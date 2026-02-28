@@ -11,3 +11,6 @@ wheels/
 .env
 
 *.log
+wandb/
+outputs/
+unsloth_compiled_cache/

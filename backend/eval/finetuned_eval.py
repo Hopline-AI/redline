@@ -126,7 +126,7 @@ def run_extraction_endpoint(endpoint_url: str, policy_text: str) -> str:
                 {"role": "user", "content": user_msg},
             ],
             "temperature": 0.0,
-            "max_tokens": 4096,
+            "max_tokens": 2048,
         },
         timeout=120,
     )
