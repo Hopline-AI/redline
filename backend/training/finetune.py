@@ -158,6 +158,14 @@ def main():
     print(f"\nAdapter saved to {output_dir / 'final_adapter'}")
 
     # Log adapter as W&B artifact
+    # SFTTrainer may have already closed the run, so re-init if needed
+    if wandb.run is None:
+        wandb.init(
+            project=cfg["wandb"]["project"],
+            entity=cfg["wandb"].get("entity"),
+            name=f"finetune-{cfg['model']['name'].split('/')[-1]}-r{cfg['lora']['rank']}-artifact",
+            config=cfg,
+        )
     artifact = wandb.Artifact(
         name="redline-lora-adapter",
         type="model",
@@ -165,7 +173,6 @@ def main():
     )
     artifact.add_dir(str(output_dir / "final_adapter"))
     wandb.log_artifact(artifact)
-
     wandb.finish()
     print("Training complete.")
 

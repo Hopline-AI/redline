@@ -1,6 +1,7 @@
 """Post-fine-tuning evaluation with W&B Weave tracing.
 
-Supports loading the model from a local path, HF Hub, or a remote BREV endpoint.
+Supports loading the model from a local adapter path, HF Hub, Mistral API,
+or a remote vLLM/TGI endpoint.
 Runs the same scorer suite as baseline and produces side-by-side comparison.
 """
 
@@ -24,6 +25,10 @@ from eval.scorers import (
 )
 
 PROMPT_TEMPLATE_PATH = Path(__file__).parent.parent / "schema" / "prompt_template.txt"
+
+# Loaded once when --local-adapter is used
+_local_model = None
+_local_tokenizer = None
 
 
 def load_prompt_template() -> str:
@@ -49,6 +54,57 @@ def extract_policy_and_expected(sample: dict) -> tuple[str, dict]:
         elif msg["role"] == "assistant":
             expected = json.loads(msg["content"])
     return policy_text, expected
+
+
+def load_local_model(adapter_path: str, base_model: str, max_seq_length: int = 4096):
+    """Load base model + LoRA adapter with Unsloth."""
+    global _local_model, _local_tokenizer
+    if _local_model is not None:
+        return _local_model, _local_tokenizer
+
+    from unsloth import FastLanguageModel
+
+    print(f"Loading base model {base_model} + adapter from {adapter_path}...")
+    _local_model, _local_tokenizer = FastLanguageModel.from_pretrained(
+        model_name=adapter_path,
+        max_seq_length=max_seq_length,
+        load_in_4bit=True,
+        dtype=None,
+    )
+    FastLanguageModel.for_inference(_local_model)
+    print("Model loaded.")
+    return _local_model, _local_tokenizer
+
+
+def run_extraction_local(policy_text: str) -> str:
+    """Run extraction using locally loaded model + adapter."""
+    model, tokenizer = _local_model, _local_tokenizer
+
+    system_msg = (
+        "You are a compliance extraction engine. Your task is to extract all decision "
+        "rules from company policy documents into structured JSON. Output only valid JSON "
+        "matching the provided schema. Do not interpret, evaluate, or offer opinions on "
+        "the rules — only extract them exactly as stated in the policy text."
+    )
+    user_msg = (
+        "Extract all decision rules from the following company policy into structured JSON. "
+        "For each rule, identify the rule type, conditions, actions, and include the exact "
+        f"source text from the policy.\n\nPolicy text:\n{policy_text}"
+    )
+
+    prompt = f"<s>[INST] {system_msg}\n{user_msg} [/INST]"
+    inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+
+    outputs = model.generate(
+        **inputs,
+        max_new_tokens=4096,
+        temperature=0.0,
+        do_sample=False,
+    )
+
+    # Decode only the generated tokens (skip the prompt)
+    generated = outputs[0][inputs["input_ids"].shape[1]:]
+    return tokenizer.decode(generated, skip_special_tokens=True)
 
 
 def run_extraction_endpoint(endpoint_url: str, policy_text: str) -> str:
@@ -99,6 +155,8 @@ def evaluate(
     test_path: str,
     endpoint_url: str | None = None,
     model: str | None = None,
+    local_adapter: str | None = None,
+    base_model: str = "mistralai/Mistral-7B-Instruct-v0.3",
     limit: int | None = None,
     baseline_run_id: str | None = None,
 ):
@@ -106,6 +164,10 @@ def evaluate(
     samples = load_test_data(test_path)
     if limit:
         samples = samples[:limit]
+
+    # Load local model if needed
+    if local_adapter:
+        load_local_model(local_adapter, base_model)
 
     scorers = {
         "schema": SchemaValidityScorer(),
@@ -116,6 +178,8 @@ def evaluate(
         "failures": FailureModeScorer(),
     }
 
+    run_name = f"finetuned-eval-{local_adapter or model or 'endpoint'}"
+
     # Initialize W&B + Weave
     use_wandb = False
     use_weave = False
@@ -123,12 +187,13 @@ def evaluate(
         import wandb
         wandb.init(
             project="redline-compliance",
-            name=f"finetuned-eval-{model or 'endpoint'}",
+            name=run_name,
             config={
-                "model": model or endpoint_url,
+                "model": model or local_adapter or endpoint_url,
                 "test_samples": len(samples),
                 "phase": "finetuned_eval",
                 "baseline_run_id": baseline_run_id,
+                "inference_mode": "local" if local_adapter else ("endpoint" if endpoint_url else "api"),
             },
         )
         use_wandb = True
@@ -150,12 +215,14 @@ def evaluate(
 
         start = time.time()
         try:
-            if endpoint_url:
+            if local_adapter:
+                output = run_extraction_local(policy_text)
+            elif endpoint_url:
                 output = run_extraction_endpoint(endpoint_url, policy_text)
             elif model:
                 output = run_extraction_mistral(policy_text, model)
             else:
-                raise ValueError("Must provide either --endpoint or --model")
+                raise ValueError("Must provide --local-adapter, --endpoint, or --model")
         except Exception as e:
             print(f"ERROR: {e}")
             output = "{}"
@@ -238,11 +305,13 @@ def main():
     parser.add_argument("--test-data", default="data/test.jsonl", help="Path to test JSONL")
     parser.add_argument("--endpoint", default=None, help="vLLM/TGI endpoint URL")
     parser.add_argument("--model", default=None, help="Mistral fine-tuned model ID")
+    parser.add_argument("--local-adapter", default=None, help="Path to local LoRA adapter directory")
+    parser.add_argument("--base-model", default="mistralai/Mistral-7B-Instruct-v0.3", help="Base model name")
     parser.add_argument("--limit", type=int, default=None, help="Limit number of samples")
     parser.add_argument("--baseline-run-id", default=None, help="W&B baseline run ID for comparison")
     args = parser.parse_args()
 
-    evaluate(args.test_data, args.endpoint, args.model, args.limit, args.baseline_run_id)
+    evaluate(args.test_data, args.endpoint, args.model, args.local_adapter, args.base_model, args.limit, args.baseline_run_id)
 
 
 if __name__ == "__main__":
