@@ -21,28 +21,28 @@ export function ReviewActions({ currentStatus, onApprove, onReject, onEdit, isEd
         placeholder="Optional notes..."
         value={notes}
         onChange={(e) => setNotes(e.target.value)}
-        style={{ margin: 0 }}
+        style={{ margin: 0, padding: "8px 12px", border: "1px solid var(--border)", borderRadius: "6px", fontSize: "13px" }}
       />
       <button
-        data-variant="secondary"
+        className="btn-danger"
         onClick={() => {
           onReject(notes || undefined);
           setNotes("");
         }}
         disabled={currentStatus === "rejected"}
-        style={currentStatus === "rejected" ? { opacity: 0.5, borderColor: "var(--danger)", color: "var(--danger)" } : {}}
+        style={currentStatus === "rejected" ? { opacity: 0.5 } : { backgroundColor: "var(--danger)", color: "white", border: "none" }}
       >
-        <Flag size={14} />
         Reject
       </button>
       <button
-        data-variant="secondary"
+        className="btn-secondary"
         onClick={onEdit}
         style={isEditing ? { backgroundColor: "var(--bg-3)" } : {}}
       >
         Edit
       </button>
       <button
+        className="btn-primary"
         onClick={() => {
           onApprove(notes || undefined);
           setNotes("");
@@ -50,8 +50,8 @@ export function ReviewActions({ currentStatus, onApprove, onReject, onEdit, isEd
         disabled={currentStatus === "approved"}
         style={
           currentStatus === "approved"
-            ? { opacity: 0.5 }
-            : { backgroundColor: "var(--success)", borderColor: "var(--success)" }
+            ? { opacity: 0.5, backgroundColor: "var(--success)", color: "white", border: "none" }
+            : { backgroundColor: "var(--success)", color: "white", border: "none" }
         }
       >
         <CheckCircle2 size={14} />

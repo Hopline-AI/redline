@@ -35,27 +35,39 @@ export function RuleDetail({ rule, isEditing = false, onSave }: Props) {
     <>
       <div>
         {/* Header */}
-        <div className="hstack gap-2 mb-4" style={{ flexWrap: "wrap" }}>
-          <span className="type-badge">{rule.rule_type}</span>
-          <code style={{ fontSize: "var(--text-7)" }}>{rule.rule_id}</code>
-          <span className={`confidence-dot ${rule.confidence}`} />
-          <small className="text-light">Confidence: {rule.confidence}</small>
+        <div className="hstack gap-2 mb-4" style={{ flexWrap: "wrap", alignItems: "center" }}>
+          <span className="type-badge" style={{ backgroundColor: "var(--faint)", color: "var(--foreground)" }}>{rule.rule_type}</span>
+          <code style={{ fontSize: "13px", fontWeight: "600", color: "var(--foreground)" }}>{rule.rule_id}</code>
+          <div style={{ display: "flex", alignItems: "center", gap: "6px", marginLeft: "4px" }}>
+            <span className={`confidence-dot ${rule.confidence}`} />
+            <span style={{ fontSize: "13px", color: "var(--muted-foreground)" }}>Confidence: {rule.confidence}</span>
+          </div>
         </div>
 
         {/* Source text */}
         <div className="detail-section">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "8px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "12px" }}>
             <h4 style={{ margin: 0 }}>Source Text</h4>
             {policyId && (
               <button 
                 onClick={() => setShowPdf(true)} 
-                style={{ fontSize: "12px", padding: "4px 8px", background: "none", border: "1px solid var(--border)", color: "var(--primary)" }}
+                className="btn-outline"
+                style={{ fontSize: "12px", padding: "4px 8px", borderRadius: "6px" }}
               >
                  View Context in PDF
               </button>
             )}
           </div>
-          <blockquote style={{ marginTop: 0 }}>{rule.source_text}</blockquote>
+          <blockquote style={{ 
+            marginTop: 0, 
+            borderLeft: "4px solid var(--border)", 
+            paddingLeft: "16px",
+            color: "var(--muted-foreground)",
+            fontStyle: "italic",
+            lineHeight: 1.6
+          }}>
+            {rule.source_text}
+          </blockquote>
         </div>
 
         {/* Conditions */}
@@ -68,20 +80,20 @@ export function RuleDetail({ rule, isEditing = false, onSave }: Props) {
           </h4>
           <ul className="condition-list">
             {editedRule.conditions.map((c, i) => (
-              <li key={i} className="condition-item" style={{ display: isEditing ? "flex" : undefined, gap: isEditing ? "8px" : undefined }}>
+              <li key={i} className="condition-item" style={{ display: isEditing ? "grid" : "flex", gridTemplateColumns: isEditing ? "1fr auto 1fr" : undefined, gap: isEditing ? "12px" : undefined, alignItems: "center" }}>
                 {isEditing ? (
                   <>
                     <input 
                       type="text" 
                       value={c.field} 
                       onChange={(e) => handleConditionChange(i, "field", e.target.value)} 
-                      style={{ flex: 1, padding: "4px" }}
+                      style={{ width: "100%", padding: "8px 12px", border: "1px solid var(--border)", borderRadius: "6px", fontFamily: "var(--font-mono)", fontSize: "13px", backgroundColor: "var(--background)" }}
                       placeholder="Field name"
                     />
                     <select 
                       value={c.operator} 
                       onChange={(e) => handleConditionChange(i, "operator", e.target.value)}
-                      style={{ padding: "4px" }}
+                      style={{ width: "auto", padding: "8px 12px", border: "1px solid var(--border)", borderRadius: "6px", fontFamily: "var(--font-mono)", fontSize: "13px", backgroundColor: "var(--background)", minWidth: "80px" }}
                     >
                       {Object.entries(OPERATOR_LABELS).map(([op, label]) => (
                         <option key={op} value={op}>{label}</option>
@@ -95,7 +107,7 @@ export function RuleDetail({ rule, isEditing = false, onSave }: Props) {
                         if (!isNaN(Number(val)) && val.trim() !== "") val = Number(val);
                         handleConditionChange(i, "value", val);
                       }} 
-                      style={{ flex: 1, padding: "4px" }}
+                      style={{ width: "100%", padding: "8px 12px", border: "1px solid var(--border)", borderRadius: "6px", fontFamily: "var(--font-mono)", fontSize: "13px", backgroundColor: "var(--background)" }}
                       placeholder="Value"
                     />
                   </>
@@ -116,29 +128,29 @@ export function RuleDetail({ rule, isEditing = false, onSave }: Props) {
           <h4>Action</h4>
           <div className="action-block">
             {isEditing ? (
-              <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+              <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
                 <select 
                   value={editedRule.action.type} 
                   onChange={(e) => handleActionChange("type", e.target.value)}
-                  style={{ padding: "4px", width: "120px" }}
+                  style={{ padding: "6px 8px", border: "1px solid var(--border)", borderRadius: "6px", fontSize: "13px", fontWeight: "600", width: "120px", backgroundColor: "var(--background)" }}
                 >
                     <option value="grant">grant</option>
                     <option value="deny">deny</option>
                     <option value="require">require</option>
                     <option value="notify">notify</option>
                 </select>
-                <span>→</span>
+                <span style={{ color: "var(--muted-foreground)" }}>→</span>
                 <input 
                   type="text" 
                   value={editedRule.action.subject} 
                   onChange={(e) => handleActionChange("subject", e.target.value)}
-                  style={{ padding: "4px", flex: 1 }}
+                  style={{ padding: "6px 8px", border: "1px solid var(--border)", borderRadius: "6px", fontSize: "13px", flex: 1, minWidth: 0, backgroundColor: "var(--background)" }}
                   placeholder="Action subject"
                 />
               </div>
             ) : (
-              <p style={{ margin: 0 }}>
-                <strong>{rule.action.type}</strong> → {rule.action.subject}
+              <p style={{ margin: 0, fontSize: "15px" }}>
+                <strong style={{ fontWeight: 600 }}>{rule.action.type}</strong> → {rule.action.subject}
               </p>
             )}
             {rule.action.parameters && (

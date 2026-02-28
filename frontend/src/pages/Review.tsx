@@ -127,10 +127,10 @@ export default function Review() {
       </div>
 
       {/* Right: Detail panel */}
-      <div className="detail-panel" style={{ display: "flex", flexDirection: "column", background: "var(--faint)" }}>
+      <div className="detail-panel" style={{ display: "flex", flexDirection: "column", background: "var(--faint)", padding: 0 }}>
         {selectedRule ? (
-          <>
-            <div style={{ flex: 1, overflowY: "auto", padding: "var(--space-6)", background: "var(--background)", borderRadius: "var(--radius-large)", margin: "var(--space-4)", border: "1px solid var(--border)", boxShadow: "var(--shadow-sm)" }}>
+          <div style={{ display: "flex", flexDirection: "column", flex: 1, overflow: "hidden", background: "var(--background)", borderRadius: "var(--radius-large)", margin: "var(--space-4)", border: "1px solid var(--border)", boxShadow: "var(--shadow-sm)" }}>
+            <div style={{ flex: 1, overflowY: "auto", padding: "var(--space-6)" }}>
               <RuleDetail
                 key={selectedRule.ui_id}
                 rule={selectedRule.extracted} 
@@ -143,16 +143,14 @@ export default function Review() {
               <hr style={{ margin: "var(--space-6) 0", border: "none", borderTop: "1px solid var(--border)" }} />
               <LegislationPanel conflicts={selectedRule.conflicts} />
             </div>
-            <div style={{ padding: "0 var(--space-4) var(--space-4)" }}>
-              <ReviewActions
-                currentStatus={selectedRule.status}
-                isEditing={editingId === selectedRule.ui_id}
-                onApprove={(notes) => updateStatus(selectedRule.ui_id, "approved", notes)}
-                onReject={(notes) => updateStatus(selectedRule.ui_id, "rejected", notes)}
-                onEdit={() => setEditingId(editingId === selectedRule.ui_id ? null : selectedRule.ui_id)}
-              />
-            </div>
-          </>
+            <ReviewActions
+              currentStatus={selectedRule.status}
+              isEditing={editingId === selectedRule.ui_id}
+              onApprove={(notes) => updateStatus(selectedRule.ui_id, "approved", notes)}
+              onReject={(notes) => updateStatus(selectedRule.ui_id, "rejected", notes)}
+              onEdit={() => setEditingId(editingId === selectedRule.ui_id ? null : selectedRule.ui_id)}
+            />
+          </div>
         ) : (
           <div className="empty-state">
             <Scale size={48} style={{ opacity: 0.2, marginBottom: "var(--space-4)" }} />
