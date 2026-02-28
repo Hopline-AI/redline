@@ -138,4 +138,6 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 python -m uvicorn api.server:app \
     --host "$API_HOST" \
     --port "$API_PORT" \
+    --worker 4 \
     --reload
+
