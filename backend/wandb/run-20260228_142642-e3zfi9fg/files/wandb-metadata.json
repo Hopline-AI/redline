@@ -1,0 +1,34 @@
+{
+  "os": "macOS-26.3-arm64-arm-64bit",
+  "python": "CPython 3.12.9",
+  "startedAt": "2026-02-28T13:26:42.828153Z",
+  "program": "-m eval.baseline_eval",
+  "git": {
+    "remote": "https://github.com/Hopline-AI/redline.git",
+    "commit": "31cc155201c2bfdc1ab91a48d7992959b9fbbb5f"
+  },
+  "email": "khushiyant2002@gmail.com",
+  "root": "/Users/khushiyantchauhan/Developer/experiments/redline/backend",
+  "host": "Khushiyants-MacBook-Pro.local",
+  "executable": "/Users/khushiyantchauhan/Developer/experiments/redline/backend/.venv/bin/python3",
+  "cpu_count": 12,
+  "cpu_count_logical": 12,
+  "disk": {
+    "/": {
+      "total": "494384795648",
+      "used": "354071752704"
+    }
+  },
+  "memory": {
+    "total": "25769803776"
+  },
+  "apple": {
+    "name": "Apple M4 Pro",
+    "ecpuCores": 4,
+    "pcpuCores": 8,
+    "gpuCores": 16,
+    "memoryGb": 24,
+    "ramTotalBytes": "25769803776"
+  },
+  "writerId": "uel6ukyxwxe9u7s3vhj37egdizx7oidp"
+}

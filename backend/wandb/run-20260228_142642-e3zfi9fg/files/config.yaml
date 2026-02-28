@@ -1,0 +1,49 @@
+_wandb:
+    value:
+        cli_version: 0.25.0
+        e:
+            uel6ukyxwxe9u7s3vhj37egdizx7oidp:
+                apple:
+                    ecpuCores: 4
+                    gpuCores: 16
+                    memoryGb: 24
+                    name: Apple M4 Pro
+                    pcpuCores: 8
+                    ramTotalBytes: "25769803776"
+                cpu_count: 12
+                cpu_count_logical: 12
+                disk:
+                    /:
+                        total: "494384795648"
+                        used: "354071752704"
+                email: khushiyant2002@gmail.com
+                executable: /Users/khushiyantchauhan/Developer/experiments/redline/backend/.venv/bin/python3
+                git:
+                    commit: 31cc155201c2bfdc1ab91a48d7992959b9fbbb5f
+                    remote: https://github.com/Hopline-AI/redline.git
+                host: Khushiyants-MacBook-Pro.local
+                memory:
+                    total: "25769803776"
+                os: macOS-26.3-arm64-arm-64bit
+                program: -m eval.baseline_eval
+                python: CPython 3.12.9
+                root: /Users/khushiyantchauhan/Developer/experiments/redline/backend
+                startedAt: "2026-02-28T13:26:42.828153Z"
+                writerId: uel6ukyxwxe9u7s3vhj37egdizx7oidp
+        m: []
+        python_version: 3.12.9
+        t:
+            "3":
+                - 2
+                - 13
+                - 16
+            "4": 3.12.9
+            "5": 0.25.0
+            "12": 0.25.0
+            "13": darwin-arm64
+model:
+    value: open-mistral-7b
+phase:
+    value: baseline
+test_samples:
+    value: 46
