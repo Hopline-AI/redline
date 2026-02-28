@@ -3,6 +3,21 @@
 
 /* ─── Custom tokens for Redline ──────────────────────────────────── */
 :root {
+  --background: light-dark(#ffffff, #0a0a0b);
+  --foreground: light-dark(#000000, #ececec);
+  --muted: light-dark(#f4f4f5, #18181b);
+  --muted-foreground: light-dark(#71717a, #a1a1aa);
+  --accent: light-dark(#f4f4f5, #1e1e21);
+  --accent-foreground: light-dark(#18181b, #fafafa);
+  --border: light-dark(#e4e4e7, #27272a);
+  --primary: light-dark(#000000, #ffffff);
+  --primary-foreground: light-dark(#ffffff, #000000);
+  --secondary: light-dark(#f4f4f5, #1c1c1f);
+  --secondary-foreground: light-dark(#18181b, #fafafa);
+  --faint: light-dark(#fafafa, #111114);
+  --danger: #ef4444;
+  --success: #22c55e;
+
   --conflict-contradicts: light-dark(#d32f2f, #ef5350);
   --conflict-falls-short: light-dark(#e65100, #ff9800);
   --conflict-exceeds: light-dark(#f9a825, #fdd835);
@@ -22,10 +37,19 @@
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
   /* Glassmorphism / Elevation */
-  --glass-bg: light-dark(rgba(255, 255, 255, 0.7), rgba(18, 18, 23, 0.7));
-  --glass-border: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
-  --glass-blur: 12px;
+  --glass-bg: light-dark(rgba(255, 255, 255, 0.7), rgba(10, 10, 11, 0.8));
+  --glass-border: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.08));
+  --glass-blur: 16px;
 }
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 
 /* ─── Utilities ──────────────────────────────────────────────────── */
 html {
@@ -99,12 +123,23 @@ button:disabled, .btn:disabled {
 
 .btn-ghost {
   background: transparent;
-  color: var(--foreground);
+  color: var(--muted-foreground);
+  border: none;
 }
 
 .btn-ghost:not(:disabled):hover {
-  background: var(--faint);
+  background: var(--accent);
+  color: var(--foreground);
 }
+
+.icon-btn {
+  padding: var(--space-2);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-medium);
+  flex-shrink: 0;
+}
+
 
 .btn-outline {
   background: transparent;

@@ -14,7 +14,7 @@ export function Layout() {
         </Link>
         <nav>
           <button
-            className="ghost icon small"
+            className="btn-ghost icon-btn"
             onClick={toggleTheme}
             aria-label="Toggle dark mode"
           >
