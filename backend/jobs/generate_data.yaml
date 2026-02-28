@@ -15,16 +15,17 @@ image: python:3.12-slim
 env:
   GEMINI_API_KEY: "${GEMINI_API_KEY}"
   HF_TOKEN: "${HF_TOKEN}"
-  TARGET_CATEGORY: "${TARGET_CATEGORY:-all}"
-  NUM_SAMPLES: "${NUM_SAMPLES:-50}"
+  TARGET_COUNT: "${TARGET_COUNT:-510}"
+  WORKERS: "${WORKERS:-15}"
 
 setup: |
   pip install google-genai jsonschema huggingface-hub
 
 command: |
   python data/generation_script.py \
-    --target-category "${TARGET_CATEGORY}" \
-    --num-samples "${NUM_SAMPLES}" \
+    --target-count "${TARGET_COUNT}" \
+    --workers "${WORKERS}" \
+    --resume \
     --output-dir /outputs/data
 
 artifacts:

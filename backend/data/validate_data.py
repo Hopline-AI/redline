@@ -10,6 +10,7 @@
 
 import argparse
 import json
+import re
 import sys
 from collections import Counter
 import jsonschema
@@ -118,7 +119,11 @@ def check_source_text(samples: list[dict]) -> tuple[int, int, list[str]]:
 def check_distribution(samples: list[dict]) -> dict:
     rule_types = Counter()
     jurisdictions = Counter()
+    operators = Counter()
+    confidence = Counter()
+    condition_logic = Counter()
     total_rules = 0
+    total_conditions = 0
 
     for sample in samples:
         parsed, _ = extract_assistant_json(sample)
@@ -126,6 +131,11 @@ def check_distribution(samples: list[dict]) -> dict:
             continue
         for rule in parsed.get("rules", []):
             rule_types[rule.get("rule_type", "unknown")] += 1
+            condition_logic[rule.get("condition_logic", "unknown")] += 1
+            confidence[rule.get("confidence", "missing")] += 1
+            for cond in rule.get("conditions", []):
+                operators[cond.get("operator", "unknown")] += 1
+                total_conditions += 1
             total_rules += 1
         for j in parsed.get("metadata", {}).get("applicable_jurisdictions", []):
             jurisdictions[j] += 1
@@ -133,9 +143,74 @@ def check_distribution(samples: list[dict]) -> dict:
     return {
         "total_samples": len(samples),
         "total_rules": total_rules,
+        "total_conditions": total_conditions,
         "rule_type_distribution": dict(rule_types.most_common()),
+        "operator_distribution": dict(operators.most_common()),
+        "confidence_distribution": dict(confidence.most_common()),
+        "condition_logic_distribution": dict(condition_logic.most_common()),
         "jurisdiction_distribution": dict(jurisdictions.most_common()),
     }
+
+
+def check_quality_gates(samples: list[dict], dist: dict, args) -> tuple[int, int, list[str]]:
+    """Production data quality gates for balance and diversity."""
+    errors = []
+    checks = 0
+
+    total_rules = dist["total_rules"]
+    total_conditions = dist["total_conditions"]
+    logic = dist["condition_logic_distribution"]
+    confidence = dist["confidence_distribution"]
+    operators = dist["operator_distribution"]
+
+    if total_rules == 0:
+        return 0, 1, ["  quality_gates: no rules found"]
+
+    any_ratio = logic.get("any", 0) / total_rules
+    checks += 1
+    if any_ratio < args.min_any_ratio:
+        errors.append(
+            f"  quality_gates: condition_logic 'any' ratio {any_ratio:.4f} < {args.min_any_ratio:.4f}"
+        )
+
+    low_conf_ratio = confidence.get("low", 0) / total_rules
+    checks += 1
+    if low_conf_ratio < args.min_low_conf_ratio:
+        errors.append(
+            f"  quality_gates: confidence 'low' ratio {low_conf_ratio:.4f} < {args.min_low_conf_ratio:.4f}"
+        )
+
+    if total_conditions > 0:
+        eq_ratio = operators.get("eq", 0) / total_conditions
+    else:
+        eq_ratio = 1.0
+    checks += 1
+    if eq_ratio > args.max_eq_ratio:
+        errors.append(
+            f"  quality_gates: operator 'eq' ratio {eq_ratio:.4f} > {args.max_eq_ratio:.4f}"
+        )
+
+    checks += 1
+    not_in_presence = operators.get("not_in", 0) / max(1, total_conditions)
+    if not_in_presence < args.min_not_in_ratio:
+        errors.append(
+            f"  quality_gates: operator 'not_in' ratio {not_in_presence:.4f} < {args.min_not_in_ratio:.4f}"
+        )
+
+    iso_date = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+    non_iso = 0
+    for sample in samples:
+        parsed, _ = extract_assistant_json(sample)
+        if parsed is None:
+            continue
+        eff = parsed.get("metadata", {}).get("effective_date", "")
+        if not iso_date.match(eff):
+            non_iso += 1
+    checks += 1
+    if non_iso > 0:
+        errors.append(f"  quality_gates: non-ISO effective_date found in {non_iso} samples")
+
+    return checks - len(errors), len(errors), errors
 
 
 def main():
@@ -149,6 +224,11 @@ def main():
     parser.add_argument(
         "--verbose", "-v", action="store_true", help="Show individual errors"
     )
+    parser.add_argument("--quality-gates", action="store_true", help="Enable production quality gates")
+    parser.add_argument("--min-any-ratio", type=float, default=0.03, help="Minimum ratio of condition_logic='any'")
+    parser.add_argument("--min-low-conf-ratio", type=float, default=0.01, help="Minimum ratio of confidence='low'")
+    parser.add_argument("--max-eq-ratio", type=float, default=0.70, help="Maximum ratio of operator='eq'")
+    parser.add_argument("--min-not-in-ratio", type=float, default=0.01, help="Minimum ratio of operator='not_in'")
     args = parser.parse_args()
 
     schema = load_schema(args.schema)
@@ -189,11 +269,28 @@ def main():
     print(f"   Rule types:")
     for rt, count in dist["rule_type_distribution"].items():
         print(f"     {rt}: {count}")
+    print(f"   Operators:")
+    for op, count in dist["operator_distribution"].items():
+        print(f"     {op}: {count}")
+    print(f"   Condition logic:")
+    for logic_key, count in dist["condition_logic_distribution"].items():
+        print(f"     {logic_key}: {count}")
+    print(f"   Confidence:")
+    for conf_key, count in dist["confidence_distribution"].items():
+        print(f"     {conf_key}: {count}")
     print(f"   Jurisdictions:")
     for j, count in dist["jurisdiction_distribution"].items():
         print(f"     {j}: {count}")
 
-    total_failures = f + f2 + f3
+    f4 = 0
+    if args.quality_gates:
+        p4, f4, errs4 = check_quality_gates(samples, dist, args)
+        print(f"5. Quality gates:       {p4} passed / {f4} failed")
+        if errs4:
+            for e in errs4:
+                print(e)
+
+    total_failures = f + f2 + f3 + f4
     print(f"\n{'PASS' if total_failures == 0 else 'FAIL'}: {total_failures} total failures")
     sys.exit(0 if total_failures == 0 else 1)
 

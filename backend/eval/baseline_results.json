@@ -1,28 +1,29 @@
 {
   "model": "open-mistral-7b",
   "phase": "baseline_zero_shot",
-  "test_samples": 60,
-  "date": "2026-02-27",
+  "test_samples": 46,
+  "date": "2026-02-28",
   "aggregate_metrics": {
-    "schema_validity_rate": 0.7166666666666667,
-    "avg_field_accuracy": 0.07986111111111112,
-    "avg_precision": 0.06793650793650793,
-    "avg_recall": 0.17916666666666667,
-    "avg_f1": 0.09324074074074074,
-    "avg_source_overlap": 0.8463888888888889,
-    "avg_latency_ms": 5461.367686589559
+    "schema_validity_rate": 0.0,
+    "avg_field_accuracy": 0.029347826086956522,
+    "avg_precision": 0.04139061421670117,
+    "avg_recall": 0.058695652173913045,
+    "avg_f1": 0.0439005439005439,
+    "avg_source_overlap": 0.7958223539745278,
+    "avg_latency_ms": 7965.875288714533
   },
   "per_sample": [
     {
       "sample_index": 0,
-      "latency_ms": 5616.329193115234,
+      "latency_ms": 9193.583011627197,
       "schema": {
         "schema_valid": false,
         "json_parseable": true,
-        "validation_error": "[] should be non-empty",
+        "validation_error": "'United States (FMLA)' is not one of ['CA', 'federal']",
         "error_path": [
           "metadata",
-          "applicable_jurisdictions"
+          "applicable_jurisdictions",
+          1
         ]
       },
       "fields": {
@@ -31,22 +32,24 @@
         "total_fields": 4,
         "rule_type_accuracy": 0.0,
         "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 1
       },
       "rules": {
         "precision": 0.0,
         "recall": 0.0,
         "f1": 0.0,
         "expected_count": 1,
-        "output_count": 6,
+        "output_count": 7,
         "true_positives": 0,
-        "hallucinated_rules": 6,
+        "hallucinated_rules": 7,
         "missed_rules": 1
       },
       "source": {
-        "source_text_overlap": 0.8333333333333334,
-        "matched": 5,
-        "total_rules": 6
+        "source_text_overlap": 0.42857142857142855,
+        "matched": 3,
+        "total_rules": 7
       },
       "confidence": {
         "confidence_calibration": {
@@ -55,7 +58,7 @@
           "low": null
         },
         "bucket_counts": {
-          "high": 6,
+          "high": 7,
           "medium": 0,
           "low": 0
         }
@@ -64,45 +67,53 @@
         "failure_modes": {
           "missing_field": 0,
           "wrong_operator": 0,
-          "hallucinated_rule": 6,
+          "hallucinated_rule": 7,
           "malformed_json": 0,
           "wrong_value": 0,
           "extra_field": 0,
           "wrong_rule_type": 0,
           "missing_rule": 1
         },
-        "total_failures": 7
+        "total_failures": 8
       }
     },
     {
       "sample_index": 1,
-      "latency_ms": 5761.71612739563,
+      "latency_ms": 11115.208148956299,
       "schema": {
-        "schema_valid": true,
-        "json_parseable": true
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'California' is not one of ['CA', 'federal']",
+        "error_path": [
+          "metadata",
+          "applicable_jurisdictions",
+          0
+        ]
       },
       "fields": {
         "field_accuracy": 0.0,
         "correct_fields": 0,
-        "total_fields": 12,
+        "total_fields": 4,
         "rule_type_accuracy": 0.0,
         "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 1
       },
       "rules": {
         "precision": 0.0,
         "recall": 0.0,
         "f1": 0.0,
-        "expected_count": 3,
-        "output_count": 4,
+        "expected_count": 1,
+        "output_count": 9,
         "true_positives": 0,
-        "hallucinated_rules": 4,
-        "missed_rules": 3
+        "hallucinated_rules": 9,
+        "missed_rules": 1
       },
       "source": {
-        "source_text_overlap": 0.5,
-        "matched": 2,
-        "total_rules": 4
+        "source_text_overlap": 0.6666666666666666,
+        "matched": 6,
+        "total_rules": 9
       },
       "confidence": {
         "confidence_calibration": {
@@ -111,7 +122,7 @@
           "low": null
         },
         "bucket_counts": {
-          "high": 4,
+          "high": 9,
           "medium": 0,
           "low": 0
         }
@@ -120,45 +131,53 @@
         "failure_modes": {
           "missing_field": 0,
           "wrong_operator": 0,
-          "hallucinated_rule": 4,
+          "hallucinated_rule": 9,
           "malformed_json": 0,
           "wrong_value": 0,
           "extra_field": 0,
           "wrong_rule_type": 0,
-          "missing_rule": 3
+          "missing_rule": 1
         },
-        "total_failures": 7
+        "total_failures": 10
       }
     },
     {
       "sample_index": 2,
-      "latency_ms": 5464.38193321228,
+      "latency_ms": 8545.27473449707,
       "schema": {
-        "schema_valid": true,
-        "json_parseable": true
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'California' is not one of ['CA', 'federal']",
+        "error_path": [
+          "metadata",
+          "applicable_jurisdictions",
+          0
+        ]
       },
       "fields": {
         "field_accuracy": 0.0,
         "correct_fields": 0,
-        "total_fields": 12,
+        "total_fields": 20,
         "rule_type_accuracy": 0.0,
         "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 5
       },
       "rules": {
         "precision": 0.0,
         "recall": 0.0,
         "f1": 0.0,
-        "expected_count": 3,
-        "output_count": 4,
+        "expected_count": 5,
+        "output_count": 7,
         "true_positives": 0,
-        "hallucinated_rules": 4,
-        "missed_rules": 3
+        "hallucinated_rules": 7,
+        "missed_rules": 5
       },
       "source": {
         "source_text_overlap": 1.0,
-        "matched": 4,
-        "total_rules": 4
+        "matched": 7,
+        "total_rules": 7
       },
       "confidence": {
         "confidence_calibration": {
@@ -167,7 +186,7 @@
           "low": null
         },
         "bucket_counts": {
-          "high": 4,
+          "high": 7,
           "medium": 0,
           "low": 0
         }
@@ -176,83 +195,27 @@
         "failure_modes": {
           "missing_field": 0,
           "wrong_operator": 0,
-          "hallucinated_rule": 4,
+          "hallucinated_rule": 7,
           "malformed_json": 0,
           "wrong_value": 0,
           "extra_field": 0,
           "wrong_rule_type": 0,
-          "missing_rule": 3
+          "missing_rule": 5
         },
-        "total_failures": 7
+        "total_failures": 12
       }
     },
     {
       "sample_index": 3,
-      "latency_ms": 7609.483003616333,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 12,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 3,
-        "output_count": 8,
-        "true_positives": 0,
-        "hallucinated_rules": 8,
-        "missed_rules": 3
-      },
-      "source": {
-        "source_text_overlap": 0.0,
-        "matched": 0,
-        "total_rules": 8
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 8,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 8,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 3
-        },
-        "total_failures": 11
-      }
-    },
-    {
-      "sample_index": 4,
-      "latency_ms": 7061.323881149292,
+      "latency_ms": 10166.269063949585,
       "schema": {
         "schema_valid": false,
         "json_parseable": true,
-        "validation_error": "[] should be non-empty",
+        "validation_error": "'United States (federal, WARN Act compliance)' is not one of ['CA', 'federal']",
         "error_path": [
-          "rules",
-          5,
-          "conditions"
+          "metadata",
+          "applicable_jurisdictions",
+          0
         ]
       },
       "fields": {
@@ -261,32 +224,34 @@
         "total_fields": 16,
         "rule_type_accuracy": 0.0,
         "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 4
       },
       "rules": {
         "precision": 0.0,
         "recall": 0.0,
         "f1": 0.0,
         "expected_count": 4,
-        "output_count": 6,
+        "output_count": 7,
         "true_positives": 0,
-        "hallucinated_rules": 6,
+        "hallucinated_rules": 7,
         "missed_rules": 4
       },
       "source": {
-        "source_text_overlap": 1.0,
-        "matched": 6,
-        "total_rules": 6
+        "source_text_overlap": 0.5714285714285714,
+        "matched": 4,
+        "total_rules": 7
       },
       "confidence": {
         "confidence_calibration": {
           "high": 0.0,
-          "medium": null,
+          "medium": 0.0,
           "low": null
         },
         "bucket_counts": {
           "high": 6,
-          "medium": 0,
+          "medium": 1,
           "low": 0
         }
       },
@@ -294,27 +259,91 @@
         "failure_modes": {
           "missing_field": 0,
           "wrong_operator": 0,
-          "hallucinated_rule": 6,
+          "hallucinated_rule": 7,
           "malformed_json": 0,
           "wrong_value": 0,
           "extra_field": 0,
           "wrong_rule_type": 0,
           "missing_rule": 4
         },
-        "total_failures": 10
+        "total_failures": 11
+      }
+    },
+    {
+      "sample_index": 4,
+      "latency_ms": 5935.881853103638,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'California' is not one of ['CA', 'federal']",
+        "error_path": [
+          "metadata",
+          "applicable_jurisdictions",
+          1
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.0,
+        "correct_fields": 0,
+        "total_fields": 4,
+        "rule_type_accuracy": 0.0,
+        "conditions_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 1
+      },
+      "rules": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "expected_count": 1,
+        "output_count": 5,
+        "true_positives": 0,
+        "hallucinated_rules": 5,
+        "missed_rules": 1
+      },
+      "source": {
+        "source_text_overlap": 0.4,
+        "matched": 2,
+        "total_rules": 5
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.0,
+          "medium": 0.0,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 4,
+          "medium": 1,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 5,
+          "malformed_json": 0,
+          "wrong_value": 0,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
+          "missing_rule": 1
+        },
+        "total_failures": 6
       }
     },
     {
       "sample_index": 5,
-      "latency_ms": 8141.471147537231,
+      "latency_ms": 7811.45715713501,
       "schema": {
         "schema_valid": false,
         "json_parseable": true,
-        "validation_error": "'require' is not one of ['entitlement', 'restriction', 'eligibility', 'termination', 'leave', 'compensation']",
+        "validation_error": "[] should be non-empty",
         "error_path": [
           "rules",
           6,
-          "rule_type"
+          "conditions"
         ]
       },
       "fields": {
@@ -323,7 +352,9 @@
         "total_fields": 12,
         "rule_type_accuracy": 0.0,
         "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 3
       },
       "rules": {
         "precision": 0.0,
@@ -368,797 +399,50 @@
     },
     {
       "sample_index": 6,
-      "latency_ms": 11463.3469581604,
+      "latency_ms": 8018.403053283691,
       "schema": {
-        "schema_valid": true,
-        "json_parseable": true
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'United States' is not one of ['CA', 'federal']",
+        "error_path": [
+          "metadata",
+          "applicable_jurisdictions",
+          0
+        ]
       },
       "fields": {
-        "field_accuracy": 0.08333333333333333,
-        "correct_fields": 1,
-        "total_fields": 12,
-        "rule_type_accuracy": 0.3333333333333333,
+        "field_accuracy": 0.0,
+        "correct_fields": 0,
+        "total_fields": 4,
+        "rule_type_accuracy": 0.0,
         "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 1
       },
       "rules": {
-        "precision": 0.14285714285714285,
-        "recall": 0.3333333333333333,
-        "f1": 0.2,
-        "expected_count": 3,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "expected_count": 1,
         "output_count": 7,
-        "true_positives": 1,
-        "hallucinated_rules": 6,
-        "missed_rules": 2
+        "true_positives": 0,
+        "hallucinated_rules": 7,
+        "missed_rules": 1
       },
       "source": {
-        "source_text_overlap": 0.8571428571428571,
-        "matched": 6,
+        "source_text_overlap": 1.0,
+        "matched": 7,
         "total_rules": 7
       },
       "confidence": {
         "confidence_calibration": {
-          "high": 0.2,
+          "high": 0.0,
           "medium": 0.0,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 5,
-          "medium": 2,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 1,
-          "wrong_operator": 0,
-          "hallucinated_rule": 6,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 3,
-          "wrong_rule_type": 0,
-          "missing_rule": 2
-        },
-        "total_failures": 12
-      }
-    },
-    {
-      "sample_index": 7,
-      "latency_ms": 5720.459938049316,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 4,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 1,
-        "output_count": 3,
-        "true_positives": 0,
-        "hallucinated_rules": 3,
-        "missed_rules": 1
-      },
-      "source": {
-        "source_text_overlap": 0.3333333333333333,
-        "matched": 1,
-        "total_rules": 3
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 3,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 3,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 1
-        },
-        "total_failures": 4
-      }
-    },
-    {
-      "sample_index": 8,
-      "latency_ms": 6384.325981140137,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.125,
-        "correct_fields": 2,
-        "total_fields": 16,
-        "rule_type_accuracy": 0.25,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.25,
-        "recall": 0.25,
-        "f1": 0.25,
-        "expected_count": 4,
-        "output_count": 4,
-        "true_positives": 1,
-        "hallucinated_rules": 3,
-        "missed_rules": 3
-      },
-      "source": {
-        "source_text_overlap": 0.75,
-        "matched": 3,
-        "total_rules": 4
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.25,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 4,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 2,
-          "wrong_operator": 0,
-          "hallucinated_rule": 3,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 4,
-          "wrong_rule_type": 0,
-          "missing_rule": 3
-        },
-        "total_failures": 12
-      }
-    },
-    {
-      "sample_index": 9,
-      "latency_ms": 3466.4740562438965,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 4,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 1,
-        "output_count": 3,
-        "true_positives": 0,
-        "hallucinated_rules": 3,
-        "missed_rules": 1
-      },
-      "source": {
-        "source_text_overlap": 0.6666666666666666,
-        "matched": 2,
-        "total_rules": 3
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 3,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 3,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 1
-        },
-        "total_failures": 4
-      }
-    },
-    {
-      "sample_index": 10,
-      "latency_ms": 4013.582944869995,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 12,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 3,
-        "output_count": 3,
-        "true_positives": 0,
-        "hallucinated_rules": 3,
-        "missed_rules": 3
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 3,
-        "total_rules": 3
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 3,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 3,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 3
-        },
-        "total_failures": 6
-      }
-    },
-    {
-      "sample_index": 11,
-      "latency_ms": 2010.716199874878,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 4,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 1,
-        "output_count": 1,
-        "true_positives": 0,
-        "hallucinated_rules": 1,
-        "missed_rules": 1
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 1,
-        "total_rules": 1
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 1,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 1,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 1
-        },
-        "total_failures": 2
-      }
-    },
-    {
-      "sample_index": 12,
-      "latency_ms": 5621.216058731079,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 4,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 1,
-        "output_count": 4,
-        "true_positives": 0,
-        "hallucinated_rules": 4,
-        "missed_rules": 1
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 4,
-        "total_rules": 4
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 4,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 4,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 1
-        },
-        "total_failures": 5
-      }
-    },
-    {
-      "sample_index": 13,
-      "latency_ms": 4419.66700553894,
-      "schema": {
-        "schema_valid": false,
-        "json_parseable": true,
-        "validation_error": "[] should be non-empty",
-        "error_path": [
-          "rules",
-          4,
-          "conditions"
-        ]
-      },
-      "fields": {
-        "field_accuracy": 0.25,
-        "correct_fields": 1,
-        "total_fields": 4,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.2,
-        "recall": 1.0,
-        "f1": 0.33333333333333337,
-        "expected_count": 1,
-        "output_count": 5,
-        "true_positives": 1,
-        "hallucinated_rules": 4,
-        "missed_rules": 0
-      },
-      "source": {
-        "source_text_overlap": 0.8,
-        "matched": 4,
-        "total_rules": 5
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 5,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 4,
-          "malformed_json": 0,
-          "wrong_value": 1,
-          "extra_field": 0,
-          "wrong_rule_type": 1,
-          "missing_rule": 0
-        },
-        "total_failures": 6
-      }
-    },
-    {
-      "sample_index": 14,
-      "latency_ms": 4587.532043457031,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 4,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 1,
-        "output_count": 2,
-        "true_positives": 0,
-        "hallucinated_rules": 2,
-        "missed_rules": 1
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 2,
-        "total_rules": 2
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 2,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 2,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 1
-        },
-        "total_failures": 3
-      }
-    },
-    {
-      "sample_index": 15,
-      "latency_ms": 5925.257921218872,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 16,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 4,
-        "output_count": 4,
-        "true_positives": 0,
-        "hallucinated_rules": 4,
-        "missed_rules": 4
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 4,
-        "total_rules": 4
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 4,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 4,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 4
-        },
-        "total_failures": 8
-      }
-    },
-    {
-      "sample_index": 16,
-      "latency_ms": 7076.756954193115,
-      "schema": {
-        "schema_valid": false,
-        "json_parseable": true,
-        "validation_error": "'field' is a required property",
-        "error_path": [
-          "rules",
-          4,
-          "conditions",
-          2
-        ]
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 16,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 4,
-        "output_count": 6,
-        "true_positives": 0,
-        "hallucinated_rules": 6,
-        "missed_rules": 4
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 6,
-        "total_rules": 6
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
           "low": null
         },
         "bucket_counts": {
           "high": 6,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 6,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 4
-        },
-        "total_failures": 10
-      }
-    },
-    {
-      "sample_index": 17,
-      "latency_ms": 6133.98814201355,
-      "schema": {
-        "schema_valid": false,
-        "json_parseable": true,
-        "validation_error": "[] should be non-empty",
-        "error_path": [
-          "rules",
-          3,
-          "conditions"
-        ]
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 4,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 1,
-        "output_count": 4,
-        "true_positives": 0,
-        "hallucinated_rules": 4,
-        "missed_rules": 1
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 4,
-        "total_rules": 4
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 4,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 4,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 1
-        },
-        "total_failures": 5
-      }
-    },
-    {
-      "sample_index": 18,
-      "latency_ms": 5814.0459060668945,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.25,
-        "correct_fields": 1,
-        "total_fields": 4,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.2,
-        "recall": 1.0,
-        "f1": 0.33333333333333337,
-        "expected_count": 1,
-        "output_count": 5,
-        "true_positives": 1,
-        "hallucinated_rules": 4,
-        "missed_rules": 0
-      },
-      "source": {
-        "source_text_overlap": 0.8,
-        "matched": 4,
-        "total_rules": 5
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 5,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 1,
-          "wrong_operator": 0,
-          "hallucinated_rule": 4,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 1,
-          "wrong_rule_type": 1,
-          "missing_rule": 0
-        },
-        "total_failures": 7
-      }
-    },
-    {
-      "sample_index": 19,
-      "latency_ms": 6143.329858779907,
-      "schema": {
-        "schema_valid": false,
-        "json_parseable": true,
-        "validation_error": "{'capital_seeking': {'reasonable_belief': {'notice_would_preclude_capital_obtainment': True}}} is not valid under any of the given schemas",
-        "error_path": [
-          "rules",
-          1,
-          "conditions",
-          1,
-          "value"
-        ]
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 12,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 3,
-        "output_count": 5,
-        "true_positives": 0,
-        "hallucinated_rules": 5,
-        "missed_rules": 3
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 5,
-        "total_rules": 5
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": 0.0,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 4,
           "medium": 1,
           "low": 0
         }
@@ -1167,163 +451,52 @@
         "failure_modes": {
           "missing_field": 0,
           "wrong_operator": 0,
-          "hallucinated_rule": 5,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 3
-        },
-        "total_failures": 8
-      }
-    },
-    {
-      "sample_index": 20,
-      "latency_ms": 2585.819721221924,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 4,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 1,
-        "output_count": 1,
-        "true_positives": 0,
-        "hallucinated_rules": 1,
-        "missed_rules": 1
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 1,
-        "total_rules": 1
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 1,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 1,
+          "hallucinated_rule": 7,
           "malformed_json": 0,
           "wrong_value": 0,
           "extra_field": 0,
           "wrong_rule_type": 0,
           "missing_rule": 1
         },
-        "total_failures": 2
+        "total_failures": 8
       }
     },
     {
-      "sample_index": 21,
-      "latency_ms": 4143.449783325195,
+      "sample_index": 7,
+      "latency_ms": 8043.208122253418,
       "schema": {
         "schema_valid": false,
         "json_parseable": true,
-        "validation_error": "Additional properties are not allowed ('context' was unexpected)",
+        "validation_error": "'California' is not one of ['CA', 'federal']",
         "error_path": [
-          "rules",
-          3,
-          "conditions",
+          "metadata",
+          "applicable_jurisdictions",
           0
         ]
       },
       "fields": {
-        "field_accuracy": 0.5,
-        "correct_fields": 2,
-        "total_fields": 4,
-        "rule_type_accuracy": 1.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.25,
-        "recall": 1.0,
-        "f1": 0.4,
-        "expected_count": 1,
-        "output_count": 4,
-        "true_positives": 1,
-        "hallucinated_rules": 3,
-        "missed_rules": 0
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 4,
-        "total_rules": 4
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.25,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 4,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 1,
-          "hallucinated_rule": 3,
-          "malformed_json": 0,
-          "wrong_value": 1,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 0
-        },
-        "total_failures": 5
-      }
-    },
-    {
-      "sample_index": 22,
-      "latency_ms": 7825.668811798096,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
         "field_accuracy": 0.0,
         "correct_fields": 0,
-        "total_fields": 12,
+        "total_fields": 16,
         "rule_type_accuracy": 0.0,
         "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 4
       },
       "rules": {
         "precision": 0.0,
         "recall": 0.0,
         "f1": 0.0,
-        "expected_count": 3,
+        "expected_count": 4,
         "output_count": 7,
         "true_positives": 0,
         "hallucinated_rules": 7,
-        "missed_rules": 3
+        "missed_rules": 4
       },
       "source": {
-        "source_text_overlap": 0.42857142857142855,
-        "matched": 3,
+        "source_text_overlap": 0.7142857142857143,
+        "matched": 5,
         "total_rules": 7
       },
       "confidence": {
@@ -1347,17 +520,23 @@
           "wrong_value": 0,
           "extra_field": 0,
           "wrong_rule_type": 0,
-          "missing_rule": 3
+          "missing_rule": 4
         },
-        "total_failures": 10
+        "total_failures": 11
       }
     },
     {
-      "sample_index": 23,
-      "latency_ms": 3159.003257751465,
+      "sample_index": 8,
+      "latency_ms": 5578.624725341797,
       "schema": {
-        "schema_valid": true,
-        "json_parseable": true
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'Federal' is not one of ['CA', 'federal']",
+        "error_path": [
+          "metadata",
+          "applicable_jurisdictions",
+          1
+        ]
       },
       "fields": {
         "field_accuracy": 0.0,
@@ -1365,73 +544,19 @@
         "total_fields": 4,
         "rule_type_accuracy": 0.0,
         "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 1
       },
       "rules": {
         "precision": 0.0,
         "recall": 0.0,
         "f1": 0.0,
         "expected_count": 1,
-        "output_count": 3,
-        "true_positives": 0,
-        "hallucinated_rules": 3,
-        "missed_rules": 1
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 3,
-        "total_rules": 3
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 3,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 3,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 1
-        },
-        "total_failures": 4
-      }
-    },
-    {
-      "sample_index": 24,
-      "latency_ms": 4928.128004074097,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.5,
-        "correct_fields": 4,
-        "total_fields": 8,
-        "rule_type_accuracy": 1.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.5,
-        "recall": 1.0,
-        "f1": 0.6666666666666666,
-        "expected_count": 2,
         "output_count": 4,
-        "true_positives": 2,
-        "hallucinated_rules": 2,
-        "missed_rules": 0
+        "true_positives": 0,
+        "hallucinated_rules": 4,
+        "missed_rules": 1
       },
       "source": {
         "source_text_overlap": 0.75,
@@ -1440,7 +565,7 @@
       },
       "confidence": {
         "confidence_calibration": {
-          "high": 0.5,
+          "high": 0.0,
           "medium": null,
           "low": null
         },
@@ -1452,86 +577,30 @@
       },
       "failures": {
         "failure_modes": {
-          "missing_field": 2,
-          "wrong_operator": 0,
-          "hallucinated_rule": 2,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 2,
-          "wrong_rule_type": 0,
-          "missing_rule": 0
-        },
-        "total_failures": 6
-      }
-    },
-    {
-      "sample_index": 25,
-      "latency_ms": 7800.851106643677,
-      "schema": {
-        "schema_valid": false,
-        "json_parseable": true,
-        "validation_error": "'requirement' is not one of ['entitlement', 'restriction', 'eligibility', 'termination', 'leave', 'compensation']",
-        "error_path": [
-          "rules",
-          7,
-          "rule_type"
-        ]
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 12,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 3,
-        "output_count": 8,
-        "true_positives": 0,
-        "hallucinated_rules": 8,
-        "missed_rules": 3
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 8,
-        "total_rules": 8
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 8,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
           "missing_field": 0,
           "wrong_operator": 0,
-          "hallucinated_rule": 8,
+          "hallucinated_rule": 4,
           "malformed_json": 0,
           "wrong_value": 0,
           "extra_field": 0,
           "wrong_rule_type": 0,
-          "missing_rule": 3
+          "missing_rule": 1
         },
-        "total_failures": 11
+        "total_failures": 5
       }
     },
     {
-      "sample_index": 26,
-      "latency_ms": 2769.1030502319336,
+      "sample_index": 9,
+      "latency_ms": 6582.257986068726,
       "schema": {
-        "schema_valid": true,
-        "json_parseable": true
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'California' is not one of ['CA', 'federal']",
+        "error_path": [
+          "metadata",
+          "applicable_jurisdictions",
+          1
+        ]
       },
       "fields": {
         "field_accuracy": 0.0,
@@ -1539,77 +608,23 @@
         "total_fields": 4,
         "rule_type_accuracy": 0.0,
         "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 1
       },
       "rules": {
         "precision": 0.0,
         "recall": 0.0,
         "f1": 0.0,
         "expected_count": 1,
-        "output_count": 1,
-        "true_positives": 0,
-        "hallucinated_rules": 1,
-        "missed_rules": 1
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 1,
-        "total_rules": 1
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 1,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 1,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 1
-        },
-        "total_failures": 2
-      }
-    },
-    {
-      "sample_index": 27,
-      "latency_ms": 8180.734395980835,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 12,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 3,
         "output_count": 7,
         "true_positives": 0,
         "hallucinated_rules": 7,
-        "missed_rules": 3
+        "missed_rules": 1
       },
       "source": {
-        "source_text_overlap": 0.42857142857142855,
-        "matched": 3,
+        "source_text_overlap": 0.5714285714285714,
+        "matched": 4,
         "total_rules": 7
       },
       "confidence": {
@@ -1633,17 +648,23 @@
           "wrong_value": 0,
           "extra_field": 0,
           "wrong_rule_type": 0,
-          "missing_rule": 3
+          "missing_rule": 1
         },
-        "total_failures": 10
+        "total_failures": 8
       }
     },
     {
-      "sample_index": 28,
-      "latency_ms": 4293.551206588745,
+      "sample_index": 10,
+      "latency_ms": 6682.029008865356,
       "schema": {
-        "schema_valid": true,
-        "json_parseable": true
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'United States' is not one of ['CA', 'federal']",
+        "error_path": [
+          "metadata",
+          "applicable_jurisdictions",
+          0
+        ]
       },
       "fields": {
         "field_accuracy": 0.0,
@@ -1651,22 +672,88 @@
         "total_fields": 4,
         "rule_type_accuracy": 0.0,
         "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 1
       },
       "rules": {
         "precision": 0.0,
         "recall": 0.0,
         "f1": 0.0,
         "expected_count": 1,
-        "output_count": 3,
+        "output_count": 6,
         "true_positives": 0,
-        "hallucinated_rules": 3,
+        "hallucinated_rules": 6,
         "missed_rules": 1
       },
       "source": {
-        "source_text_overlap": 0.3333333333333333,
-        "matched": 1,
-        "total_rules": 3
+        "source_text_overlap": 0.8333333333333334,
+        "matched": 5,
+        "total_rules": 6
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.0,
+          "medium": 0.0,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 5,
+          "medium": 1,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 6,
+          "malformed_json": 0,
+          "wrong_value": 0,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
+          "missing_rule": 1
+        },
+        "total_failures": 7
+      }
+    },
+    {
+      "sample_index": 11,
+      "latency_ms": 10362.836837768555,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'requirement' is not one of ['entitlement', 'restriction', 'eligibility', 'termination', 'leave', 'compensation']",
+        "error_path": [
+          "rules",
+          8,
+          "rule_type"
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.0,
+        "correct_fields": 0,
+        "total_fields": 20,
+        "rule_type_accuracy": 0.0,
+        "conditions_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 5
+      },
+      "rules": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "expected_count": 5,
+        "output_count": 10,
+        "true_positives": 0,
+        "hallucinated_rules": 10,
+        "missed_rules": 5
+      },
+      "source": {
+        "source_text_overlap": 0.9,
+        "matched": 9,
+        "total_rules": 10
       },
       "confidence": {
         "confidence_calibration": {
@@ -1675,7 +762,7 @@
           "low": null
         },
         "bucket_counts": {
-          "high": 3,
+          "high": 10,
           "medium": 0,
           "low": 0
         }
@@ -1684,40 +771,112 @@
         "failure_modes": {
           "missing_field": 0,
           "wrong_operator": 0,
-          "hallucinated_rule": 3,
+          "hallucinated_rule": 10,
+          "malformed_json": 0,
+          "wrong_value": 0,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
+          "missing_rule": 5
+        },
+        "total_failures": 15
+      }
+    },
+    {
+      "sample_index": 12,
+      "latency_ms": 8058.199167251587,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'United States' is not one of ['CA', 'federal']",
+        "error_path": [
+          "metadata",
+          "applicable_jurisdictions",
+          0
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.0,
+        "correct_fields": 0,
+        "total_fields": 4,
+        "rule_type_accuracy": 0.0,
+        "conditions_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 1
+      },
+      "rules": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "expected_count": 1,
+        "output_count": 7,
+        "true_positives": 0,
+        "hallucinated_rules": 7,
+        "missed_rules": 1
+      },
+      "source": {
+        "source_text_overlap": 0.8571428571428571,
+        "matched": 6,
+        "total_rules": 7
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.0,
+          "medium": null,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 7,
+          "medium": 0,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 7,
           "malformed_json": 0,
           "wrong_value": 0,
           "extra_field": 0,
           "wrong_rule_type": 0,
           "missing_rule": 1
         },
-        "total_failures": 4
+        "total_failures": 8
       }
     },
     {
-      "sample_index": 29,
-      "latency_ms": 4391.4690017700195,
+      "sample_index": 13,
+      "latency_ms": 3482.0261001586914,
       "schema": {
-        "schema_valid": true,
-        "json_parseable": true
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'United States (WARN Act compliance)' is not one of ['CA', 'federal']",
+        "error_path": [
+          "metadata",
+          "applicable_jurisdictions",
+          0
+        ]
       },
       "fields": {
-        "field_accuracy": 0.5,
-        "correct_fields": 2,
-        "total_fields": 4,
-        "rule_type_accuracy": 1.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
+        "field_accuracy": 0.25,
+        "correct_fields": 4,
+        "total_fields": 16,
+        "rule_type_accuracy": 0.25,
+        "conditions_accuracy": 0.25,
+        "action_accuracy": 0.25,
+        "matched_rules": 1,
+        "missing_rules": 3
       },
       "rules": {
         "precision": 0.5,
-        "recall": 1.0,
-        "f1": 0.6666666666666666,
-        "expected_count": 1,
+        "recall": 0.25,
+        "f1": 0.3333333333333333,
+        "expected_count": 4,
         "output_count": 2,
         "true_positives": 1,
         "hallucinated_rules": 1,
-        "missed_rules": 0
+        "missed_rules": 3
       },
       "source": {
         "source_text_overlap": 0.5,
@@ -1738,769 +897,30 @@
       },
       "failures": {
         "failure_modes": {
-          "missing_field": 2,
+          "missing_field": 0,
           "wrong_operator": 0,
           "hallucinated_rule": 1,
           "malformed_json": 0,
           "wrong_value": 0,
-          "extra_field": 2,
-          "wrong_rule_type": 0,
-          "missing_rule": 0
-        },
-        "total_failures": 5
-      }
-    },
-    {
-      "sample_index": 30,
-      "latency_ms": 7264.609813690186,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 12,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 3,
-        "output_count": 5,
-        "true_positives": 0,
-        "hallucinated_rules": 5,
-        "missed_rules": 3
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 5,
-        "total_rules": 5
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": 0.0,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 4,
-          "medium": 1,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 5,
-          "malformed_json": 0,
-          "wrong_value": 0,
           "extra_field": 0,
           "wrong_rule_type": 0,
           "missing_rule": 3
         },
-        "total_failures": 8
+        "total_failures": 4
       }
     },
     {
-      "sample_index": 31,
-      "latency_ms": 8218.199014663696,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.3333333333333333,
-        "correct_fields": 4,
-        "total_fields": 12,
-        "rule_type_accuracy": 0.6666666666666666,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.3333333333333333,
-        "recall": 0.6666666666666666,
-        "f1": 0.4444444444444444,
-        "expected_count": 3,
-        "output_count": 6,
-        "true_positives": 2,
-        "hallucinated_rules": 4,
-        "missed_rules": 1
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 6,
-        "total_rules": 6
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.3333333333333333,
-          "medium": 0.3333333333333333,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 3,
-          "medium": 3,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 4,
-          "wrong_operator": 0,
-          "hallucinated_rule": 4,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 4,
-          "wrong_rule_type": 0,
-          "missing_rule": 1
-        },
-        "total_failures": 13
-      }
-    },
-    {
-      "sample_index": 32,
-      "latency_ms": 3751.178026199341,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 4,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 1,
-        "output_count": 2,
-        "true_positives": 0,
-        "hallucinated_rules": 2,
-        "missed_rules": 1
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 2,
-        "total_rules": 2
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 2,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 2,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 1
-        },
-        "total_failures": 3
-      }
-    },
-    {
-      "sample_index": 33,
-      "latency_ms": 4928.9610385894775,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 12,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 3,
-        "output_count": 4,
-        "true_positives": 0,
-        "hallucinated_rules": 4,
-        "missed_rules": 3
-      },
-      "source": {
-        "source_text_overlap": 0.75,
-        "matched": 3,
-        "total_rules": 4
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 4,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 4,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 3
-        },
-        "total_failures": 7
-      }
-    },
-    {
-      "sample_index": 34,
-      "latency_ms": 6821.173906326294,
+      "sample_index": 14,
+      "latency_ms": 5054.1510581970215,
       "schema": {
         "schema_valid": false,
         "json_parseable": true,
-        "validation_error": "[] should be non-empty",
-        "error_path": [
-          "rules",
-          5,
-          "conditions"
-        ]
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 16,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 4,
-        "output_count": 6,
-        "true_positives": 0,
-        "hallucinated_rules": 6,
-        "missed_rules": 4
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 6,
-        "total_rules": 6
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 6,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 6,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 4
-        },
-        "total_failures": 10
-      }
-    },
-    {
-      "sample_index": 35,
-      "latency_ms": 5767.696142196655,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 12,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 3,
-        "output_count": 6,
-        "true_positives": 0,
-        "hallucinated_rules": 6,
-        "missed_rules": 3
-      },
-      "source": {
-        "source_text_overlap": 0.16666666666666666,
-        "matched": 1,
-        "total_rules": 6
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 6,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 6,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 3
-        },
-        "total_failures": 9
-      }
-    },
-    {
-      "sample_index": 36,
-      "latency_ms": 4024.0650177001953,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.25,
-        "correct_fields": 2,
-        "total_fields": 8,
-        "rule_type_accuracy": 0.5,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.5,
-        "recall": 0.5,
-        "f1": 0.5,
-        "expected_count": 2,
-        "output_count": 2,
-        "true_positives": 1,
-        "hallucinated_rules": 1,
-        "missed_rules": 1
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 2,
-        "total_rules": 2
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.5,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 2,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 4,
-          "wrong_operator": 0,
-          "hallucinated_rule": 1,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 4,
-          "wrong_rule_type": 0,
-          "missing_rule": 1
-        },
-        "total_failures": 10
-      }
-    },
-    {
-      "sample_index": 37,
-      "latency_ms": 6675.664901733398,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 12,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 3,
-        "output_count": 5,
-        "true_positives": 0,
-        "hallucinated_rules": 5,
-        "missed_rules": 3
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 5,
-        "total_rules": 5
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 5,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 5,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 3
-        },
-        "total_failures": 8
-      }
-    },
-    {
-      "sample_index": 38,
-      "latency_ms": 7438.0011558532715,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 16,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 4,
-        "output_count": 7,
-        "true_positives": 0,
-        "hallucinated_rules": 7,
-        "missed_rules": 4
-      },
-      "source": {
-        "source_text_overlap": 0.2857142857142857,
-        "matched": 2,
-        "total_rules": 7
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 7,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 7,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 4
-        },
-        "total_failures": 11
-      }
-    },
-    {
-      "sample_index": 39,
-      "latency_ms": 3401.846170425415,
-      "schema": {
-        "schema_valid": false,
-        "json_parseable": true,
-        "validation_error": "[] should be non-empty",
-        "error_path": [
-          "rules",
-          3,
-          "conditions"
-        ]
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 4,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 1,
-        "output_count": 4,
-        "true_positives": 0,
-        "hallucinated_rules": 4,
-        "missed_rules": 1
-      },
-      "source": {
-        "source_text_overlap": 0.75,
-        "matched": 3,
-        "total_rules": 4
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": 0.0,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 3,
-          "medium": 1,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 4,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 1
-        },
-        "total_failures": 5
-      }
-    },
-    {
-      "sample_index": 40,
-      "latency_ms": 5722.26095199585,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 4,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 1,
-        "output_count": 5,
-        "true_positives": 0,
-        "hallucinated_rules": 5,
-        "missed_rules": 1
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 5,
-        "total_rules": 5
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 5,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 5,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 1
-        },
-        "total_failures": 6
-      }
-    },
-    {
-      "sample_index": 41,
-      "latency_ms": 3577.7719020843506,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 4,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 1,
-        "output_count": 2,
-        "true_positives": 0,
-        "hallucinated_rules": 2,
-        "missed_rules": 1
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 2,
-        "total_rules": 2
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 2,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 2,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 1
-        },
-        "total_failures": 3
-      }
-    },
-    {
-      "sample_index": 42,
-      "latency_ms": 3981.816053390503,
-      "schema": {
-        "schema_valid": false,
-        "json_parseable": true,
-        "validation_error": "[] should be non-empty",
+        "validation_error": "'California' is not one of ['CA', 'federal']",
         "error_path": [
           "metadata",
-          "applicable_jurisdictions"
+          "applicable_jurisdictions",
+          1
         ]
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 4,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 1,
-        "output_count": 4,
-        "true_positives": 0,
-        "hallucinated_rules": 4,
-        "missed_rules": 1
-      },
-      "source": {
-        "source_text_overlap": 0.75,
-        "matched": 3,
-        "total_rules": 4
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": 0.0,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 3,
-          "medium": 1,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 4,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 1
-        },
-        "total_failures": 5
-      }
-    },
-    {
-      "sample_index": 43,
-      "latency_ms": 4088.9928340911865,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
       },
       "fields": {
         "field_accuracy": 0.0,
@@ -2508,7 +928,9 @@
         "total_fields": 12,
         "rule_type_accuracy": 0.0,
         "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 3
       },
       "rules": {
         "precision": 0.0,
@@ -2552,241 +974,81 @@
       }
     },
     {
-      "sample_index": 44,
-      "latency_ms": 4787.585020065308,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 4,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 1,
-        "output_count": 2,
-        "true_positives": 0,
-        "hallucinated_rules": 2,
-        "missed_rules": 1
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 2,
-        "total_rules": 2
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 2,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 2,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 1
-        },
-        "total_failures": 3
-      }
-    },
-    {
-      "sample_index": 45,
-      "latency_ms": 4203.344821929932,
+      "sample_index": 15,
+      "latency_ms": 5355.329990386963,
       "schema": {
         "schema_valid": false,
         "json_parseable": true,
-        "validation_error": "'requirement' is not one of ['entitlement', 'restriction', 'eligibility', 'termination', 'leave', 'compensation']",
+        "validation_error": "'United States (FMLA)' is not one of ['CA', 'federal']",
         "error_path": [
-          "rules",
-          1,
-          "rule_type"
+          "metadata",
+          "applicable_jurisdictions",
+          1
         ]
       },
       "fields": {
-        "field_accuracy": 0.5,
+        "field_accuracy": 0.1,
         "correct_fields": 2,
-        "total_fields": 4,
-        "rule_type_accuracy": 1.0,
+        "total_fields": 20,
+        "rule_type_accuracy": 0.2,
         "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
+        "action_accuracy": 0.0,
+        "matched_rules": 1,
+        "missing_rules": 4
       },
       "rules": {
         "precision": 0.25,
-        "recall": 1.0,
-        "f1": 0.4,
-        "expected_count": 1,
+        "recall": 0.2,
+        "f1": 0.22222222222222224,
+        "expected_count": 5,
         "output_count": 4,
         "true_positives": 1,
         "hallucinated_rules": 3,
-        "missed_rules": 0
+        "missed_rules": 4
       },
       "source": {
-        "source_text_overlap": 1.0,
-        "matched": 4,
+        "source_text_overlap": 0.75,
+        "matched": 3,
         "total_rules": 4
       },
       "confidence": {
         "confidence_calibration": {
-          "high": 0.25,
-          "medium": null,
+          "high": 0.3333333333333333,
+          "medium": 0.0,
           "low": null
         },
         "bucket_counts": {
-          "high": 4,
-          "medium": 0,
+          "high": 3,
+          "medium": 1,
           "low": 0
         }
       },
       "failures": {
         "failure_modes": {
-          "missing_field": 2,
+          "missing_field": 1,
           "wrong_operator": 0,
           "hallucinated_rule": 3,
           "malformed_json": 0,
           "wrong_value": 0,
-          "extra_field": 1,
-          "wrong_rule_type": 0,
-          "missing_rule": 0
-        },
-        "total_failures": 6
-      }
-    },
-    {
-      "sample_index": 46,
-      "latency_ms": 3060.434103012085,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 4,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 1,
-        "output_count": 2,
-        "true_positives": 0,
-        "hallucinated_rules": 2,
-        "missed_rules": 1
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 2,
-        "total_rules": 2
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 2,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 2,
-          "malformed_json": 0,
-          "wrong_value": 0,
           "extra_field": 0,
           "wrong_rule_type": 0,
-          "missing_rule": 1
+          "missing_rule": 4
         },
-        "total_failures": 3
+        "total_failures": 8
       }
     },
     {
-      "sample_index": 47,
-      "latency_ms": 5209.245920181274,
+      "sample_index": 16,
+      "latency_ms": 7852.681875228882,
       "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 4,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 1,
-        "output_count": 5,
-        "true_positives": 0,
-        "hallucinated_rules": 5,
-        "missed_rules": 1
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 5,
-        "total_rules": 5
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 5,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 5,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 1
-        },
-        "total_failures": 6
-      }
-    },
-    {
-      "sample_index": 48,
-      "latency_ms": 5827.8491497039795,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'California' is not one of ['CA', 'federal']",
+        "error_path": [
+          "metadata",
+          "applicable_jurisdictions",
+          0
+        ]
       },
       "fields": {
         "field_accuracy": 0.0,
@@ -2794,22 +1056,24 @@
         "total_fields": 16,
         "rule_type_accuracy": 0.0,
         "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 4
       },
       "rules": {
         "precision": 0.0,
         "recall": 0.0,
         "f1": 0.0,
         "expected_count": 4,
-        "output_count": 5,
+        "output_count": 7,
         "true_positives": 0,
-        "hallucinated_rules": 5,
+        "hallucinated_rules": 7,
         "missed_rules": 4
       },
       "source": {
-        "source_text_overlap": 0.8,
-        "matched": 4,
-        "total_rules": 5
+        "source_text_overlap": 0.7142857142857143,
+        "matched": 5,
+        "total_rules": 7
       },
       "confidence": {
         "confidence_calibration": {
@@ -2818,7 +1082,7 @@
           "low": null
         },
         "bucket_counts": {
-          "high": 5,
+          "high": 7,
           "medium": 0,
           "low": 0
         }
@@ -2827,40 +1091,48 @@
         "failure_modes": {
           "missing_field": 0,
           "wrong_operator": 0,
-          "hallucinated_rule": 5,
+          "hallucinated_rule": 7,
           "malformed_json": 0,
           "wrong_value": 0,
           "extra_field": 0,
           "wrong_rule_type": 0,
           "missing_rule": 4
         },
-        "total_failures": 9
+        "total_failures": 11
       }
     },
     {
-      "sample_index": 49,
-      "latency_ms": 3744.453191757202,
+      "sample_index": 17,
+      "latency_ms": 5087.567090988159,
       "schema": {
-        "schema_valid": true,
-        "json_parseable": true
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "[] should be non-empty",
+        "error_path": [
+          "rules",
+          2,
+          "conditions"
+        ]
       },
       "fields": {
-        "field_accuracy": 0.5,
-        "correct_fields": 2,
+        "field_accuracy": 0.0,
+        "correct_fields": 0,
         "total_fields": 4,
-        "rule_type_accuracy": 1.0,
+        "rule_type_accuracy": 0.0,
         "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 1
       },
       "rules": {
-        "precision": 0.25,
-        "recall": 1.0,
-        "f1": 0.4,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
         "expected_count": 1,
         "output_count": 4,
-        "true_positives": 1,
-        "hallucinated_rules": 3,
-        "missed_rules": 0
+        "true_positives": 0,
+        "hallucinated_rules": 4,
+        "missed_rules": 1
       },
       "source": {
         "source_text_overlap": 1.0,
@@ -2869,77 +1141,13 @@
       },
       "confidence": {
         "confidence_calibration": {
-          "high": 0.25,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 4,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 2,
-          "wrong_operator": 0,
-          "hallucinated_rule": 3,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 2,
-          "wrong_rule_type": 0,
-          "missing_rule": 0
-        },
-        "total_failures": 7
-      }
-    },
-    {
-      "sample_index": 50,
-      "latency_ms": 2464.2767906188965,
-      "schema": {
-        "schema_valid": false,
-        "json_parseable": true,
-        "validation_error": "None is not valid under any of the given schemas",
-        "error_path": [
-          "rules",
-          0,
-          "conditions",
-          0,
-          "value"
-        ]
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 4,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 1,
-        "output_count": 2,
-        "true_positives": 0,
-        "hallucinated_rules": 2,
-        "missed_rules": 1
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 2,
-        "total_rules": 2
-      },
-      "confidence": {
-        "confidence_calibration": {
           "high": 0.0,
-          "medium": null,
+          "medium": 0.0,
           "low": null
         },
         "bucket_counts": {
-          "high": 2,
-          "medium": 0,
+          "high": 3,
+          "medium": 1,
           "low": 0
         }
       },
@@ -2947,46 +1155,48 @@
         "failure_modes": {
           "missing_field": 0,
           "wrong_operator": 0,
-          "hallucinated_rule": 2,
+          "hallucinated_rule": 4,
           "malformed_json": 0,
           "wrong_value": 0,
           "extra_field": 0,
           "wrong_rule_type": 0,
           "missing_rule": 1
         },
-        "total_failures": 3
+        "total_failures": 5
       }
     },
     {
-      "sample_index": 51,
-      "latency_ms": 7492.903232574463,
+      "sample_index": 18,
+      "latency_ms": 7449.7997760772705,
       "schema": {
         "schema_valid": false,
         "json_parseable": true,
-        "validation_error": "'require' is not one of ['entitlement', 'restriction', 'eligibility', 'termination', 'leave', 'compensation']",
+        "validation_error": "'United States (WARN Act)' is not one of ['CA', 'federal']",
         "error_path": [
-          "rules",
-          5,
-          "rule_type"
+          "metadata",
+          "applicable_jurisdictions",
+          1
         ]
       },
       "fields": {
         "field_accuracy": 0.0,
         "correct_fields": 0,
-        "total_fields": 8,
+        "total_fields": 12,
         "rule_type_accuracy": 0.0,
         "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 3
       },
       "rules": {
         "precision": 0.0,
         "recall": 0.0,
         "f1": 0.0,
-        "expected_count": 2,
+        "expected_count": 3,
         "output_count": 6,
         "true_positives": 0,
         "hallucinated_rules": 6,
-        "missed_rules": 2
+        "missed_rules": 3
       },
       "source": {
         "source_text_overlap": 0.8333333333333334,
@@ -3014,375 +1224,33 @@
           "wrong_value": 0,
           "extra_field": 0,
           "wrong_rule_type": 0,
-          "missing_rule": 2
+          "missing_rule": 3
         },
-        "total_failures": 8
+        "total_failures": 9
       }
     },
     {
-      "sample_index": 52,
-      "latency_ms": 6337.776899337769,
+      "sample_index": 19,
+      "latency_ms": 10564.934253692627,
       "schema": {
         "schema_valid": false,
         "json_parseable": true,
-        "validation_error": "{'field': 'federal_law.timeline'} is not valid under any of the given schemas",
+        "validation_error": "'require' is not one of ['entitlement', 'restriction', 'eligibility', 'termination', 'leave', 'compensation']",
         "error_path": [
           "rules",
-          5,
-          "conditions",
-          0,
-          "value"
-        ]
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 16,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 4,
-        "output_count": 6,
-        "true_positives": 0,
-        "hallucinated_rules": 6,
-        "missed_rules": 4
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 6,
-        "total_rules": 6
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 6,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 6,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 4
-        },
-        "total_failures": 10
-      }
-    },
-    {
-      "sample_index": 53,
-      "latency_ms": 7342.501163482666,
-      "schema": {
-        "schema_valid": false,
-        "json_parseable": true,
-        "validation_error": "'notify' is not one of ['entitlement', 'restriction', 'eligibility', 'termination', 'leave', 'compensation']",
-        "error_path": [
-          "rules",
-          4,
+          9,
           "rule_type"
         ]
       },
       "fields": {
         "field_accuracy": 0.0,
         "correct_fields": 0,
-        "total_fields": 12,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 3,
-        "output_count": 5,
-        "true_positives": 0,
-        "hallucinated_rules": 5,
-        "missed_rules": 3
-      },
-      "source": {
-        "source_text_overlap": 0.8,
-        "matched": 4,
-        "total_rules": 5
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": 0.0,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 4,
-          "medium": 1,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 5,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 3
-        },
-        "total_failures": 8
-      }
-    },
-    {
-      "sample_index": 54,
-      "latency_ms": 2770.7571983337402,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 4,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 1,
-        "output_count": 1,
-        "true_positives": 0,
-        "hallucinated_rules": 1,
-        "missed_rules": 1
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 1,
-        "total_rules": 1
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 1,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 1,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 1
-        },
-        "total_failures": 2
-      }
-    },
-    {
-      "sample_index": 55,
-      "latency_ms": 2770.855188369751,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
-        "total_fields": 4,
-        "rule_type_accuracy": 0.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "expected_count": 1,
-        "output_count": 2,
-        "true_positives": 0,
-        "hallucinated_rules": 2,
-        "missed_rules": 1
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 2,
-        "total_rules": 2
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.0,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 2,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 0,
-          "hallucinated_rule": 2,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 1
-        },
-        "total_failures": 3
-      }
-    },
-    {
-      "sample_index": 56,
-      "latency_ms": 3978.518009185791,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.5,
-        "correct_fields": 2,
-        "total_fields": 4,
-        "rule_type_accuracy": 1.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.5,
-        "recall": 1.0,
-        "f1": 0.6666666666666666,
-        "expected_count": 1,
-        "output_count": 2,
-        "true_positives": 1,
-        "hallucinated_rules": 1,
-        "missed_rules": 0
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 2,
-        "total_rules": 2
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.5,
-          "medium": null,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 2,
-          "medium": 0,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 1,
-          "wrong_operator": 0,
-          "hallucinated_rule": 1,
-          "malformed_json": 0,
-          "wrong_value": 0,
-          "extra_field": 2,
-          "wrong_rule_type": 0,
-          "missing_rule": 0
-        },
-        "total_failures": 4
-      }
-    },
-    {
-      "sample_index": 57,
-      "latency_ms": 6440.774917602539,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.5,
-        "correct_fields": 2,
-        "total_fields": 4,
-        "rule_type_accuracy": 1.0,
-        "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
-      },
-      "rules": {
-        "precision": 0.2,
-        "recall": 1.0,
-        "f1": 0.33333333333333337,
-        "expected_count": 1,
-        "output_count": 5,
-        "true_positives": 1,
-        "hallucinated_rules": 4,
-        "missed_rules": 0
-      },
-      "source": {
-        "source_text_overlap": 1.0,
-        "matched": 5,
-        "total_rules": 5
-      },
-      "confidence": {
-        "confidence_calibration": {
-          "high": 0.3333333333333333,
-          "medium": 0.0,
-          "low": null
-        },
-        "bucket_counts": {
-          "high": 3,
-          "medium": 2,
-          "low": 0
-        }
-      },
-      "failures": {
-        "failure_modes": {
-          "missing_field": 0,
-          "wrong_operator": 1,
-          "hallucinated_rule": 4,
-          "malformed_json": 0,
-          "wrong_value": 1,
-          "extra_field": 0,
-          "wrong_rule_type": 0,
-          "missing_rule": 0
-        },
-        "total_failures": 6
-      }
-    },
-    {
-      "sample_index": 58,
-      "latency_ms": 10642.50898361206,
-      "schema": {
-        "schema_valid": true,
-        "json_parseable": true
-      },
-      "fields": {
-        "field_accuracy": 0.0,
-        "correct_fields": 0,
         "total_fields": 16,
         "rule_type_accuracy": 0.0,
         "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 4
       },
       "rules": {
         "precision": 0.0,
@@ -3426,33 +1294,616 @@
       }
     },
     {
-      "sample_index": 59,
-      "latency_ms": 6432.85608291626,
+      "sample_index": 20,
+      "latency_ms": 6226.662874221802,
       "schema": {
-        "schema_valid": true,
-        "json_parseable": true
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'California' is not one of ['CA', 'federal']",
+        "error_path": [
+          "metadata",
+          "applicable_jurisdictions",
+          0
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.125,
+        "correct_fields": 2,
+        "total_fields": 16,
+        "rule_type_accuracy": 0.25,
+        "conditions_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "matched_rules": 1,
+        "missing_rules": 3
+      },
+      "rules": {
+        "precision": 0.2,
+        "recall": 0.25,
+        "f1": 0.22222222222222224,
+        "expected_count": 4,
+        "output_count": 5,
+        "true_positives": 1,
+        "hallucinated_rules": 4,
+        "missed_rules": 3
+      },
+      "source": {
+        "source_text_overlap": 0.8,
+        "matched": 4,
+        "total_rules": 5
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.2,
+          "medium": null,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 5,
+          "medium": 0,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 4,
+          "malformed_json": 0,
+          "wrong_value": 1,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
+          "missing_rule": 3
+        },
+        "total_failures": 8
+      }
+    },
+    {
+      "sample_index": 21,
+      "latency_ms": 8165.201902389526,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'condition_logic' is a required property",
+        "error_path": [
+          "rules",
+          3
+        ]
       },
       "fields": {
         "field_accuracy": 0.0,
         "correct_fields": 0,
-        "total_fields": 12,
+        "total_fields": 16,
         "rule_type_accuracy": 0.0,
         "conditions_accuracy": 0.0,
-        "action_accuracy": 0.0
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 4
       },
       "rules": {
         "precision": 0.0,
         "recall": 0.0,
         "f1": 0.0,
-        "expected_count": 3,
-        "output_count": 6,
+        "expected_count": 4,
+        "output_count": 5,
         "true_positives": 0,
+        "hallucinated_rules": 5,
+        "missed_rules": 4
+      },
+      "source": {
+        "source_text_overlap": 0.8,
+        "matched": 4,
+        "total_rules": 5
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.0,
+          "medium": 0.0,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 4,
+          "medium": 1,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 5,
+          "malformed_json": 0,
+          "wrong_value": 0,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
+          "missing_rule": 4
+        },
+        "total_failures": 9
+      }
+    },
+    {
+      "sample_index": 22,
+      "latency_ms": 8989.33720588684,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'notification' is not one of ['entitlement', 'restriction', 'eligibility', 'termination', 'leave', 'compensation']",
+        "error_path": [
+          "rules",
+          7,
+          "rule_type"
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.0,
+        "correct_fields": 0,
+        "total_fields": 16,
+        "rule_type_accuracy": 0.0,
+        "conditions_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 4
+      },
+      "rules": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "expected_count": 4,
+        "output_count": 8,
+        "true_positives": 0,
+        "hallucinated_rules": 8,
+        "missed_rules": 4
+      },
+      "source": {
+        "source_text_overlap": 0.875,
+        "matched": 7,
+        "total_rules": 8
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.0,
+          "medium": 0.0,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 7,
+          "medium": 1,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 8,
+          "malformed_json": 0,
+          "wrong_value": 0,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
+          "missing_rule": 4
+        },
+        "total_failures": 12
+      }
+    },
+    {
+      "sample_index": 23,
+      "latency_ms": 8458.310842514038,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'California' is not one of ['CA', 'federal']",
+        "error_path": [
+          "metadata",
+          "applicable_jurisdictions",
+          1
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.1875,
+        "correct_fields": 3,
+        "total_fields": 16,
+        "rule_type_accuracy": 0.25,
+        "conditions_accuracy": 0.25,
+        "action_accuracy": 0.0,
+        "matched_rules": 1,
+        "missing_rules": 3
+      },
+      "rules": {
+        "precision": 0.14285714285714285,
+        "recall": 0.25,
+        "f1": 0.18181818181818182,
+        "expected_count": 4,
+        "output_count": 7,
+        "true_positives": 1,
         "hallucinated_rules": 6,
         "missed_rules": 3
       },
       "source": {
-        "source_text_overlap": 0.6666666666666666,
+        "source_text_overlap": 0.8571428571428571,
+        "matched": 6,
+        "total_rules": 7
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.14285714285714285,
+          "medium": null,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 7,
+          "medium": 0,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 6,
+          "malformed_json": 0,
+          "wrong_value": 0,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
+          "missing_rule": 3
+        },
+        "total_failures": 9
+      }
+    },
+    {
+      "sample_index": 24,
+      "latency_ms": 6113.234043121338,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'California' is not one of ['CA', 'federal']",
+        "error_path": [
+          "metadata",
+          "applicable_jurisdictions",
+          0
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.0,
+        "correct_fields": 0,
+        "total_fields": 4,
+        "rule_type_accuracy": 0.0,
+        "conditions_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 1
+      },
+      "rules": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "expected_count": 1,
+        "output_count": 5,
+        "true_positives": 0,
+        "hallucinated_rules": 5,
+        "missed_rules": 1
+      },
+      "source": {
+        "source_text_overlap": 1.0,
+        "matched": 5,
+        "total_rules": 5
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.0,
+          "medium": null,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 5,
+          "medium": 0,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 5,
+          "malformed_json": 0,
+          "wrong_value": 0,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
+          "missing_rule": 1
+        },
+        "total_failures": 6
+      }
+    },
+    {
+      "sample_index": 25,
+      "latency_ms": 5726.28116607666,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'United States (WARN Act)' is not one of ['CA', 'federal']",
+        "error_path": [
+          "metadata",
+          "applicable_jurisdictions",
+          1
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.0,
+        "correct_fields": 0,
+        "total_fields": 16,
+        "rule_type_accuracy": 0.0,
+        "conditions_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 4
+      },
+      "rules": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "expected_count": 4,
+        "output_count": 5,
+        "true_positives": 0,
+        "hallucinated_rules": 5,
+        "missed_rules": 4
+      },
+      "source": {
+        "source_text_overlap": 1.0,
+        "matched": 5,
+        "total_rules": 5
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.0,
+          "medium": 0.0,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 4,
+          "medium": 1,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 5,
+          "malformed_json": 0,
+          "wrong_value": 0,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
+          "missing_rule": 4
+        },
+        "total_failures": 9
+      }
+    },
+    {
+      "sample_index": 26,
+      "latency_ms": 6001.6608238220215,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'California' is not one of ['CA', 'federal']",
+        "error_path": [
+          "metadata",
+          "applicable_jurisdictions",
+          0
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.0,
+        "correct_fields": 0,
+        "total_fields": 16,
+        "rule_type_accuracy": 0.0,
+        "conditions_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 4
+      },
+      "rules": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "expected_count": 4,
+        "output_count": 5,
+        "true_positives": 0,
+        "hallucinated_rules": 5,
+        "missed_rules": 4
+      },
+      "source": {
+        "source_text_overlap": 0.8,
         "matched": 4,
+        "total_rules": 5
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.0,
+          "medium": null,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 5,
+          "medium": 0,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 5,
+          "malformed_json": 0,
+          "wrong_value": 0,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
+          "missing_rule": 4
+        },
+        "total_failures": 9
+      }
+    },
+    {
+      "sample_index": 27,
+      "latency_ms": 9021.222829818726,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'requirement' is not one of ['entitlement', 'restriction', 'eligibility', 'termination', 'leave', 'compensation']",
+        "error_path": [
+          "rules",
+          3,
+          "rule_type"
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.3125,
+        "correct_fields": 5,
+        "total_fields": 16,
+        "rule_type_accuracy": 0.5,
+        "conditions_accuracy": 0.25,
+        "action_accuracy": 0.0,
+        "matched_rules": 2,
+        "missing_rules": 2
+      },
+      "rules": {
+        "precision": 0.4,
+        "recall": 0.5,
+        "f1": 0.4444444444444445,
+        "expected_count": 4,
+        "output_count": 5,
+        "true_positives": 2,
+        "hallucinated_rules": 3,
+        "missed_rules": 2
+      },
+      "source": {
+        "source_text_overlap": 1.0,
+        "matched": 5,
+        "total_rules": 5
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.5,
+          "medium": 0.0,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 4,
+          "medium": 1,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 3,
+          "malformed_json": 0,
+          "wrong_value": 1,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
+          "missing_rule": 2
+        },
+        "total_failures": 6
+      }
+    },
+    {
+      "sample_index": 28,
+      "latency_ms": 7788.800001144409,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'California' is not one of ['CA', 'federal']",
+        "error_path": [
+          "metadata",
+          "applicable_jurisdictions",
+          0
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.0,
+        "correct_fields": 0,
+        "total_fields": 16,
+        "rule_type_accuracy": 0.0,
+        "conditions_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 4
+      },
+      "rules": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "expected_count": 4,
+        "output_count": 7,
+        "true_positives": 0,
+        "hallucinated_rules": 7,
+        "missed_rules": 4
+      },
+      "source": {
+        "source_text_overlap": 1.0,
+        "matched": 7,
+        "total_rules": 7
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.0,
+          "medium": 0.0,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 6,
+          "medium": 1,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 7,
+          "malformed_json": 0,
+          "wrong_value": 0,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
+          "missing_rule": 4
+        },
+        "total_failures": 11
+      }
+    },
+    {
+      "sample_index": 29,
+      "latency_ms": 8268.014907836914,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'United States (Federal WARN Act)' is not one of ['CA', 'federal']",
+        "error_path": [
+          "metadata",
+          "applicable_jurisdictions",
+          0
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.0,
+        "correct_fields": 0,
+        "total_fields": 8,
+        "rule_type_accuracy": 0.0,
+        "conditions_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 2
+      },
+      "rules": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "expected_count": 2,
+        "output_count": 6,
+        "true_positives": 0,
+        "hallucinated_rules": 6,
+        "missed_rules": 2
+      },
+      "source": {
+        "source_text_overlap": 0.3333333333333333,
+        "matched": 2,
         "total_rules": 6
       },
       "confidence": {
@@ -3476,7 +1927,1031 @@
           "wrong_value": 0,
           "extra_field": 0,
           "wrong_rule_type": 0,
+          "missing_rule": 2
+        },
+        "total_failures": 8
+      }
+    },
+    {
+      "sample_index": 30,
+      "latency_ms": 9125.17499923706,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "[] should be non-empty",
+        "error_path": [
+          "rules",
+          7,
+          "conditions"
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.0,
+        "correct_fields": 0,
+        "total_fields": 4,
+        "rule_type_accuracy": 0.0,
+        "conditions_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 1
+      },
+      "rules": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "expected_count": 1,
+        "output_count": 9,
+        "true_positives": 0,
+        "hallucinated_rules": 9,
+        "missed_rules": 1
+      },
+      "source": {
+        "source_text_overlap": 0.8888888888888888,
+        "matched": 8,
+        "total_rules": 9
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.0,
+          "medium": null,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 9,
+          "medium": 0,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 9,
+          "malformed_json": 0,
+          "wrong_value": 0,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
+          "missing_rule": 1
+        },
+        "total_failures": 10
+      }
+    },
+    {
+      "sample_index": 31,
+      "latency_ms": 9341.330289840698,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'California' is not one of ['CA', 'federal']",
+        "error_path": [
+          "metadata",
+          "applicable_jurisdictions",
+          0
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.0,
+        "correct_fields": 0,
+        "total_fields": 4,
+        "rule_type_accuracy": 0.0,
+        "conditions_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 1
+      },
+      "rules": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "expected_count": 1,
+        "output_count": 7,
+        "true_positives": 0,
+        "hallucinated_rules": 7,
+        "missed_rules": 1
+      },
+      "source": {
+        "source_text_overlap": 0.8571428571428571,
+        "matched": 6,
+        "total_rules": 7
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.0,
+          "medium": 0.0,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 6,
+          "medium": 1,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 7,
+          "malformed_json": 0,
+          "wrong_value": 0,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
+          "missing_rule": 1
+        },
+        "total_failures": 8
+      }
+    },
+    {
+      "sample_index": 32,
+      "latency_ms": 6983.21795463562,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "[] should be non-empty",
+        "error_path": [
+          "rules",
+          2,
+          "conditions"
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.0,
+        "correct_fields": 0,
+        "total_fields": 16,
+        "rule_type_accuracy": 0.0,
+        "conditions_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 4
+      },
+      "rules": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "expected_count": 4,
+        "output_count": 7,
+        "true_positives": 0,
+        "hallucinated_rules": 7,
+        "missed_rules": 4
+      },
+      "source": {
+        "source_text_overlap": 0.7142857142857143,
+        "matched": 5,
+        "total_rules": 7
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.0,
+          "medium": null,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 7,
+          "medium": 0,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 7,
+          "malformed_json": 0,
+          "wrong_value": 0,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
+          "missing_rule": 4
+        },
+        "total_failures": 11
+      }
+    },
+    {
+      "sample_index": 33,
+      "latency_ms": 8664.365768432617,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'notification' is not one of ['entitlement', 'restriction', 'eligibility', 'termination', 'leave', 'compensation']",
+        "error_path": [
+          "rules",
+          9,
+          "rule_type"
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.0,
+        "correct_fields": 0,
+        "total_fields": 4,
+        "rule_type_accuracy": 0.0,
+        "conditions_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 1
+      },
+      "rules": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "expected_count": 1,
+        "output_count": 10,
+        "true_positives": 0,
+        "hallucinated_rules": 10,
+        "missed_rules": 1
+      },
+      "source": {
+        "source_text_overlap": 0.9,
+        "matched": 9,
+        "total_rules": 10
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.0,
+          "medium": null,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 10,
+          "medium": 0,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 10,
+          "malformed_json": 0,
+          "wrong_value": 0,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
+          "missing_rule": 1
+        },
+        "total_failures": 11
+      }
+    },
+    {
+      "sample_index": 34,
+      "latency_ms": 6954.808235168457,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "[] should be non-empty",
+        "error_path": [
+          "rules",
+          5,
+          "conditions"
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.0,
+        "correct_fields": 0,
+        "total_fields": 16,
+        "rule_type_accuracy": 0.0,
+        "conditions_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 4
+      },
+      "rules": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "expected_count": 4,
+        "output_count": 8,
+        "true_positives": 0,
+        "hallucinated_rules": 8,
+        "missed_rules": 4
+      },
+      "source": {
+        "source_text_overlap": 0.875,
+        "matched": 7,
+        "total_rules": 8
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.0,
+          "medium": null,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 8,
+          "medium": 0,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 8,
+          "malformed_json": 0,
+          "wrong_value": 0,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
+          "missing_rule": 4
+        },
+        "total_failures": 12
+      }
+    },
+    {
+      "sample_index": 35,
+      "latency_ms": 6938.695907592773,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "[] should be non-empty",
+        "error_path": [
+          "rules",
+          6,
+          "conditions"
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.0,
+        "correct_fields": 0,
+        "total_fields": 4,
+        "rule_type_accuracy": 0.0,
+        "conditions_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 1
+      },
+      "rules": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "expected_count": 1,
+        "output_count": 7,
+        "true_positives": 0,
+        "hallucinated_rules": 7,
+        "missed_rules": 1
+      },
+      "source": {
+        "source_text_overlap": 0.8571428571428571,
+        "matched": 6,
+        "total_rules": 7
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.0,
+          "medium": 0.0,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 6,
+          "medium": 1,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 7,
+          "malformed_json": 0,
+          "wrong_value": 0,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
+          "missing_rule": 1
+        },
+        "total_failures": 8
+      }
+    },
+    {
+      "sample_index": 36,
+      "latency_ms": 6814.699172973633,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'California' is not one of ['CA', 'federal']",
+        "error_path": [
+          "metadata",
+          "applicable_jurisdictions",
+          1
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.0,
+        "correct_fields": 0,
+        "total_fields": 4,
+        "rule_type_accuracy": 0.0,
+        "conditions_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 1
+      },
+      "rules": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "expected_count": 1,
+        "output_count": 5,
+        "true_positives": 0,
+        "hallucinated_rules": 5,
+        "missed_rules": 1
+      },
+      "source": {
+        "source_text_overlap": 0.8,
+        "matched": 4,
+        "total_rules": 5
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.0,
+          "medium": 0.0,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 4,
+          "medium": 1,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 5,
+          "malformed_json": 0,
+          "wrong_value": 0,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
+          "missing_rule": 1
+        },
+        "total_failures": 6
+      }
+    },
+    {
+      "sample_index": 37,
+      "latency_ms": 11428.215026855469,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'California' is not one of ['CA', 'federal']",
+        "error_path": [
+          "metadata",
+          "applicable_jurisdictions",
+          0
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.0,
+        "correct_fields": 0,
+        "total_fields": 16,
+        "rule_type_accuracy": 0.0,
+        "conditions_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 4
+      },
+      "rules": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "expected_count": 4,
+        "output_count": 9,
+        "true_positives": 0,
+        "hallucinated_rules": 9,
+        "missed_rules": 4
+      },
+      "source": {
+        "source_text_overlap": 0.6666666666666666,
+        "matched": 6,
+        "total_rules": 9
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.0,
+          "medium": 0.0,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 8,
+          "medium": 1,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 9,
+          "malformed_json": 0,
+          "wrong_value": 0,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
+          "missing_rule": 4
+        },
+        "total_failures": 13
+      }
+    },
+    {
+      "sample_index": 38,
+      "latency_ms": 5487.262010574341,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'United States' is not one of ['CA', 'federal']",
+        "error_path": [
+          "metadata",
+          "applicable_jurisdictions",
+          0
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.0,
+        "correct_fields": 0,
+        "total_fields": 4,
+        "rule_type_accuracy": 0.0,
+        "conditions_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 1
+      },
+      "rules": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "expected_count": 1,
+        "output_count": 3,
+        "true_positives": 0,
+        "hallucinated_rules": 3,
+        "missed_rules": 1
+      },
+      "source": {
+        "source_text_overlap": 1.0,
+        "matched": 3,
+        "total_rules": 3
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.0,
+          "medium": null,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 3,
+          "medium": 0,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 3,
+          "malformed_json": 0,
+          "wrong_value": 0,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
+          "missing_rule": 1
+        },
+        "total_failures": 4
+      }
+    },
+    {
+      "sample_index": 39,
+      "latency_ms": 11341.248989105225,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'requirement' is not one of ['entitlement', 'restriction', 'eligibility', 'termination', 'leave', 'compensation']",
+        "error_path": [
+          "rules",
+          8,
+          "rule_type"
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.0,
+        "correct_fields": 0,
+        "total_fields": 16,
+        "rule_type_accuracy": 0.0,
+        "conditions_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 4
+      },
+      "rules": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "expected_count": 4,
+        "output_count": 11,
+        "true_positives": 0,
+        "hallucinated_rules": 11,
+        "missed_rules": 4
+      },
+      "source": {
+        "source_text_overlap": 0.7272727272727273,
+        "matched": 8,
+        "total_rules": 11
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.0,
+          "medium": null,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 11,
+          "medium": 0,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 11,
+          "malformed_json": 0,
+          "wrong_value": 0,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
+          "missing_rule": 4
+        },
+        "total_failures": 15
+      }
+    },
+    {
+      "sample_index": 40,
+      "latency_ms": 7614.6399974823,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'All applicable state jurisdictions' is not one of ['CA', 'federal']",
+        "error_path": [
+          "metadata",
+          "applicable_jurisdictions",
+          1
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.0,
+        "correct_fields": 0,
+        "total_fields": 4,
+        "rule_type_accuracy": 0.0,
+        "conditions_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 1
+      },
+      "rules": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "expected_count": 1,
+        "output_count": 5,
+        "true_positives": 0,
+        "hallucinated_rules": 5,
+        "missed_rules": 1
+      },
+      "source": {
+        "source_text_overlap": 0.6,
+        "matched": 3,
+        "total_rules": 5
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.0,
+          "medium": null,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 5,
+          "medium": 0,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 5,
+          "malformed_json": 0,
+          "wrong_value": 0,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
+          "missing_rule": 1
+        },
+        "total_failures": 6
+      }
+    },
+    {
+      "sample_index": 41,
+      "latency_ms": 10763.094663619995,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'California' is not one of ['CA', 'federal']",
+        "error_path": [
+          "metadata",
+          "applicable_jurisdictions",
+          1
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.0,
+        "correct_fields": 0,
+        "total_fields": 4,
+        "rule_type_accuracy": 0.0,
+        "conditions_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 1
+      },
+      "rules": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "expected_count": 1,
+        "output_count": 9,
+        "true_positives": 0,
+        "hallucinated_rules": 9,
+        "missed_rules": 1
+      },
+      "source": {
+        "source_text_overlap": 0.4444444444444444,
+        "matched": 4,
+        "total_rules": 9
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.0,
+          "medium": 0.0,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 8,
+          "medium": 1,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 9,
+          "malformed_json": 0,
+          "wrong_value": 0,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
+          "missing_rule": 1
+        },
+        "total_failures": 10
+      }
+    },
+    {
+      "sample_index": 42,
+      "latency_ms": 6953.503131866455,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'requirement' is not one of ['entitlement', 'restriction', 'eligibility', 'termination', 'leave', 'compensation']",
+        "error_path": [
+          "rules",
+          6,
+          "rule_type"
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.0,
+        "correct_fields": 0,
+        "total_fields": 4,
+        "rule_type_accuracy": 0.0,
+        "conditions_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 1
+      },
+      "rules": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "expected_count": 1,
+        "output_count": 7,
+        "true_positives": 0,
+        "hallucinated_rules": 7,
+        "missed_rules": 1
+      },
+      "source": {
+        "source_text_overlap": 0.8571428571428571,
+        "matched": 6,
+        "total_rules": 7
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.0,
+          "medium": 0.0,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 6,
+          "medium": 1,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 7,
+          "malformed_json": 0,
+          "wrong_value": 0,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
+          "missing_rule": 1
+        },
+        "total_failures": 8
+      }
+    },
+    {
+      "sample_index": 43,
+      "latency_ms": 10949.741125106812,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'United States (FMLA)' is not one of ['CA', 'federal']",
+        "error_path": [
+          "metadata",
+          "applicable_jurisdictions",
+          1
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.125,
+        "correct_fields": 2,
+        "total_fields": 16,
+        "rule_type_accuracy": 0.25,
+        "conditions_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "matched_rules": 1,
+        "missing_rules": 3
+      },
+      "rules": {
+        "precision": 0.1111111111111111,
+        "recall": 0.25,
+        "f1": 0.15384615384615383,
+        "expected_count": 4,
+        "output_count": 9,
+        "true_positives": 1,
+        "hallucinated_rules": 8,
+        "missed_rules": 3
+      },
+      "source": {
+        "source_text_overlap": 0.8888888888888888,
+        "matched": 8,
+        "total_rules": 9
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.1111111111111111,
+          "medium": null,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 9,
+          "medium": 0,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 8,
+          "malformed_json": 0,
+          "wrong_value": 1,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
           "missing_rule": 3
+        },
+        "total_failures": 12
+      }
+    },
+    {
+      "sample_index": 44,
+      "latency_ms": 11911.65828704834,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'California' is not one of ['CA', 'federal']",
+        "error_path": [
+          "metadata",
+          "applicable_jurisdictions",
+          0
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.25,
+        "correct_fields": 3,
+        "total_fields": 12,
+        "rule_type_accuracy": 0.0,
+        "conditions_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "matched_rules": 3,
+        "missing_rules": 0
+      },
+      "rules": {
+        "precision": 0.3,
+        "recall": 1.0,
+        "f1": 0.4615384615384615,
+        "expected_count": 3,
+        "output_count": 10,
+        "true_positives": 3,
+        "hallucinated_rules": 7,
+        "missed_rules": 0
+      },
+      "source": {
+        "source_text_overlap": 0.7,
+        "matched": 7,
+        "total_rules": 10
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.3,
+          "medium": null,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 10,
+          "medium": 0,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 2,
+          "wrong_operator": 0,
+          "hallucinated_rule": 7,
+          "malformed_json": 0,
+          "wrong_value": 3,
+          "extra_field": 2,
+          "wrong_rule_type": 3,
+          "missing_rule": 0
+        },
+        "total_failures": 17
+      }
+    },
+    {
+      "sample_index": 45,
+      "latency_ms": 9460.158109664917,
+      "schema": {
+        "schema_valid": false,
+        "json_parseable": true,
+        "validation_error": "'requirement' is not one of ['entitlement', 'restriction', 'eligibility', 'termination', 'leave', 'compensation']",
+        "error_path": [
+          "rules",
+          7,
+          "rule_type"
+        ]
+      },
+      "fields": {
+        "field_accuracy": 0.0,
+        "correct_fields": 0,
+        "total_fields": 4,
+        "rule_type_accuracy": 0.0,
+        "conditions_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "matched_rules": 0,
+        "missing_rules": 1
+      },
+      "rules": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "expected_count": 1,
+        "output_count": 8,
+        "true_positives": 0,
+        "hallucinated_rules": 8,
+        "missed_rules": 1
+      },
+      "source": {
+        "source_text_overlap": 0.875,
+        "matched": 7,
+        "total_rules": 8
+      },
+      "confidence": {
+        "confidence_calibration": {
+          "high": 0.0,
+          "medium": null,
+          "low": null
+        },
+        "bucket_counts": {
+          "high": 8,
+          "medium": 0,
+          "low": 0
+        }
+      },
+      "failures": {
+        "failure_modes": {
+          "missing_field": 0,
+          "wrong_operator": 0,
+          "hallucinated_rule": 8,
+          "malformed_json": 0,
+          "wrong_value": 0,
+          "extra_field": 0,
+          "wrong_rule_type": 0,
+          "missing_rule": 1
         },
         "total_failures": 9
       }

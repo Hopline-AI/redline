@@ -2,13 +2,17 @@
 """Generate synthetic training data for Redline compliance extraction.
 
 Produces policy_text → structured_JSON pairs using Google Gemini API.
+Uses concurrent workers for speed and saves progress incrementally.
 
 Usage:
     # Dry run with 5 samples
     uv run python data/generation_script.py --target-count 5 --seed 43
 
-    # Full generation (510 samples)
-    uv run python data/generation_script.py --target-count 510 --seed 43
+    # Full generation (510 samples), 20 concurrent workers
+    uv run python data/generation_script.py --target-count 510 --workers 20
+
+    # Resume from previous run (skips already-generated samples)
+    uv run python data/generation_script.py --target-count 510 --resume
 """
 
 import argparse
@@ -16,8 +20,11 @@ import json
 import os
 import random
 import sys
+import time
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+from threading import Lock
 
 from google import genai
 import jsonschema
@@ -115,13 +122,7 @@ OPERATOR_HINTS = ["not_in", "not_in", "neq", "neq", "neq", "lt", "lte"]
 
 
 def build_coverage_matrix(target_count: int, seed: int) -> list[dict]:
-    """Build a reproducible list of sample specs with rebalanced rule-type coverage.
-
-    Seeded so re-running with the same arguments yields an identical matrix,
-    which is important for consistent train/val/test splits across runs.
-    """
     rng = random.Random(seed)
-
     rt_names = list(RULE_TYPE_WEIGHTS.keys())
     rt_weights = [RULE_TYPE_WEIGHTS[rt] for rt in rt_names]
 
@@ -272,7 +273,6 @@ def build_prompt(spec: dict) -> str:
 
 
 def parse_response(text: str) -> tuple[str | None, dict | None, str | None]:
-    """Parse a model response into (policy_text, json_dict, error)."""
     try:
         policy_start = text.index("===POLICY_TEXT_START===") + len("===POLICY_TEXT_START===")
         policy_end = text.index("===POLICY_TEXT_END===")
@@ -287,11 +287,10 @@ def parse_response(text: str) -> tuple[str | None, dict | None, str | None]:
     except ValueError:
         return policy_text, None, "missing JSON delimiters"
 
-    # Strip markdown code fences (e.g. ```json ... ```) that some models add
     if json_str.startswith("```"):
         json_str = json_str.split("\n", 1)[1] if "\n" in json_str else json_str[3:]
     if json_str.endswith("```"):
-        json_str = json_str[: -3].rstrip()
+        json_str = json_str[:-3].rstrip()
 
     try:
         json_dict = json.loads(json_str)
@@ -302,9 +301,7 @@ def parse_response(text: str) -> tuple[str | None, dict | None, str | None]:
 
 
 def validate_sample(policy_text: str, extraction: dict, schema: dict) -> list[str]:
-    """Return list of validation errors (empty = valid)."""
     errors = []
-
     try:
         jsonschema.validate(instance=extraction, schema=schema)
     except jsonschema.ValidationError as e:
@@ -319,16 +316,11 @@ def validate_sample(policy_text: str, extraction: dict, schema: dict) -> list[st
 
 
 @retry(
-    stop=stop_after_attempt(5),
-    wait=wait_exponential(min=2, max=60),
-    before_sleep=lambda rs: print(f"    Retry {rs.attempt_number}/5 after {rs.outcome.exception().__class__.__name__}: {rs.outcome.exception()}", flush=True),
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(min=1, max=30),
 )
 def generate_single(client: genai.Client, model: str, prompt: str) -> str:
-    """Generate a single sample via Gemini API."""
-    response = client.models.generate_content(
-        model=model,
-        contents=prompt,
-    )
+    response = client.models.generate_content(model=model, contents=prompt)
     return response.text
 
 
@@ -370,10 +362,7 @@ def to_mistral_format(policy_text: str, extraction: dict) -> dict:
 def stratified_split(
     samples: list[dict], specs: list[dict], train_n: int, val_n: int, test_n: int, seed: int
 ) -> tuple[list[dict], list[dict], list[dict]]:
-    """Split samples preserving topic×rule_type distribution."""
     rng = random.Random(seed)
-
-    # Group by topic×rule_type
     groups: dict[str, list[tuple[dict, dict]]] = {}
     for sample, spec in zip(samples, specs):
         key = f"{spec['topic']['id']}_{spec['rule_type']}"
@@ -387,11 +376,10 @@ def stratified_split(
         n = len(items)
         n_test = max(1, round(n * test_n / total))
         n_val = max(1, round(n * val_n / total))
-        n_train = n - n_test - n_val
 
         test.extend([s for s, _ in items[:n_test]])
-        val.extend([s for s, _ in items[n_test : n_test + n_val]])
-        train.extend([s for s, _ in items[n_test + n_val :]])
+        val.extend([s for s, _ in items[n_test:n_test + n_val]])
+        train.extend([s for s, _ in items[n_test + n_val:]])
 
     rng.shuffle(train)
     rng.shuffle(val)
@@ -407,6 +395,61 @@ def write_jsonl(path: Path, samples: list[dict]):
     print(f"Wrote {len(samples)} samples to {path}")
 
 
+def load_progress(progress_path: Path) -> dict[str, dict]:
+    """Load previously generated samples from the progress file."""
+    completed = {}
+    if progress_path.exists():
+        with open(progress_path) as f:
+            for line in f:
+                entry = json.loads(line)
+                completed[entry["spec_id"]] = entry
+    return completed
+
+
+def append_progress(progress_path: Path, entry: dict, lock: Lock):
+    """Append a single completed sample to the progress file (thread-safe)."""
+    with lock:
+        with open(progress_path, "a") as f:
+            f.write(json.dumps(entry) + "\n")
+
+
+def process_spec(
+    spec: dict,
+    client: genai.Client,
+    model: str,
+    schema: dict,
+    progress_path: Path,
+    write_lock: Lock,
+) -> tuple[str, dict | None, dict | None, str | None]:
+    """Generate and validate a single sample. Returns (spec_id, sample, spec, error)."""
+    spec_id = spec["id"]
+    prompt = build_prompt(spec)
+
+    try:
+        text = generate_single(client, model, prompt)
+    except Exception as e:
+        return spec_id, None, None, f"API error: {e}"
+
+    policy_text, extraction, err = parse_response(text)
+    if err:
+        return spec_id, None, None, f"Parse error: {err}"
+
+    errors = validate_sample(policy_text, extraction, schema)
+    if errors:
+        return spec_id, None, None, f"Validation: {errors}"
+
+    sample = to_mistral_format(policy_text, extraction)
+
+    # Save progress immediately
+    entry = {"spec_id": spec_id, "sample": sample, "spec_summary": {
+        "topic": spec["topic"]["id"],
+        "rule_type": spec["rule_type"],
+    }}
+    append_progress(progress_path, entry, write_lock)
+
+    return spec_id, sample, spec, None
+
+
 def main():
     parser = argparse.ArgumentParser(description="Generate Redline training data")
     parser.add_argument("--model", default="gemini-2.0-flash", help="Gemini model to use")
@@ -414,6 +457,8 @@ def main():
     parser.add_argument("--output-dir", default="data", help="Output directory")
     parser.add_argument("--seed", type=int, default=42, help="Random seed")
     parser.add_argument("--schema-path", default="schema/decision_logic.json", help="Path to JSON schema")
+    parser.add_argument("--workers", type=int, default=15, help="Number of concurrent workers")
+    parser.add_argument("--resume", action="store_true", help="Resume from previous progress")
     args = parser.parse_args()
 
     with open(args.schema_path) as f:
@@ -442,61 +487,96 @@ def main():
 
     client = genai.Client(api_key=api_key)
 
+    progress_path = Path(args.output_dir) / ".generation_progress.jsonl"
+    write_lock = Lock()
+
+    # Load existing progress if resuming
+    completed = {}
+    if args.resume:
+        completed = load_progress(progress_path)
+        print(f"Resuming: {len(completed)} samples already completed")
+    else:
+        progress_path.parent.mkdir(parents=True, exist_ok=True)
+        if progress_path.exists():
+            progress_path.unlink()
+
+    # Filter out already-completed specs
+    remaining_specs = [s for s in specs if s["id"] not in completed]
+    print(f"Generating {len(remaining_specs)} samples with {args.workers} workers...")
+
     valid_samples = []
     valid_specs = []
-    failed_specs = []
+    failed_count = 0
+    start_time = time.time()
 
-    for i, spec in enumerate(specs):
-        prompt = build_prompt(spec)
-        print(f"[{i+1}/{len(specs)}] Generating {spec['id']} "
-              f"(topic={spec['topic']['id']}, type={spec['rule_type']})...", flush=True)
-        try:
-            text = generate_single(client, args.model, prompt)
-        except Exception as e:
-            print(f"  API error: {e}")
-            failed_specs.append(spec)
-            continue
+    # Collect already-completed samples
+    for spec in specs:
+        if spec["id"] in completed:
+            entry = completed[spec["id"]]
+            valid_samples.append(entry["sample"])
+            valid_specs.append(spec)
 
-        policy_text, extraction, err = parse_response(text)
-        if err:
-            print(f"  Parse error: {err}")
-            failed_specs.append(spec)
-            continue
+    # Process remaining specs concurrently
+    with ThreadPoolExecutor(max_workers=args.workers) as executor:
+        futures = {
+            executor.submit(process_spec, spec, client, args.model, schema, progress_path, write_lock): spec
+            for spec in remaining_specs
+        }
 
-        errors = validate_sample(policy_text, extraction, schema)
-        if errors:
-            print(f"  Validation errors: {errors}")
-            failed_specs.append(spec)
-            continue
+        done_count = len(completed)
+        total = len(specs)
 
-        valid_samples.append(to_mistral_format(policy_text, extraction))
-        valid_specs.append(spec)
-        print(f"  OK — {len(extraction.get('rules', []))} rules extracted")
+        for future in as_completed(futures):
+            done_count += 1
+            spec_id, sample, spec, error = future.result()
+            elapsed = time.time() - start_time
+            rate = (done_count - len(completed)) / elapsed if elapsed > 0 else 0
+            remaining_time = (total - done_count) / rate if rate > 0 else 0
 
-    print(f"\nGeneration complete: {len(valid_samples)} valid, {len(failed_specs)} failed")
+            if error:
+                failed_count += 1
+                print(f"[{done_count}/{total}] FAIL {spec_id}: {error}  "
+                      f"({rate:.1f}/s, ~{remaining_time:.0f}s left)", flush=True)
+            else:
+                valid_samples.append(sample)
+                valid_specs.append(spec)
+                rules_n = len(json.loads(sample["messages"][2]["content"]).get("rules", []))
+                print(f"[{done_count}/{total}] OK {spec_id} ({rules_n} rules)  "
+                      f"({rate:.1f}/s, ~{remaining_time:.0f}s left)", flush=True)
+
+    elapsed = time.time() - start_time
+    print(f"\nDone in {elapsed:.0f}s: {len(valid_samples)} valid, {failed_count} failed")
 
     if not valid_samples:
         print("ERROR: No valid samples generated")
         sys.exit(1)
 
-    if failed_specs:
-        print(f"\nRetrying {len(failed_specs)} failures...")
-        for spec in failed_specs:
-            prompt = build_prompt(spec)
-            try:
-                text = generate_single(client, args.model, prompt)
-                policy_text, extraction, err = parse_response(text)
-                if err:
-                    continue
-                errors = validate_sample(policy_text, extraction, schema)
-                if errors:
-                    continue
-                valid_samples.append(to_mistral_format(policy_text, extraction))
-                valid_specs.append(spec)
-                print(f"  Retry OK: {spec['id']}")
-            except Exception:
-                pass
-        print(f"After retries: {len(valid_samples)} valid, {len(specs) - len(valid_samples)} still failed")
+    # Retry failures once with sequential calls
+    if failed_count > 0:
+        failed_ids = {s["id"] for s in specs} - {s["id"] for s in valid_specs if hasattr(s, "get")}
+        # Rebuild from what we have
+        valid_ids = set()
+        for s in valid_specs:
+            vid = s["id"] if isinstance(s, dict) else s
+            valid_ids.add(vid)
+        retry_specs = [s for s in specs if s["id"] not in valid_ids]
+
+        if retry_specs:
+            print(f"\nRetrying {len(retry_specs)} failures with {args.workers} workers...")
+            retry_results = []
+            with ThreadPoolExecutor(max_workers=args.workers) as executor:
+                futures = {
+                    executor.submit(process_spec, spec, client, args.model, schema, progress_path, write_lock): spec
+                    for spec in retry_specs
+                }
+                for future in as_completed(futures):
+                    spec_id, sample, spec, error = future.result()
+                    if not error:
+                        valid_samples.append(sample)
+                        valid_specs.append(spec)
+                        print(f"  Retry OK: {spec_id}")
+
+            print(f"After retries: {len(valid_samples)} valid")
 
     out = Path(args.output_dir)
     if len(valid_samples) >= 10:
@@ -510,20 +590,16 @@ def main():
         write_jsonl(out / "val.jsonl", val)
         write_jsonl(out / "test.jsonl", test)
     else:
-        # For dry runs, just write all to train
         write_jsonl(out / "train.jsonl", valid_samples)
 
     all_rule_types = Counter()
     for sample in valid_samples:
-        assistant_content = None
         for msg in sample["messages"]:
             if msg["role"] == "assistant":
-                assistant_content = msg["content"]
+                parsed = json.loads(msg["content"])
+                for rule in parsed.get("rules", []):
+                    all_rule_types[rule.get("rule_type", "unknown")] += 1
                 break
-        if assistant_content:
-            parsed = json.loads(assistant_content)
-            for rule in parsed.get("rules", []):
-                all_rule_types[rule.get("rule_type", "unknown")] += 1
 
     print(f"\nFinal rule_type distribution: {dict(all_rule_types.most_common())}")
     print("Done!")

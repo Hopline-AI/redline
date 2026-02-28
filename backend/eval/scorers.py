@@ -39,6 +39,81 @@ def _parse_json(text: str) -> tuple[dict | None, str | None]:
         return None, str(e)
 
 
+def _conditions_signature(rule: dict) -> tuple[str, ...]:
+    conds = rule.get("conditions", [])
+    return tuple(sorted(json.dumps(c, sort_keys=True) for c in conds))
+
+
+def _action_signature(rule: dict) -> str:
+    return json.dumps(rule.get("action", {}), sort_keys=True)
+
+
+def _structure_signature(rule: dict) -> tuple:
+    return (
+        rule.get("condition_logic"),
+        _conditions_signature(rule),
+        _action_signature(rule),
+    )
+
+
+def _align_rules(expected_rules: list[dict], output_rules: list[dict]) -> tuple[list[tuple[dict, dict]], list[dict], list[dict]]:
+    """Align expected/output rules with id-first then structural matching.
+
+    Returns: (matched_pairs, unmatched_expected, unmatched_output)
+    """
+    matched: list[tuple[dict, dict]] = []
+    used_out: set[int] = set()
+    remaining_exp: list[int] = []
+
+    # Pass 1: exact rule_id match.
+    out_id_to_idx: dict[str, list[int]] = {}
+    for oi, out_rule in enumerate(output_rules):
+        rid = out_rule.get("rule_id")
+        if rid:
+            out_id_to_idx.setdefault(rid, []).append(oi)
+
+    for exp_rule in expected_rules:
+        rid = exp_rule.get("rule_id")
+        matched_idx = None
+        if rid and rid in out_id_to_idx:
+            for oi in out_id_to_idx[rid]:
+                if oi not in used_out:
+                    matched_idx = oi
+                    break
+        if matched_idx is None:
+            remaining_exp.append(len(matched))
+            matched.append((exp_rule, None))
+        else:
+            used_out.add(matched_idx)
+            matched.append((exp_rule, output_rules[matched_idx]))
+
+    # Pass 2: structural match for unmatched expected rules.
+    out_struct_to_idx: dict[tuple, list[int]] = {}
+    for oi, out_rule in enumerate(output_rules):
+        if oi in used_out:
+            continue
+        out_struct_to_idx.setdefault(_structure_signature(out_rule), []).append(oi)
+
+    for pos in remaining_exp:
+        exp_rule, out_rule = matched[pos]
+        if out_rule is not None:
+            continue
+        sig = _structure_signature(exp_rule)
+        candidate_idx = None
+        for oi in out_struct_to_idx.get(sig, []):
+            if oi not in used_out:
+                candidate_idx = oi
+                break
+        if candidate_idx is not None:
+            used_out.add(candidate_idx)
+            matched[pos] = (exp_rule, output_rules[candidate_idx])
+
+    matched_pairs = [(exp, out) for exp, out in matched if out is not None]
+    unmatched_expected = [exp for exp, out in matched if out is None]
+    unmatched_output = [output_rules[i] for i in range(len(output_rules)) if i not in used_out]
+    return matched_pairs, unmatched_expected, unmatched_output
+
+
 class SchemaValidityScorer:
     """Check if output is valid JSON matching the decision_logic schema."""
 
@@ -84,16 +159,15 @@ class FieldAccuracyScorer:
         if not exp_rules:
             return {"field_accuracy": 1.0 if not out_rules else 0.0}
 
-        # Match rules by rule_id for comparison
-        exp_by_id = {r["rule_id"]: r for r in exp_rules}
-        out_by_id = {r.get("rule_id"): r for r in out_rules}
+        matched_pairs, unmatched_expected, _ = _align_rules(exp_rules, out_rules)
+        matched_exp_ids = {id(exp): out for exp, out in matched_pairs}
 
         fields_to_check = ["rule_type", "condition_logic"]
         total_checks = 0
         correct_checks = 0
 
-        for rule_id, exp_rule in exp_by_id.items():
-            out_rule = out_by_id.get(rule_id)
+        for exp_rule in exp_rules:
+            out_rule = matched_exp_ids.get(id(exp_rule))
             if out_rule is None:
                 total_checks += len(fields_to_check) + 2  # +2 for conditions, action
                 continue
@@ -120,53 +194,30 @@ class FieldAccuracyScorer:
 
         accuracy = correct_checks / total_checks if total_checks > 0 else 0.0
 
+        total_rules = len(exp_rules)
+        matched_count = len(matched_pairs)
+        rule_type_correct = sum(1 for exp, out in matched_pairs if exp.get("rule_type") == out.get("rule_type"))
+        cond_correct = sum(
+            1
+            for exp, out in matched_pairs
+            if _conditions_signature(exp) == _conditions_signature(out)
+        )
+        action_correct = sum(
+            1
+            for exp, out in matched_pairs
+            if _action_signature(exp) == _action_signature(out)
+        )
+
         return {
             "field_accuracy": accuracy,
             "correct_fields": correct_checks,
             "total_fields": total_checks,
-            "rule_type_accuracy": self._field_accuracy(exp_by_id, out_by_id, "rule_type"),
-            "conditions_accuracy": self._conditions_accuracy(exp_by_id, out_by_id),
-            "action_accuracy": self._action_accuracy(exp_by_id, out_by_id),
+            "rule_type_accuracy": (rule_type_correct / total_rules) if total_rules else 1.0,
+            "conditions_accuracy": (cond_correct / total_rules) if total_rules else 1.0,
+            "action_accuracy": (action_correct / total_rules) if total_rules else 1.0,
+            "matched_rules": matched_count,
+            "missing_rules": len(unmatched_expected),
         }
-
-    @staticmethod
-    def _field_accuracy(exp_by_id: dict, out_by_id: dict, field: str) -> float:
-        total = len(exp_by_id)
-        if total == 0:
-            return 1.0
-        correct = sum(
-            1 for rid, exp in exp_by_id.items()
-            if rid in out_by_id and out_by_id[rid].get(field) == exp.get(field)
-        )
-        return correct / total
-
-    @staticmethod
-    def _conditions_accuracy(exp_by_id: dict, out_by_id: dict) -> float:
-        total = len(exp_by_id)
-        if total == 0:
-            return 1.0
-        correct = 0
-        for rid, exp in exp_by_id.items():
-            if rid not in out_by_id:
-                continue
-            exp_c = sorted(json.dumps(c, sort_keys=True) for c in exp.get("conditions", []))
-            out_c = sorted(json.dumps(c, sort_keys=True) for c in out_by_id[rid].get("conditions", []))
-            if exp_c == out_c:
-                correct += 1
-        return correct / total
-
-    @staticmethod
-    def _action_accuracy(exp_by_id: dict, out_by_id: dict) -> float:
-        total = len(exp_by_id)
-        if total == 0:
-            return 1.0
-        correct = 0
-        for rid, exp in exp_by_id.items():
-            if rid not in out_by_id:
-                continue
-            if json.dumps(exp.get("action"), sort_keys=True) == json.dumps(out_by_id[rid].get("action"), sort_keys=True):
-                correct += 1
-        return correct / total
 
 
 class RuleDetectionScorer:
@@ -180,23 +231,24 @@ class RuleDetectionScorer:
         if parsed is None:
             return {"precision": 0.0, "recall": 0.0, "f1": 0.0, "parse_error": parse_error}
 
-        out_ids = {r.get("rule_id") for r in parsed.get("rules", [])}
-        exp_ids = {r.get("rule_id") for r in expected.get("rules", [])}
+        out_rules = parsed.get("rules", [])
+        exp_rules = expected.get("rules", [])
+        matched_pairs, unmatched_expected, unmatched_output = _align_rules(exp_rules, out_rules)
 
-        true_positives = len(out_ids & exp_ids)
-        precision = true_positives / len(out_ids) if out_ids else 0.0
-        recall = true_positives / len(exp_ids) if exp_ids else 0.0
+        true_positives = len(matched_pairs)
+        precision = true_positives / len(out_rules) if out_rules else 0.0
+        recall = true_positives / len(exp_rules) if exp_rules else 0.0
         f1 = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0.0
 
         return {
             "precision": precision,
             "recall": recall,
             "f1": f1,
-            "expected_count": len(exp_ids),
-            "output_count": len(out_ids),
+            "expected_count": len(exp_rules),
+            "output_count": len(out_rules),
             "true_positives": true_positives,
-            "hallucinated_rules": len(out_ids - exp_ids),
-            "missed_rules": len(exp_ids - out_ids),
+            "hallucinated_rules": len(unmatched_output),
+            "missed_rules": len(unmatched_expected),
         }
 
 
@@ -240,7 +292,9 @@ class ConfidenceCalibrationScorer:
             return {"confidence_calibration": 0.0, "parse_error": parse_error}
 
         out_rules = parsed.get("rules", [])
-        exp_by_id = {r["rule_id"]: r for r in expected.get("rules", [])}
+        exp_rules = expected.get("rules", [])
+        matched_pairs, _, _ = _align_rules(exp_rules, out_rules)
+        matched_out = {id(out) for _, out in matched_pairs}
 
         buckets: dict[str, dict[str, int]] = {
             "high": {"correct": 0, "total": 0},
@@ -254,8 +308,7 @@ class ConfidenceCalibrationScorer:
                 confidence = "medium"
             buckets[confidence]["total"] += 1
 
-            exp_rule = exp_by_id.get(rule.get("rule_id"))
-            if exp_rule and rule.get("rule_type") == exp_rule.get("rule_type"):
+            if id(rule) in matched_out:
                 buckets[confidence]["correct"] += 1
 
         calibration = {}
@@ -294,24 +347,12 @@ class FailureModeScorer:
 
         out_rules = parsed.get("rules", [])
         exp_rules = expected.get("rules", [])
-        exp_by_id = {r["rule_id"]: r for r in exp_rules}
-        out_by_id = {r.get("rule_id"): r for r in out_rules}
+        matched_pairs, unmatched_expected, unmatched_output = _align_rules(exp_rules, out_rules)
 
-        # Hallucinated rules
-        for rid in out_by_id:
-            if rid not in exp_by_id:
-                failures["hallucinated_rule"] += 1
+        failures["hallucinated_rule"] += len(unmatched_output)
+        failures["missing_rule"] += len(unmatched_expected)
 
-        # Missing rules
-        for rid in exp_by_id:
-            if rid not in out_by_id:
-                failures["missing_rule"] += 1
-
-        # Per-rule field errors
-        for rid, exp_rule in exp_by_id.items():
-            out_rule = out_by_id.get(rid)
-            if out_rule is None:
-                continue
+        for exp_rule, out_rule in matched_pairs:
 
             if exp_rule.get("rule_type") != out_rule.get("rule_type"):
                 failures["wrong_rule_type"] += 1
