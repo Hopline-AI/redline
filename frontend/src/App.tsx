@@ -10,6 +10,7 @@ export default function App() {
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Upload />} />
+          <Route path="/:policyId" element={<Upload />} />
           <Route path="/review/:policyId" element={<Review />} />
           <Route path="/report/:policyId" element={<Report />} />
         </Route>

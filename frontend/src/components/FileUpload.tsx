@@ -12,7 +12,7 @@ export function FileUpload({ onFile, disabled }: Props) {
 
   const handleFile = useCallback(
     (file: File | undefined) => {
-      if (file && file.type === "application/pdf") {
+      if (file && file.type === "application/pdf" || file.type === "text/plain") {
         onFile(file);
       }
     },
@@ -46,7 +46,7 @@ export function FileUpload({ onFile, disabled }: Props) {
       <input
         ref={inputRef}
         type="file"
-        accept=".pdf"
+        accept=".pdf,.txt"
         disabled={disabled}
         onChange={(e) => handleFile(e.target.files?.[0])}
       />

@@ -1,38 +1,53 @@
-import { useState, useMemo } from "react";
-import { Link } from "react-router-dom";
-import { buildMockReviewedRules, MOCK_POLICY } from "@/data/mockExtraction";
-import { ConflictBadge, worstConflict } from "@/components/ConflictBadge";
-import type { ReviewedRule } from "@/types";
+import { useMemo } from "react";
+import { Link, useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { getReport } from "@/api/client";
+import type { ReviewStatus } from "@/types";
 import { Download, FileText, ArrowLeft, AlertTriangle } from "lucide-react";
+import { ReportSummaryCards } from "@/components/ReportSummaryCards";
+import { ReportTable } from "@/components/ReportTable";
 
 export default function Report() {
-  // In real app, this would come from shared state/API.
-  // For the demo, we use the same mock data.
-  const [rules] = useState<ReviewedRule[]>(() => buildMockReviewedRules());
+  const { policyId } = useParams<{ policyId: string }>();
+
+  const { data: reportData, isLoading, error } = useQuery({
+    queryKey: ['report', policyId],
+    queryFn: () => getReport(policyId!),
+    enabled: !!policyId,
+  });
+
+  const rules = useMemo(() => {
+    if (!reportData) return [];
+    return reportData.rule_results.map((r: any) => ({
+      rule_id: r.policy_rule_id,
+      rule_type: "N/A", // If the backend doesn't send this in report, just placeholder
+      status: r.lawyer_status as ReviewStatus,
+      lawyer_notes: r.lawyer_notes,
+      conflicts: r.conflict_type !== "aligned" && r.conflict_type !== "missing" ? [{ conflict_type: r.conflict_type }] : [],
+    }));
+  }, [reportData]);
 
   const counts = useMemo(() => {
     const approved = rules.filter((r) => r.status === "approved").length;
-    const flagged = rules.filter((r) => r.status === "flagged").length;
+    const rejected = rules.filter((r) => r.status === "rejected").length;
     const pending = rules.filter((r) => r.status === "pending").length;
     const conflicts = rules.filter((r) =>
       r.conflicts.some((c) => c.conflict_type === "contradicts")
     ).length;
-    return { approved, flagged, pending, conflicts, total: rules.length };
+    return { approved, rejected, pending, conflicts, total: rules.length };
   }, [rules]);
 
   const hasPending = counts.pending > 0;
 
   const exportJSON = () => {
-    const approved = rules
-      .filter((r) => r.status === "approved")
-      .map((r) => r.extracted);
-    const blob = new Blob([JSON.stringify(approved, null, 2)], {
+    if (!reportData) return;
+    const blob = new Blob([JSON.stringify(reportData, null, 2)], {
       type: "application/json",
     });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${MOCK_POLICY.name.replace(/\s+/g, "_")}_approved_rules.json`;
+    a.download = `${reportData.policy_name.replace(/\s+/g, "_")}_compliance_report.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -41,40 +56,29 @@ export default function Report() {
     window.print();
   };
 
+  if (isLoading) {
+    return <div style={{ padding: 40, textAlign: "center" }}>Loading report...</div>;
+  }
+
+  if (error) {
+    return <div style={{ padding: 40, color: "var(--danger)" }}>Error: {error.message}</div>;
+  }
+  
+  if (!reportData) return null;
+
   return (
     <div className="report-page">
       <div className="hstack mb-6">
-        <Link to="/review/pol_demo_001" className="hstack gap-1" style={{ textDecoration: "none" }}>
+        <Link to={`/review/${policyId}`} className="hstack gap-1" style={{ textDecoration: "none" }}>
           <ArrowLeft size={16} /> Back to Review
         </Link>
       </div>
 
-      <h1>{MOCK_POLICY.name}</h1>
-      <p className="text-light">Compliance Report · {new Date().toLocaleDateString()}</p>
+      <h1>{reportData.policy_name}</h1>
+      <p className="text-light">Compliance Report · {new Date(reportData.generated_at).toLocaleDateString()}</p>
 
       {/* Summary cards */}
-      <div className="report-summary">
-        <div className="card summary-card">
-          <div className="number">{counts.total}</div>
-          <div className="label">Total Rules</div>
-        </div>
-        <div className="card summary-card">
-          <div className="number" style={{ color: "var(--success)" }}>{counts.approved}</div>
-          <div className="label">Approved</div>
-        </div>
-        <div className="card summary-card">
-          <div className="number" style={{ color: "var(--warning)" }}>{counts.flagged}</div>
-          <div className="label">Flagged</div>
-        </div>
-        <div className="card summary-card">
-          <div className="number" style={{ color: "var(--muted-foreground)" }}>{counts.pending}</div>
-          <div className="label">Pending</div>
-        </div>
-        <div className="card summary-card">
-          <div className="number" style={{ color: "var(--danger)" }}>{counts.conflicts}</div>
-          <div className="label">Contradictions</div>
-        </div>
-      </div>
+      <ReportSummaryCards counts={counts} />
 
       {/* Export guard */}
       {hasPending && (
@@ -101,42 +105,7 @@ export default function Report() {
       </div>
 
       {/* Rules table */}
-      <div className="table">
-        <table>
-          <thead>
-            <tr>
-              <th>Rule ID</th>
-              <th>Type</th>
-              <th>Worst Conflict</th>
-              <th>Status</th>
-              <th>Notes</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rules.map((rule) => {
-              const conflictTypes = rule.conflicts.map((c) => c.conflict_type);
-              const worst = conflictTypes.length > 0 ? worstConflict(conflictTypes) : null;
-              return (
-                <tr key={rule.extracted.rule_id}>
-                  <td>
-                    <code>{rule.extracted.rule_id}</code>
-                  </td>
-                  <td>
-                    <span className="type-badge">{rule.extracted.rule_type}</span>
-                  </td>
-                  <td>{worst ? <ConflictBadge type={worst} /> : <span className="text-light">—</span>}</td>
-                  <td>
-                    <span className={`status-badge ${rule.status}`}>{rule.status}</span>
-                  </td>
-                  <td>
-                    <small className="text-light">{rule.lawyer_notes ?? "—"}</small>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <ReportTable rules={rules} />
     </div>
   );
 }

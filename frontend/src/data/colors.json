@@ -1,0 +1,48 @@
+{
+  "theme": {
+    "modes": ["light", "dark"],
+    "default": "system",
+    "implementation": "light-dark() CSS function"
+  },
+  "colors": {
+    "semantics": {
+      "conflict": {
+        "contradicts": { "light": "#d32f2f", "dark": "#ef5350", "description": "Critical violation or direct contradiction" },
+        "falls_short": { "light": "#e65100", "dark": "#ff9800", "description": "Policy is less protective than law" },
+        "exceeds": { "light": "#f9a825", "dark": "#fdd835", "description": "Policy is more protective than law" },
+        "missing": { "light": "#7b1fa2", "dark": "#ce93d8", "description": "Required legal provision is missing" },
+        "aligned": { "light": "#2e7d32", "dark": "#81c784", "description": "Policy matches or complies with law" }
+      },
+      "confidence": {
+        "high": { "ref": "colors.semantics.conflict.aligned" },
+        "medium": { "ref": "colors.semantics.conflict.exceeds" },
+        "low": { "ref": "colors.semantics.conflict.contradicts" }
+      },
+      "status": {
+        "approved": { "light": "#2e7d32", "dark": "#81c784" },
+        "flagged": { "light": "#e65100", "dark": "#ff9800" },
+        "edited": { "light": "#1565c0", "dark": "#64b5f6" },
+        "pending": { "light": "#71717a", "dark": "#a1a1aa" }
+      }
+    }
+  },
+  "typography": {
+    "fonts": {
+      "sans": {
+        "family": ["Inter", "system-ui", "-apple-system", "sans-serif"],
+        "source": "Google Fonts",
+        "usage": "Primary UI font"
+      },
+      "mono": {
+        "family": ["JetBrains Mono", "ui-monospace", "monospace"],
+        "source": "Google Fonts",
+        "usage": "Code, JSON, and source text"
+      }
+    },
+    "guidelines": {
+      "headings": "Inter Bold, reduced letter-spacing (-0.02em) for branding",
+      "body": "Inter Regular/Medium",
+      "code": "JetBrains Mono for deterministic logic extraction"
+    }
+  }
+}

@@ -5,10 +5,12 @@ import { CheckCircle2, Flag } from "lucide-react";
 interface Props {
   currentStatus: ReviewStatus;
   onApprove: (notes?: string) => void;
-  onFlag: (notes?: string) => void;
+  onReject: (notes?: string) => void;
+  onEdit: () => void;
+  isEditing: boolean;
 }
 
-export function ReviewActions({ currentStatus, onApprove, onFlag }: Props) {
+export function ReviewActions({ currentStatus, onApprove, onReject, onEdit, isEditing }: Props) {
   const [notes, setNotes] = useState("");
 
   return (
@@ -24,14 +26,21 @@ export function ReviewActions({ currentStatus, onApprove, onFlag }: Props) {
       <button
         data-variant="secondary"
         onClick={() => {
-          onFlag(notes || undefined);
+          onReject(notes || undefined);
           setNotes("");
         }}
-        disabled={currentStatus === "flagged"}
-        style={currentStatus === "flagged" ? { opacity: 0.5 } : {}}
+        disabled={currentStatus === "rejected"}
+        style={currentStatus === "rejected" ? { opacity: 0.5, borderColor: "var(--danger)", color: "var(--danger)" } : {}}
       >
         <Flag size={14} />
-        Flag
+        Reject
+      </button>
+      <button
+        data-variant="secondary"
+        onClick={onEdit}
+        style={isEditing ? { backgroundColor: "var(--bg-3)" } : {}}
+      >
+        Edit
       </button>
       <button
         onClick={() => {

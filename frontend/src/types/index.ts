@@ -57,10 +57,12 @@ export interface ConflictResult {
 }
 
 // ─── Frontend review state ──────────────────────────────────────────
-export type ReviewStatus = "pending" | "approved" | "flagged" | "edited";
+export type ReviewStatus = "pending" | "approved" | "rejected" | "edited";
 
 export interface ReviewedRule {
+    ui_id: string;
     extracted: ExtractedRule;
+    edited_rule?: ExtractedRule;
     status: ReviewStatus;
     lawyer_notes?: string;
     conflicts: ConflictResult[];

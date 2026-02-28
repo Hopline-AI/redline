@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@knadh/oat": "^0.4.1",
+    "@tanstack/react-query": "^5.90.21",
+    "axios": "^1.13.6",
     "lucide-react": "^0.462.0",
     "pdfjs-dist": "^4.4.168",
     "react": "^18.3.1",
