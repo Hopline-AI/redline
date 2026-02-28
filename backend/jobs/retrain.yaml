@@ -1,0 +1,43 @@
+# HF Jobs: Fine-tuning (Retraining)
+# QLoRA fine-tune Mistral 7B on updated dataset
+
+name: redline-retrain
+description: Fine-tune Mistral 7B on compliance extraction dataset
+
+compute:
+  accelerator: gpu
+  gpu_type: nvidia-a100
+  gpu_count: 1
+  max_duration_seconds: 7200
+
+image: pytorch/pytorch:2.1.0-cuda12.1-cudnn8-runtime
+
+env:
+  HF_TOKEN: "${HF_TOKEN}"
+  WANDB_API_KEY: "${WANDB_API_KEY}"
+  WANDB_PROJECT: "redline-compliance"
+  DATASET_REPO: "${DATASET_REPO:-redline-compliance-extraction}"
+  MODEL_REPO: "${MODEL_REPO:-redline-compliance-extractor}"
+  RUN_NAME: "${RUN_NAME:-retrain}"
+
+setup: |
+  pip install "unsloth[colab-new]" wandb transformers datasets trl peft bitsandbytes accelerate pyyaml
+
+  # Download dataset
+  python -c "
+  from huggingface_hub import hf_hub_download
+  import os
+  repo = os.environ['DATASET_REPO']
+  for split in ['train', 'val', 'test']:
+      hf_hub_download(repo_id=repo, filename=f'{split}.jsonl', repo_type='dataset', local_dir='data')
+  "
+
+command: |
+  python training/finetune.py --config training/config.yaml
+
+artifacts:
+  output:
+    path: ./outputs/redline-mistral-lora/final_adapter
+    push_to_hub:
+      repo_id: "${MODEL_REPO}"
+      repo_type: model

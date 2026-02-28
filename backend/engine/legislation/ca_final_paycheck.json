@@ -1,0 +1,72 @@
+{
+  "legislation": {
+    "name": "California Final Paycheck Law",
+    "jurisdiction": "CA",
+    "effective_date": "1976-01-01",
+    "source_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?sectionNum=201.&lawCode=LAB"
+  },
+  "rules": [
+    {
+      "rule_id": "ca_final_pay_001",
+      "rule_type": "entitlement",
+      "conditions": [
+        {"field": "termination.type", "operator": "eq", "value": "involuntary"},
+        {"field": "employee.location", "operator": "eq", "value": "CA"}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "require",
+        "subject": "final_paycheck",
+        "parameters": {"timing": "immediately_at_termination"}
+      },
+      "source_text": "Cal. Lab. Code § 201(a): If an employer discharges an employee, the wages earned and unpaid at the time of discharge are due and payable immediately."
+    },
+    {
+      "rule_id": "ca_final_pay_002",
+      "rule_type": "entitlement",
+      "conditions": [
+        {"field": "termination.type", "operator": "eq", "value": "voluntary"},
+        {"field": "employee.location", "operator": "eq", "value": "CA"},
+        {"field": "employee.notice_given_hours", "operator": "gte", "value": 72}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "require",
+        "subject": "final_paycheck",
+        "parameters": {"timing": "on_last_day"}
+      },
+      "source_text": "Cal. Lab. Code § 202(a): If an employee not having a written contract for a definite period quits his or her employment, his or her wages shall become due and payable not later than 72 hours thereafter, unless the employee has given 72 hours previous notice of his or her intention to quit, in which case the employee is entitled to his or her wages at the time of quitting."
+    },
+    {
+      "rule_id": "ca_final_pay_003",
+      "rule_type": "entitlement",
+      "conditions": [
+        {"field": "termination.type", "operator": "eq", "value": "voluntary"},
+        {"field": "employee.location", "operator": "eq", "value": "CA"},
+        {"field": "employee.notice_given_hours", "operator": "lt", "value": 72}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "require",
+        "subject": "final_paycheck",
+        "parameters": {"timing": "within_72_hours"}
+      },
+      "source_text": "Cal. Lab. Code § 202(a): If an employee not having a written contract for a definite period quits his or her employment, his or her wages shall become due and payable not later than 72 hours thereafter."
+    },
+    {
+      "rule_id": "ca_final_pay_004",
+      "rule_type": "entitlement",
+      "conditions": [
+        {"field": "employee.location", "operator": "eq", "value": "CA"},
+        {"field": "employer.final_paycheck_late", "operator": "eq", "value": true}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "grant",
+        "subject": "waiting_time_penalty",
+        "parameters": {"rate": "daily_wages", "max_days": 30}
+      },
+      "source_text": "Cal. Lab. Code § 203(a): If an employer willfully fails to pay any wages due to an employee who is discharged or who quits, the wages of the employee shall continue as a penalty from the due date thereof at the same rate until paid or until an action therefor is commenced; but the wages shall not continue for more than 30 days."
+    }
+  ]
+}

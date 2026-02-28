@@ -1,0 +1,56 @@
+{
+  "legislation": {
+    "name": "Federal WARN Act (Worker Adjustment and Retraining Notification Act)",
+    "jurisdiction": "federal",
+    "effective_date": "1989-02-04",
+    "source_url": "https://www.law.cornell.edu/uscode/text/29/chapter-23"
+  },
+  "rules": [
+    {
+      "rule_id": "fed_warn_001",
+      "rule_type": "restriction",
+      "conditions": [
+        {"field": "employer.employee_count", "operator": "gte", "value": 100},
+        {"field": "layoff.affected_count", "operator": "gte", "value": 50}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "require",
+        "subject": "layoff_notice",
+        "parameters": {"notice_days": 60}
+      },
+      "source_text": "29 U.S.C. § 2102(a): An employer shall not order a plant closing or mass layoff until the end of a 60-day period after the employer serves written notice of such an order to each representative of the affected employees or, if there is no such representative, to each affected employee."
+    },
+    {
+      "rule_id": "fed_warn_002",
+      "rule_type": "restriction",
+      "conditions": [
+        {"field": "employer.employee_count", "operator": "gte", "value": 100},
+        {"field": "layoff.affected_count", "operator": "gte", "value": 50}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "require",
+        "subject": "layoff_notice_to_government",
+        "parameters": {"notice_days": 60, "recipient": "State dislocated worker unit and local government"}
+      },
+      "source_text": "29 U.S.C. § 2102(a)(2): The employer shall serve written notice to the State or entity designated by the State to carry out rapid response activities and the chief elected official of the unit of local government within which such closing or layoff is to occur."
+    },
+    {
+      "rule_id": "fed_warn_003",
+      "rule_type": "entitlement",
+      "conditions": [
+        {"field": "employer.employee_count", "operator": "gte", "value": 100},
+        {"field": "layoff.affected_count", "operator": "gte", "value": 50},
+        {"field": "employer.warn_notice_given", "operator": "eq", "value": false}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "grant",
+        "subject": "back_pay_and_benefits",
+        "parameters": {"duration_days": 60, "includes_benefits": true}
+      },
+      "source_text": "29 U.S.C. § 2104(a)(1): Any employer who orders a plant closing or mass layoff in violation of section 2102 shall be liable to each aggrieved employee who suffers an employment loss for back pay for each day of violation and benefits under an employee benefit plan."
+    }
+  ]
+}

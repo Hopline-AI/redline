@@ -1,0 +1,56 @@
+{
+  "legislation": {
+    "name": "California WARN Act",
+    "jurisdiction": "CA",
+    "effective_date": "2003-01-01",
+    "source_url": "https://leginfo.legislature.ca.gov/faces/codes_displayText.xhtml?lawCode=LAB&division=2.&title=&part=4.&chapter=4.&article="
+  },
+  "rules": [
+    {
+      "rule_id": "ca_warn_001",
+      "rule_type": "restriction",
+      "conditions": [
+        {"field": "employer.employee_count", "operator": "gte", "value": 75},
+        {"field": "layoff.affected_count", "operator": "gte", "value": 50}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "require",
+        "subject": "layoff_notice",
+        "parameters": {"notice_days": 60}
+      },
+      "source_text": "Cal. Lab. Code § 1401(a): No employer may order a mass layoff, relocation, or termination at a covered establishment unless, 60 days before the order takes effect, the employer gives written notice of the order to affected employees and the Employment Development Department."
+    },
+    {
+      "rule_id": "ca_warn_002",
+      "rule_type": "restriction",
+      "conditions": [
+        {"field": "employer.employee_count", "operator": "gte", "value": 75},
+        {"field": "layoff.affected_count", "operator": "gte", "value": 50}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "require",
+        "subject": "layoff_notice_to_edd",
+        "parameters": {"notice_days": 60, "recipient": "Employment Development Department"}
+      },
+      "source_text": "Cal. Lab. Code § 1401(b): The employer shall also give 60 days' notice to the Employment Development Department, the local workforce investment board, and the chief elected official of each city and county government within which the termination, relocation, or mass layoff occurs."
+    },
+    {
+      "rule_id": "ca_warn_003",
+      "rule_type": "entitlement",
+      "conditions": [
+        {"field": "employer.employee_count", "operator": "gte", "value": 75},
+        {"field": "layoff.affected_count", "operator": "gte", "value": 50},
+        {"field": "employer.warn_notice_given", "operator": "eq", "value": false}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "grant",
+        "subject": "back_pay_and_benefits",
+        "parameters": {"duration_days": 60, "includes_benefits": true}
+      },
+      "source_text": "Cal. Lab. Code § 1402(a): An employer who fails to give notice as required by Section 1401 before ordering a mass layoff, relocation, or termination is liable to each employee entitled to notice who lost his or her employment for back pay and the value of the cost of any benefits the employee would have received for up to 60 days."
+    }
+  ]
+}

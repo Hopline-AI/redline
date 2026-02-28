@@ -1,0 +1,50 @@
+# HF Jobs: Batch Evaluation
+# Run full eval suite on test set after retraining
+
+name: redline-eval
+description: Evaluate fine-tuned model on test set with all scorers
+
+compute:
+  accelerator: gpu
+  gpu_type: nvidia-l4
+  gpu_count: 1
+  max_duration_seconds: 3600
+
+image: pytorch/pytorch:2.1.0-cuda12.1-cudnn8-runtime
+
+env:
+  HF_TOKEN: "${HF_TOKEN}"
+  WANDB_API_KEY: "${WANDB_API_KEY}"
+  WANDB_PROJECT: "redline-compliance"
+  MISTRAL_API_KEY: "${MISTRAL_API_KEY}"
+  MODEL_ENDPOINT: "${MODEL_ENDPOINT:-}"
+  MODEL_ID: "${MODEL_ID:-}"
+  BASELINE_RUN_ID: "${BASELINE_RUN_ID:-}"
+  DATASET_REPO: "${DATASET_REPO:-redline-compliance-extraction}"
+
+setup: |
+  pip install mistralai wandb weave jsonschema requests huggingface-hub
+
+  # Download test data
+  python -c "
+  from huggingface_hub import hf_hub_download
+  import os
+  repo = os.environ['DATASET_REPO']
+  hf_hub_download(repo_id=repo, filename='test.jsonl', repo_type='dataset', local_dir='data')
+  "
+
+command: |
+  if [ -n "${MODEL_ENDPOINT}" ]; then
+    python eval/finetuned_eval.py \
+      --test-data data/test.jsonl \
+      --endpoint "${MODEL_ENDPOINT}" \
+      --baseline-run-id "${BASELINE_RUN_ID}"
+  elif [ -n "${MODEL_ID}" ]; then
+    python eval/finetuned_eval.py \
+      --test-data data/test.jsonl \
+      --model "${MODEL_ID}" \
+      --baseline-run-id "${BASELINE_RUN_ID}"
+  else
+    echo "ERROR: Set MODEL_ENDPOINT or MODEL_ID"
+    exit 1
+  fi

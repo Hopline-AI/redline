@@ -1,0 +1,30 @@
+# Redline Inference Serving Configuration
+# vLLM with constrained JSON decoding via outlines
+
+server:
+  host: "0.0.0.0"
+  port: 8080
+  model: "./outputs/redline-mistral-lora/final_adapter"
+  base_model: "mistralai/Mistral-7B-Instruct-v0.3"
+  tensor_parallel_size: 1
+  max_model_len: 4096
+  gpu_memory_utilization: 0.90
+
+quantization:
+  method: "awq"  # awq | gptq | none
+  bits: 4
+
+decoding:
+  guided_json: true
+  schema_path: "schema/decision_logic.json"
+  backend: "outlines"  # outlines | lm-format-enforcer
+  max_tokens: 4096
+  temperature: 0.0
+
+batching:
+  max_num_seqs: 32
+  max_num_batched_tokens: 8192
+
+logging:
+  access_log: true
+  log_level: "info"

@@ -1,0 +1,25 @@
+{
+  "legislation": {
+    "name": "Fair Labor Standards Act — Overtime (Federal)",
+    "jurisdiction": "federal",
+    "effective_date": "1938-06-25",
+    "source_url": "https://www.law.cornell.edu/uscode/text/29/207"
+  },
+  "rules": [
+    {
+      "rule_id": "fed_ot_001",
+      "rule_type": "compensation",
+      "conditions": [
+        {"field": "employee.exempt", "operator": "eq", "value": false},
+        {"field": "employee.weekly_hours", "operator": "gt", "value": 40}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "grant",
+        "subject": "overtime_pay",
+        "parameters": {"rate_multiplier": 1.5, "basis": "weekly_hours_over_40"}
+      },
+      "source_text": "29 U.S.C. § 207(a)(1): No employer shall employ any of his employees for a workweek longer than forty hours unless such employee receives compensation for his employment in excess of the hours above specified at a rate not less than one and one-half times the regular rate at which he is employed."
+    }
+  ]
+}

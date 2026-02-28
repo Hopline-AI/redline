@@ -1,0 +1,63 @@
+# Redline Fine-tuning Configuration
+# Mistral 7B / Ministral 8B QLoRA via Unsloth on BREV
+
+model:
+  name: "mistralai/Mistral-7B-Instruct-v0.3"
+  max_seq_length: 4096
+  load_in_4bit: true
+  dtype: null  # auto-detect
+
+lora:
+  rank: 32
+  alpha: 64
+  dropout: 0.05
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+
+quantization:
+  bits: 4
+  quant_type: "nf4"
+  compute_dtype: "bfloat16"
+  double_quant: true
+
+training:
+  output_dir: "./outputs/redline-mistral-lora"
+  num_train_epochs: 3
+  per_device_train_batch_size: 4
+  gradient_accumulation_steps: 4
+  learning_rate: 2.0e-4
+  lr_scheduler_type: "cosine"
+  warmup_ratio: 0.05
+  weight_decay: 0.01
+  max_grad_norm: 1.0
+  fp16: false
+  bf16: true
+  logging_steps: 10
+  eval_strategy: "steps"
+  eval_steps: 50
+  save_strategy: "steps"
+  save_steps: 100
+  save_total_limit: 3
+  seed: 42
+  packing: true
+
+data:
+  train_path: "data/train.jsonl"
+  val_path: "data/val.jsonl"
+  test_path: "data/test.jsonl"
+
+wandb:
+  project: "redline-compliance"
+  entity: null  # uses default entity
+  log_model: true
+
+hub:
+  push_to_hub: true
+  hub_model_id: "redline-compliance-extractor"
+  hub_strategy: "end"

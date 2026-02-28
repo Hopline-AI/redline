@@ -1,0 +1,56 @@
+{
+  "legislation": {
+    "name": "Family and Medical Leave Act (FMLA)",
+    "jurisdiction": "federal",
+    "effective_date": "1993-08-05",
+    "source_url": "https://www.law.cornell.edu/uscode/text/29/chapter-28"
+  },
+  "rules": [
+    {
+      "rule_id": "fed_fmla_001",
+      "rule_type": "leave",
+      "conditions": [
+        {"field": "employer.employee_count", "operator": "gte", "value": 50},
+        {"field": "employee.tenure_months", "operator": "gte", "value": 12},
+        {"field": "employee.hours_worked_last_12_months", "operator": "gte", "value": 1250},
+        {"field": "leave.reason", "operator": "in", "value": ["birth_of_child", "adoption", "foster_care", "serious_health_condition_self", "serious_health_condition_family"]}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "grant",
+        "subject": "unpaid_family_medical_leave",
+        "parameters": {"max_weeks": 12, "paid": false, "job_protected": true}
+      },
+      "source_text": "29 U.S.C. § 2612(a)(1): An eligible employee shall be entitled to a total of 12 workweeks of leave during any 12-month period for one or more of the following: the birth of a son or daughter, placement of a child for adoption or foster care, care for a spouse, son, daughter, or parent with a serious health condition, or a serious health condition that makes the employee unable to perform the functions of the position."
+    },
+    {
+      "rule_id": "fed_fmla_002",
+      "rule_type": "eligibility",
+      "conditions": [
+        {"field": "employer.employee_count", "operator": "gte", "value": 50},
+        {"field": "employer.employees_within_75_miles", "operator": "gte", "value": 50}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "require",
+        "subject": "fmla_employer_coverage",
+        "parameters": {"note": "Employer must have 50+ employees within 75 miles"}
+      },
+      "source_text": "29 U.S.C. § 2611(2)(B)(ii): The term 'eligible employee' does not include any employee of an employer who is employed at a worksite at which such employer employs less than 50 employees if the total number of employees employed by that employer within 75 miles of that worksite is less than 50."
+    },
+    {
+      "rule_id": "fed_fmla_003",
+      "rule_type": "entitlement",
+      "conditions": [
+        {"field": "employee.on_fmla_leave", "operator": "eq", "value": true}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "require",
+        "subject": "health_benefits_continuation",
+        "parameters": {"same_terms_as_active_employment": true}
+      },
+      "source_text": "29 U.S.C. § 2614(c)(1): During any period that an eligible employee takes leave under section 2612, the employer shall maintain coverage under any group health plan for the duration of such leave at the level and under the conditions coverage would have been provided if the employee had continued in employment."
+    }
+  ]
+}

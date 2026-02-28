@@ -1,0 +1,24 @@
+{
+  "legislation": {
+    "name": "Fair Labor Standards Act — Final Paycheck (Federal)",
+    "jurisdiction": "federal",
+    "effective_date": "1938-06-25",
+    "source_url": "https://www.law.cornell.edu/uscode/text/29/chapter-8"
+  },
+  "rules": [
+    {
+      "rule_id": "fed_final_pay_001",
+      "rule_type": "entitlement",
+      "conditions": [
+        {"field": "termination.type", "operator": "in", "value": ["involuntary", "voluntary"]}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "require",
+        "subject": "final_paycheck",
+        "parameters": {"timing": "next_regular_payday"}
+      },
+      "source_text": "29 U.S.C. § 206-207: The FLSA does not require immediate payment of final wages upon termination. Employers must pay all earned wages by the next regular payday for the pay period in which the termination occurred. Individual states may impose stricter requirements."
+    }
+  ]
+}

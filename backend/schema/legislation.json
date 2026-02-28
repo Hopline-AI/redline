@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://redline.dev/schema/legislation.json",
+  "title": "Legislation Schema",
+  "description": "Structured legislation rules for compliance comparison",
+  "type": "object",
+  "required": ["legislation", "rules"],
+  "additionalProperties": false,
+  "properties": {
+    "legislation": {
+      "type": "object",
+      "required": ["name", "jurisdiction", "effective_date", "source_url"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "jurisdiction": {
+          "type": "string",
+          "enum": ["CA", "federal"]
+        },
+        "effective_date": {
+          "type": "string",
+          "description": "ISO 8601 date or descriptive date string"
+        },
+        "source_url": {
+          "type": "string"
+        }
+      }
+    },
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["rule_id", "rule_type", "conditions", "condition_logic", "action", "source_text"],
+        "additionalProperties": false,
+        "properties": {
+          "rule_id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "rule_type": {
+            "type": "string",
+            "enum": ["entitlement", "restriction", "eligibility", "termination", "leave", "compensation"]
+          },
+          "conditions": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["field", "operator", "value"],
+              "additionalProperties": false,
+              "properties": {
+                "field": {
+                  "type": "string"
+                },
+                "operator": {
+                  "type": "string",
+                  "enum": ["eq", "neq", "gt", "gte", "lt", "lte", "in", "not_in"]
+                },
+                "value": {
+                  "oneOf": [
+                    { "type": "string" },
+                    { "type": "number" },
+                    { "type": "boolean" },
+                    { "type": "array", "items": { "oneOf": [{ "type": "string" }, { "type": "number" }] } }
+                  ]
+                }
+              }
+            }
+          },
+          "condition_logic": {
+            "type": "string",
+            "enum": ["all", "any"]
+          },
+          "action": {
+            "type": "object",
+            "required": ["type", "subject"],
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["grant", "deny", "require", "notify"]
+              },
+              "subject": {
+                "type": "string"
+              },
+              "parameters": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          },
+          "source_text": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Verbatim citation from the legislation"
+          }
+        }
+      }
+    }
+  }
+}

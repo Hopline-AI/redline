@@ -1,0 +1,37 @@
+# HF Jobs: Webhook Pipeline Configuration
+# Automated: dataset update -> validate -> retrain -> eval
+
+pipeline:
+  name: redline-improvement-pipeline
+  description: Automated ML pipeline triggered by dataset updates
+
+  trigger:
+    type: webhook
+    event: dataset_updated
+    repo_id: redline-compliance-extraction
+    repo_type: dataset
+
+  stages:
+    - name: validate
+      job: validate_data.yaml
+      on_failure: stop
+
+    - name: retrain
+      job: retrain.yaml
+      depends_on: validate
+      on_failure: stop
+
+    - name: evaluate
+      job: eval.yaml
+      depends_on: retrain
+      env:
+        BASELINE_RUN_ID: "${PREVIOUS_BEST_RUN_ID}"
+      on_failure: notify
+
+  notifications:
+    on_complete:
+      type: webhook
+      url: "${NOTIFICATION_WEBHOOK_URL}"
+    on_failure:
+      type: webhook
+      url: "${NOTIFICATION_WEBHOOK_URL}"

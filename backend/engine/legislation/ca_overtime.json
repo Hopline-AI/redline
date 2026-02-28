@@ -1,0 +1,76 @@
+{
+  "legislation": {
+    "name": "California Overtime Law",
+    "jurisdiction": "CA",
+    "effective_date": "2000-01-01",
+    "source_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?sectionNum=510.&lawCode=LAB"
+  },
+  "rules": [
+    {
+      "rule_id": "ca_ot_001",
+      "rule_type": "compensation",
+      "conditions": [
+        {"field": "employee.location", "operator": "eq", "value": "CA"},
+        {"field": "employee.exempt", "operator": "eq", "value": false},
+        {"field": "employee.daily_hours", "operator": "gt", "value": 8},
+        {"field": "employee.daily_hours", "operator": "lte", "value": 12}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "grant",
+        "subject": "overtime_pay",
+        "parameters": {"rate_multiplier": 1.5, "basis": "daily_hours_over_8"}
+      },
+      "source_text": "Cal. Lab. Code § 510(a): Any work in excess of eight hours in one workday and any work in excess of 40 hours in any one workweek and the first eight hours worked on the seventh day of work in any one workweek shall be compensated at the rate of no less than one and one-half times the regular rate of pay for an employee."
+    },
+    {
+      "rule_id": "ca_ot_002",
+      "rule_type": "compensation",
+      "conditions": [
+        {"field": "employee.location", "operator": "eq", "value": "CA"},
+        {"field": "employee.exempt", "operator": "eq", "value": false},
+        {"field": "employee.daily_hours", "operator": "gt", "value": 12}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "grant",
+        "subject": "double_overtime_pay",
+        "parameters": {"rate_multiplier": 2.0, "basis": "daily_hours_over_12"}
+      },
+      "source_text": "Cal. Lab. Code § 510(a): Any work in excess of 12 hours in one day shall be compensated at the rate of no less than twice the regular rate of pay for an employee."
+    },
+    {
+      "rule_id": "ca_ot_003",
+      "rule_type": "compensation",
+      "conditions": [
+        {"field": "employee.location", "operator": "eq", "value": "CA"},
+        {"field": "employee.exempt", "operator": "eq", "value": false},
+        {"field": "employee.seventh_consecutive_day", "operator": "eq", "value": true},
+        {"field": "employee.daily_hours", "operator": "gt", "value": 8}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "grant",
+        "subject": "seventh_day_double_overtime",
+        "parameters": {"rate_multiplier": 2.0, "basis": "seventh_day_hours_over_8"}
+      },
+      "source_text": "Cal. Lab. Code § 510(a): Any work in excess of eight hours on any seventh day of a workweek shall be compensated at the rate of no less than twice the regular rate of pay of an employee."
+    },
+    {
+      "rule_id": "ca_ot_004",
+      "rule_type": "compensation",
+      "conditions": [
+        {"field": "employee.location", "operator": "eq", "value": "CA"},
+        {"field": "employee.exempt", "operator": "eq", "value": false},
+        {"field": "employee.weekly_hours", "operator": "gt", "value": 40}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "grant",
+        "subject": "weekly_overtime_pay",
+        "parameters": {"rate_multiplier": 1.5, "basis": "weekly_hours_over_40"}
+      },
+      "source_text": "Cal. Lab. Code § 510(a): Any work in excess of 40 hours in any one workweek shall be compensated at the rate of no less than one and one-half times the regular rate of pay for an employee."
+    }
+  ]
+}

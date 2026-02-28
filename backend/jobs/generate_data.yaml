@@ -1,0 +1,35 @@
+# HF Jobs: Synthetic Data Generation
+# Generates training pairs for compliance extraction
+
+name: redline-generate-data
+description: Generate synthetic policy→JSON training pairs for weak categories
+
+compute:
+  accelerator: gpu
+  gpu_type: nvidia-l4
+  gpu_count: 1
+  max_duration_seconds: 3600
+
+image: python:3.12-slim
+
+env:
+  GEMINI_API_KEY: "${GEMINI_API_KEY}"
+  HF_TOKEN: "${HF_TOKEN}"
+  TARGET_CATEGORY: "${TARGET_CATEGORY:-all}"
+  NUM_SAMPLES: "${NUM_SAMPLES:-50}"
+
+setup: |
+  pip install google-genai jsonschema huggingface-hub
+
+command: |
+  python data/generation_script.py \
+    --target-category "${TARGET_CATEGORY}" \
+    --num-samples "${NUM_SAMPLES}" \
+    --output-dir /outputs/data
+
+artifacts:
+  output:
+    path: /outputs/data
+    push_to_hub:
+      repo_id: redline-compliance-extraction
+      repo_type: dataset

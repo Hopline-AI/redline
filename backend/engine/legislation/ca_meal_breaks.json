@@ -1,0 +1,73 @@
+{
+  "legislation": {
+    "name": "California Meal and Rest Break Law",
+    "jurisdiction": "CA",
+    "effective_date": "2001-01-01",
+    "source_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?sectionNum=512.&lawCode=LAB"
+  },
+  "rules": [
+    {
+      "rule_id": "ca_meal_001",
+      "rule_type": "entitlement",
+      "conditions": [
+        {"field": "employee.location", "operator": "eq", "value": "CA"},
+        {"field": "employee.exempt", "operator": "eq", "value": false},
+        {"field": "employee.daily_hours", "operator": "gt", "value": 5}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "grant",
+        "subject": "meal_break",
+        "parameters": {"duration_minutes": 30, "timing": "before_end_of_5th_hour", "paid": false}
+      },
+      "source_text": "Cal. Lab. Code § 512(a): An employer shall not employ an employee for a work period of more than five hours per day without providing the employee with a meal period of not less than 30 minutes, except that if the total work period per day of the employee is no more than six hours, the meal period may be waived by mutual consent of both the employer and employee."
+    },
+    {
+      "rule_id": "ca_meal_002",
+      "rule_type": "entitlement",
+      "conditions": [
+        {"field": "employee.location", "operator": "eq", "value": "CA"},
+        {"field": "employee.exempt", "operator": "eq", "value": false},
+        {"field": "employee.daily_hours", "operator": "gt", "value": 10}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "grant",
+        "subject": "second_meal_break",
+        "parameters": {"duration_minutes": 30, "timing": "before_end_of_10th_hour", "paid": false}
+      },
+      "source_text": "Cal. Lab. Code § 512(a): An employer shall not employ an employee for a work period of more than 10 hours per day without providing the employee with a second meal period of not less than 30 minutes, except that if the total hours worked is no more than 12 hours, the second meal period may be waived by mutual consent of the employer and the employee only if the first meal period was not waived."
+    },
+    {
+      "rule_id": "ca_meal_003",
+      "rule_type": "entitlement",
+      "conditions": [
+        {"field": "employee.location", "operator": "eq", "value": "CA"},
+        {"field": "employee.exempt", "operator": "eq", "value": false},
+        {"field": "employee.hours_worked_in_shift", "operator": "gte", "value": 3.5}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "grant",
+        "subject": "rest_break",
+        "parameters": {"duration_minutes": 10, "per_hours": 4, "paid": true}
+      },
+      "source_text": "Cal. Code Regs. tit. 8, § 11040(12)(A): Every employer shall authorize and permit all employees to take rest periods, which insofar as practicable shall be in the middle of each work period. The authorized rest period time shall be based on the total hours worked daily at the rate of ten (10) minutes net rest time per four (4) hours or major fraction thereof."
+    },
+    {
+      "rule_id": "ca_meal_004",
+      "rule_type": "compensation",
+      "conditions": [
+        {"field": "employee.location", "operator": "eq", "value": "CA"},
+        {"field": "employer.meal_break_violation", "operator": "eq", "value": true}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "grant",
+        "subject": "meal_break_premium_pay",
+        "parameters": {"amount": "one_hour_regular_rate", "per_violation": true}
+      },
+      "source_text": "Cal. Lab. Code § 226.7(c): If an employer fails to provide an employee a meal period or rest period in accordance with a state law, the employer shall pay the employee one additional hour of pay at the employee's regular rate of compensation for each workday that the meal period or rest period is not provided."
+    }
+  ]
+}

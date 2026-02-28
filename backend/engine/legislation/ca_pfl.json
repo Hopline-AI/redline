@@ -1,0 +1,56 @@
+{
+  "legislation": {
+    "name": "California Paid Family Leave (PFL)",
+    "jurisdiction": "CA",
+    "effective_date": "2004-07-01",
+    "source_url": "https://leginfo.legislature.ca.gov/faces/codes_displayText.xhtml?lawCode=UIC&division=1.&title=&part=2.&chapter=7.&article=2."
+  },
+  "rules": [
+    {
+      "rule_id": "ca_pfl_001",
+      "rule_type": "leave",
+      "conditions": [
+        {"field": "employee.location", "operator": "eq", "value": "CA"},
+        {"field": "employee.sdi_contributions", "operator": "eq", "value": true},
+        {"field": "leave.reason", "operator": "in", "value": ["bonding_with_new_child", "care_for_seriously_ill_family_member"]}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "grant",
+        "subject": "paid_family_leave",
+        "parameters": {"max_weeks": 8, "wage_replacement_rate_min": 0.60, "wage_replacement_rate_max": 0.70}
+      },
+      "source_text": "Cal. Unemp. Ins. Code § 3301(a): An individual shall be eligible for family temporary disability insurance benefits if the individual is unable to perform his or her regular or customary work because the individual is needed to provide care for a seriously ill family member or to bond with a minor child within one year of birth or placement for adoption or foster care."
+    },
+    {
+      "rule_id": "ca_pfl_002",
+      "rule_type": "eligibility",
+      "conditions": [
+        {"field": "employee.location", "operator": "eq", "value": "CA"},
+        {"field": "employee.sdi_earnings_period", "operator": "gte", "value": 300}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "grant",
+        "subject": "pfl_eligibility",
+        "parameters": {"base_period": "5_to_18_months_before_claim"}
+      },
+      "source_text": "Cal. Unemp. Ins. Code § 2652: An individual is eligible for disability benefits if during the base period the individual received wages of not less than three hundred dollars ($300)."
+    },
+    {
+      "rule_id": "ca_pfl_003",
+      "rule_type": "entitlement",
+      "conditions": [
+        {"field": "employee.location", "operator": "eq", "value": "CA"},
+        {"field": "employer.employee_count", "operator": "gte", "value": 1}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "deny",
+        "subject": "employer_size_exemption",
+        "parameters": {"note": "No employer size exemption for CA PFL — all employers covered"}
+      },
+      "source_text": "Cal. Unemp. Ins. Code § 3300-3306: California PFL is a state-administered insurance program funded through employee payroll deductions. There is no employer size threshold; all employees who have paid into SDI are eligible regardless of employer size."
+    }
+  ]
+}

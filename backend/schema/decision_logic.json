@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://redline.dev/schema/decision_logic.json",
+  "title": "Decision Logic Extraction",
+  "description": "Structured decision rules extracted from company policy documents",
+  "type": "object",
+  "required": ["rules", "metadata"],
+  "additionalProperties": false,
+  "properties": {
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["rule_id", "rule_type", "conditions", "condition_logic", "action", "source_text"],
+        "additionalProperties": false,
+        "properties": {
+          "rule_id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "description": "Unique identifier for the rule"
+          },
+          "rule_type": {
+            "type": "string",
+            "enum": ["entitlement", "restriction", "eligibility", "termination", "leave", "compensation"],
+            "description": "Category of the decision rule"
+          },
+          "conditions": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["field", "operator", "value"],
+              "additionalProperties": false,
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "description": "Dot-notation field path (e.g. employee.tenure_years, employer.employee_count)"
+                },
+                "operator": {
+                  "type": "string",
+                  "enum": ["eq", "neq", "gt", "gte", "lt", "lte", "in", "not_in"]
+                },
+                "value": {
+                  "oneOf": [
+                    { "type": "string" },
+                    { "type": "number" },
+                    { "type": "boolean" },
+                    { "type": "array", "items": { "oneOf": [{ "type": "string" }, { "type": "number" }] } }
+                  ]
+                }
+              }
+            }
+          },
+          "condition_logic": {
+            "type": "string",
+            "enum": ["all", "any"],
+            "description": "How conditions are combined: all = AND, any = OR"
+          },
+          "action": {
+            "type": "object",
+            "required": ["type", "subject"],
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["grant", "deny", "require", "notify"]
+              },
+              "subject": {
+                "type": "string",
+                "description": "What is being granted, denied, required, or notified"
+              },
+              "parameters": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          },
+          "source_text": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Verbatim excerpt from the policy document"
+          },
+          "confidence": {
+            "type": "string",
+            "enum": ["high", "medium", "low"],
+            "description": "Model confidence in the extraction accuracy"
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["policy_name", "effective_date", "applicable_jurisdictions"],
+      "additionalProperties": false,
+      "properties": {
+        "policy_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "effective_date": {
+          "type": "string",
+          "description": "ISO 8601 date or descriptive date string"
+        },
+        "applicable_jurisdictions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
