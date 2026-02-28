@@ -113,10 +113,14 @@ def run_extraction_endpoint(endpoint_url: str, policy_text: str) -> str:
     system_msg = template.split("USER:")[0].replace("SYSTEM:", "").strip()
     user_msg = template.split("USER:")[1].strip().replace("{policy_text}", policy_text)
 
+    # Auto-detect model name from endpoint
+    models_resp = requests.get(f"{endpoint_url}/v1/models", timeout=10)
+    model_name = models_resp.json()["data"][0]["id"]
+
     resp = requests.post(
         f"{endpoint_url}/v1/chat/completions",
         json={
-            "model": "redline-extractor",
+            "model": model_name,
             "messages": [
                 {"role": "system", "content": system_msg},
                 {"role": "user", "content": user_msg},
