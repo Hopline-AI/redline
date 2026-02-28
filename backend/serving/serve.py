@@ -1,7 +1,6 @@
-"""vLLM inference server with constrained JSON decoding for Redline.
+"""vLLM inference server for Redline.
 
-Serves the fine-tuned model with outlines-based guided decoding to
-guarantee valid JSON output matching the decision_logic schema.
+Serves the fine-tuned LoRA adapter on top of the base model.
 """
 
 from __future__ import annotations
@@ -18,23 +17,6 @@ def load_config(config_path: str = "serving/config.yaml") -> dict:
         return yaml.safe_load(f)
 
 
-def load_schema(schema_path: str) -> dict:
-    with open(schema_path) as f:
-        return json.load(f)
-
-
-def build_prompt(policy_text: str) -> list[dict]:
-    """Build chat messages from policy text using the prompt template."""
-    template_path = Path(__file__).parent.parent / "schema" / "prompt_template.txt"
-    template = template_path.read_text()
-    system_msg = template.split("USER:")[0].replace("SYSTEM:", "").strip()
-    user_msg = template.split("USER:")[1].strip().replace("{policy_text}", policy_text)
-    return [
-        {"role": "system", "content": system_msg},
-        {"role": "user", "content": user_msg},
-    ]
-
-
 def main():
     parser = argparse.ArgumentParser(description="Start Redline vLLM inference server")
     parser.add_argument("--config", default="serving/config.yaml", help="Serving config")
@@ -42,14 +24,8 @@ def main():
 
     cfg = load_config(args.config)
 
-    from vllm import LLM, SamplingParams
-    from vllm.entrypoints.openai.api_server import run_server
-
-    schema = load_schema(cfg["decoding"]["schema_path"])
-
-    # Build vLLM launch args
     vllm_args = [
-        "--model", cfg["server"]["model"],
+        "--model", cfg["server"]["base_model"],
         "--host", cfg["server"]["host"],
         "--port", str(cfg["server"]["port"]),
         "--tensor-parallel-size", str(cfg["server"]["tensor_parallel_size"]),
@@ -57,21 +33,15 @@ def main():
         "--gpu-memory-utilization", str(cfg["server"]["gpu_memory_utilization"]),
         "--max-num-seqs", str(cfg["batching"]["max_num_seqs"]),
         "--max-num-batched-tokens", str(cfg["batching"]["max_num_batched_tokens"]),
+        "--enable-lora",
+        "--lora-modules", f"redline-extractor={cfg['server']['model']}",
     ]
 
-    if cfg["quantization"]["method"] != "none":
-        vllm_args.extend(["--quantization", cfg["quantization"]["method"]])
+    print(f"Starting vLLM server...")
+    print(f"Base model: {cfg['server']['base_model']}")
+    print(f"LoRA adapter: {cfg['server']['model']}")
+    print(f"Port: {cfg['server']['port']}")
 
-    if cfg["decoding"]["guided_json"]:
-        vllm_args.extend([
-            "--guided-decoding-backend", cfg["decoding"]["backend"],
-        ])
-
-    print(f"Starting vLLM server with args: {' '.join(vllm_args)}")
-    print(f"Constrained decoding: {cfg['decoding']['guided_json']} (backend: {cfg['decoding']['backend']})")
-    print(f"Schema: {cfg['decoding']['schema_path']}")
-
-    # Use subprocess to launch vLLM OpenAI-compatible server
     import subprocess
     import sys
 
