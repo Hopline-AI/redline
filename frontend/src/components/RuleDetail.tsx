@@ -1,5 +1,6 @@
 import type { ExtractedRule, Condition, Action, Operator } from "@/types";
 import { useParams } from "react-router-dom";
+import { Plus, Trash } from "lucide-react";
 import { PdfViewerModal } from "./PdfViewerModal";
 import { useRuleEditor } from "@/hooks/useRuleEditor";
 
@@ -29,6 +30,8 @@ export function RuleDetail({ rule, isEditing = false, onSave }: Props) {
     setShowPdf,
     handleConditionChange,
     handleActionChange,
+    handleAddCondition,
+    handleRemoveCondition,
     handleSaveClick
   } = useRuleEditor(rule, onSave);
   return (
@@ -80,7 +83,7 @@ export function RuleDetail({ rule, isEditing = false, onSave }: Props) {
           </h4>
           <ul className="condition-list">
             {editedRule.conditions.map((c, i) => (
-              <li key={i} className="condition-item" style={{ display: isEditing ? "grid" : "flex", gridTemplateColumns: isEditing ? "1fr auto 1fr" : undefined, gap: isEditing ? "12px" : undefined, alignItems: "center" }}>
+              <li key={i} className="condition-item" style={{ display: isEditing ? "grid" : "flex", gridTemplateColumns: isEditing ? "1fr auto 1fr auto" : undefined, gap: isEditing ? "12px" : undefined, alignItems: "center" }}>
                 {isEditing ? (
                   <>
                     <input 
@@ -110,6 +113,14 @@ export function RuleDetail({ rule, isEditing = false, onSave }: Props) {
                       style={{ width: "100%", padding: "8px 12px", border: "1px solid var(--border)", borderRadius: "6px", fontFamily: "var(--font-mono)", fontSize: "13px", backgroundColor: "var(--background)" }}
                       placeholder="Value"
                     />
+                    <button 
+                      className="btn-ghost" 
+                      onClick={() => handleRemoveCondition(i)}
+                      style={{ padding: "8px", color: "var(--danger)", borderRadius: "6px" }}
+                      title="Remove condition"
+                    >
+                      <Trash size={14} />
+                    </button>
                   </>
                 ) : (
                   <>
@@ -121,6 +132,16 @@ export function RuleDetail({ rule, isEditing = false, onSave }: Props) {
               </li>
             ))}
           </ul>
+          {isEditing && (
+            <button 
+              className="btn-outline" 
+              onClick={handleAddCondition}
+              style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "12px", padding: "6px 12px", fontSize: "12px", borderRadius: "6px" }}
+            >
+              <Plus size={14} />
+              Add Condition
+            </button>
+          )}
         </div>
 
         {/* Action */}
@@ -153,8 +174,31 @@ export function RuleDetail({ rule, isEditing = false, onSave }: Props) {
                 <strong style={{ fontWeight: 600 }}>{rule.action.type}</strong> → {rule.action.subject}
               </p>
             )}
-            {rule.action.parameters && (
-              <pre style={{ marginTop: "var(--space-2)", fontSize: "var(--text-8)" }}>
+            {isEditing && (
+              <div style={{ marginTop: "16px" }}>
+                <label style={{ fontSize: "11px", fontWeight: 600, color: "var(--muted-foreground)", textTransform: "uppercase", letterSpacing: "0.05em", display: "block", marginBottom: "8px" }}>Parameters (JSON)</label>
+                <textarea
+                  defaultValue={editedRule.action.parameters ? JSON.stringify(editedRule.action.parameters, null, 2) : ""}
+                  onBlur={(e) => {
+                    const val = e.target.value.trim();
+                    if (!val) {
+                      handleActionChange("parameters", undefined);
+                      return;
+                    }
+                    try {
+                      const parsed = JSON.parse(val);
+                      handleActionChange("parameters", parsed);
+                    } catch (err) {
+                      // Silently fail on invalid JSON to prevent crash, user can fix it
+                    }
+                  }}
+                  style={{ width: "100%", fontFamily: "var(--font-mono)", fontSize: "12px", padding: "12px", borderRadius: "6px", border: "1px solid var(--border)", backgroundColor: "var(--background)", minHeight: "100px", resize: "vertical" }}
+                  placeholder='{"key": "value"}'
+                />
+              </div>
+            )}
+            {!isEditing && rule.action.parameters && Object.keys(rule.action.parameters).length > 0 && (
+              <pre style={{ marginTop: "16px", padding: "12px", backgroundColor: "var(--faint)", borderRadius: "6px", fontSize: "12px", fontFamily: "var(--font-mono)", color: "var(--foreground)", overflowX: "auto" }}>
                 {JSON.stringify(rule.action.parameters, null, 2)}
               </pre>
             )}

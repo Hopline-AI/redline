@@ -3,12 +3,14 @@ import { Layout } from "@/components/Layout";
 import Upload from "@/pages/Upload";
 import Review from "@/pages/Review";
 import Report from "@/pages/Report";
+import Landing from "@/pages/Landing";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
+          <Route path="/landing" element={<Landing />} />
           <Route path="/" element={<Upload />} />
           <Route path="/:policyId" element={<Upload />} />
           <Route path="/review/:policyId" element={<Review />} />

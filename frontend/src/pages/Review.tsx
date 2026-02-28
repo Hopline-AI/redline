@@ -66,15 +66,10 @@ export default function Review() {
           <button 
             className="btn-primary"
             style={{ width: "100%" }}
-            disabled={saving || counts.pending === counts.total} 
+            disabled={counts.pending === counts.total} 
             onClick={handleSave}
           >
-            {saving ? (
-              <>
-                <div className="spinner" style={{ borderTopColor: "white" }} />
-                Saving…
-              </>
-            ) : "Save & Generate Report"}
+            Generate Report
           </button>
 
           {/* Filter Bar */}

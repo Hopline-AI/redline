@@ -45,6 +45,20 @@ export function useRuleEditor(initialRule: ExtractedRule, onSaveCallback?: (rule
         setValidationErrors([]);
     };
 
+    const handleAddCondition = () => {
+        setEditedRule({
+            ...editedRule,
+            conditions: [...editedRule.conditions, { field: "", operator: "eq", value: "" }]
+        });
+        setValidationErrors([]);
+    };
+
+    const handleRemoveCondition = (index: number) => {
+        const newConditions = editedRule.conditions.filter((_, i) => i !== index);
+        setEditedRule({ ...editedRule, conditions: newConditions });
+        setValidationErrors([]);
+    };
+
     const handleSaveClick = () => {
         const result = extractedRuleSchema.safeParse(editedRule);
 
@@ -67,6 +81,8 @@ export function useRuleEditor(initialRule: ExtractedRule, onSaveCallback?: (rule
         setShowPdf,
         handleConditionChange,
         handleActionChange,
+        handleAddCondition,
+        handleRemoveCondition,
         handleSaveClick
     };
 }

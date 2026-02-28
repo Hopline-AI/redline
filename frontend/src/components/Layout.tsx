@@ -13,21 +13,6 @@ export function Layout() {
           Red<span>line</span>
         </Link>
         <nav>
-          <Link to="/" aria-current={pathname === "/" ? "page" : undefined}>
-            Upload
-          </Link>
-          <Link
-            to="/review/pol_demo_001"
-            aria-current={pathname.startsWith("/review") ? "page" : undefined}
-          >
-            Review
-          </Link>
-          <Link
-            to="/report/pol_demo_001"
-            aria-current={pathname.startsWith("/report") ? "page" : undefined}
-          >
-            Report
-          </Link>
           <button
             className="ghost icon small"
             onClick={toggleTheme}

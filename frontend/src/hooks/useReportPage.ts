@@ -15,23 +15,39 @@ export function useReportPage(policyId: string | undefined) {
 
     const rules = useMemo(() => {
         if (!reportData) return [];
-        return reportData.rule_results.map((r: any) => ({
+
+        const mappedRules = reportData.rule_results.map((r: any) => ({
             rule_id: r.policy_rule_id,
-            rule_type: "N/A", // If the backend doesn't send this in report, just placeholder
-            status: r.lawyer_status as ReviewStatus,
+            rule_type: r.topic || "N/A",
+            status: r.lawyer_status,
             lawyer_notes: r.lawyer_notes,
-            conflicts: r.conflict_type !== "aligned" && r.conflict_type !== "missing" ? [{ conflict_type: r.conflict_type }] : [],
+            details: r.details, // Details can be a string or Array<{parameter, type, policy_value, legislation_value, detail}>
+            conflicts: r.conflict_type !== "aligned" && r.conflict_type !== "compliant" ? [{ conflict_type: r.conflict_type }] : [],
+            legislation_ids: r.legislation_rule_ids || []
         }));
+
+        const mappedMissing = (reportData.missing_requirements || []).map((m: any) => ({
+            rule_id: `missing-${m.topic}`,
+            rule_type: m.topic || "N/A",
+            status: "pending",
+            lawyer_notes: "",
+            details: m.details,
+            conflicts: [{ conflict_type: m.conflict_type }],
+            legislation_ids: m.legislation_rule_ids || []
+        }));
+
+        return [...mappedRules, ...mappedMissing];
     }, [reportData]);
 
     const counts = useMemo(() => {
         const approved = rules.filter((r) => r.status === "approved").length;
         const rejected = rules.filter((r) => r.status === "rejected").length;
+        const edited = rules.filter((r) => r.status === "edit").length;
         const pending = rules.filter((r) => r.status === "pending").length;
         const conflicts = rules.filter((r) =>
-            r.conflicts.some((c) => c.conflict_type === "contradicts")
+            r.conflicts.some((c) => c.conflict_type === "falls_short" || c.conflict_type === "missing_requirement" || c.conflict_type === "contradicts")
         ).length;
-        return { approved, rejected, pending, conflicts, total: rules.length };
+        return { approved, rejected, edited, pending, conflicts, total: rules.length };
     }, [rules]);
 
     const hasPending = counts.pending > 0;
