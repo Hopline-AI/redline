@@ -76,51 +76,54 @@ export default function Review() {
               </>
             ) : "Save & Generate Report"}
           </button>
-        </div>
 
-        {/* Filter Bar */}
-        <div className="no-scrollbar" style={{ padding: "var(--space-3) var(--space-4)", display: "flex", gap: "var(--space-2)", overflowX: "auto", borderBottom: "1px solid var(--border)", WebkitOverflowScrolling: "touch" }}>
-            {filterOptions.map(opt => (
-                <button 
-                  key={opt.value}
-                  onClick={() => setFilter(opt.value)}
-                  className={filter === opt.value ? "btn-primary" : "btn-secondary"}
-                  style={{ 
-                      padding: "4px 12px", 
-                      fontSize: "var(--text-8)", 
-                      borderRadius: "20px",
-                      height: "28px"
-                  }}
-                >
-                    {opt.label}
-                    {opt.count !== undefined && (
-                        <span className="tabular-nums" style={{ 
-                            background: filter === opt.value ? "rgba(255,255,255,0.2)" : "var(--faint)",
-                            padding: "0 6px",
-                            borderRadius: "10px",
-                            fontSize: "10px",
-                            marginLeft: "4px"
-                        }}>
-                            {opt.count}
-                        </span>
-                    )}
-                </button>
-            ))}
-        </div>
-
-        {filteredRules.map((rule) => (
-          <RuleCard
-            key={rule.ui_id}
-            rule={rule}
-            selected={rule.ui_id === selectedId}
-            onClick={() => setSelectedId(rule.ui_id)}
-          />
-        ))}
-        {filteredRules.length === 0 && (
-          <div style={{ padding: "var(--space-10) var(--space-4)", textAlign: "center", color: "var(--muted-foreground)" }}>
-             <p style={{ margin: 0 }}>No rules match this filter.</p>
+          {/* Filter Bar */}
+          <div className="no-scrollbar" style={{ padding: "var(--space-1) 0", display: "flex", gap: "var(--space-2)", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+              {filterOptions.map(opt => (
+                  <button 
+                    key={opt.value}
+                    onClick={() => setFilter(opt.value)}
+                    className={filter === opt.value ? "btn-primary" : "btn-secondary"}
+                    style={{ 
+                        padding: "4px 12px", 
+                        fontSize: "var(--text-8)", 
+                        borderRadius: "20px",
+                        height: "28px",
+                        flexShrink: 0
+                    }}
+                  >
+                      {opt.label}
+                      {opt.count !== undefined && (
+                          <span className="tabular-nums" style={{ 
+                              background: filter === opt.value ? "rgba(255,255,255,0.2)" : "var(--faint)",
+                              padding: "0 6px",
+                              borderRadius: "10px",
+                              fontSize: "10px",
+                              marginLeft: "4px"
+                          }}>
+                              {opt.count}
+                          </span>
+                      )}
+                  </button>
+              ))}
           </div>
-        )}
+        </div>
+
+        <div className="rule-list-scroll-area">
+          {filteredRules.map((rule) => (
+            <RuleCard
+              key={rule.ui_id}
+              rule={rule}
+              selected={rule.ui_id === selectedId}
+              onClick={() => setSelectedId(rule.ui_id)}
+            />
+          ))}
+          {filteredRules.length === 0 && (
+            <div style={{ padding: "var(--space-10) var(--space-4)", textAlign: "center", color: "var(--muted-foreground)" }}>
+               <p style={{ margin: 0 }}>No rules match this filter.</p>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Right: Detail panel */}

@@ -269,20 +269,25 @@ button:disabled, .btn:disabled {
 
 .rule-list-panel {
   border-right: 1px solid var(--border);
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   background: var(--background);
 }
 
 .rule-list-header {
-  position: sticky;
-  top: 0;
-  z-index: 2;
+  flex-shrink: 0;
   padding: var(--space-3) var(--space-4);
   border-bottom: 1px solid var(--border);
   background: var(--card);
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.rule-list-scroll-area {
+  flex: 1;
+  overflow-y: auto;
 }
 
 .rule-card {
