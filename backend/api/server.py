@@ -34,6 +34,7 @@ from api.models import (
     UploadResponse,
 )
 from engine.comparator import compare_all
+from engine.normalize import post_process
 from engine.pdf_parser import chunk_by_sections, parse_pdf
 from engine.report import generate_report, report_to_dict
 
@@ -210,6 +211,9 @@ def _run_pipeline(job_id: str, text: str, policy_name: str):
                 "effective_date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
                 "applicable_jurisdictions": ["CA", "federal"],
             }
+
+        # Normalize parameter names and deduplicate across chunks
+        all_rules = post_process(all_rules)
 
         job["extraction"] = {"rules": all_rules, "metadata": metadata}
 

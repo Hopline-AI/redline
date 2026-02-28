@@ -3,34 +3,42 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Any
 
 LEGISLATION_DIR = Path(__file__).parent / "legislation"
 
-# Maps topic keywords to canonical topic names
+# Maps topic keywords to canonical topic names.
+# Each keyword is checked as a substring against action.subject + rule_type.
 TOPIC_KEYWORDS: dict[str, list[str]] = {
     "layoff_notice": [
         "layoff", "warn", "mass_layoff", "plant_closing", "relocation",
         "layoff_notice", "layoff_notice_to_edd", "layoff_notice_to_government",
+        "workforce_reduction", "reduction_in_force", "rif",
     ],
     "final_paycheck": [
         "final_paycheck", "final_pay", "final_wages", "waiting_time_penalty",
-        "last_paycheck",
+        "last_paycheck", "termination_pay", "separation_pay", "final_check",
+        "final_wage", "last_pay",
     ],
     "family_leave": [
         "paid_family_leave", "pfl", "fmla", "family_leave", "medical_leave",
         "unpaid_family_medical_leave", "pfl_eligibility", "fmla_employer_coverage",
         "health_benefits_continuation", "bonding_with_new_child",
+        "parental_leave", "maternity", "paternity", "bonding_leave",
+        "family_medical", "caregiver",
     ],
     "overtime": [
         "overtime", "overtime_pay", "double_overtime", "weekly_overtime",
-        "double_overtime_pay", "seventh_day_double_overtime", "seventh_day_overtime", "weekly_overtime_pay",
+        "double_overtime_pay", "seventh_day_double_overtime", "seventh_day_overtime",
+        "weekly_overtime_pay", "daily_overtime", "ot_pay", "time_and_half",
     ],
     "meal_breaks": [
         "meal_break", "rest_break", "meal_period", "rest_period",
         "second_meal_break", "meal_break_premium_pay", "short_break_compensation",
-        "unpaid_meal_period",
+        "unpaid_meal_period", "lunch_break", "lunch_period", "break_period",
+        "meal", "rest",
     ],
 }
 
@@ -44,8 +52,6 @@ TOPIC_FILES: dict[str, dict[str, str]] = {
 }
 
 # For numeric parameters, define which direction is "more protective" for the employee
-# "higher_is_better" means a higher value benefits the employee
-# "lower_is_better" means a lower value benefits the employee
 PARAMETER_DIRECTIONS: dict[str, str] = {
     "notice_days": "higher_is_better",
     "max_weeks": "higher_is_better",
@@ -57,11 +63,18 @@ PARAMETER_DIRECTIONS: dict[str, str] = {
     "duration_days": "higher_is_better",
 }
 
-# Threshold directions for conditions (lower threshold = more protective for employees)
+# Condition fields where a LOWER threshold is more protective for employees.
+# Both canonical and legacy field names are included so the comparator works
+# regardless of whether normalize.py ran first or not.
 CONDITION_THRESHOLD_FIELDS: dict[str, str] = {
     "employer.employee_count": "lower_is_more_protective",
+    "employer.employee_count_within_75_miles": "lower_is_more_protective",
+    "employer.employees_within_75_miles": "lower_is_more_protective",
     "employee.tenure_months": "lower_is_more_protective",
     "employee.hours_worked_last_12_months": "lower_is_more_protective",
+    "employee.hours_worked_12_months": "lower_is_more_protective",
+    "layoff.affected_employee_count": "lower_is_more_protective",
+    "layoff.affected_count": "lower_is_more_protective",
 }
 
 
@@ -81,17 +94,28 @@ def load_legislation(legislation_dir: Path | None = None) -> dict[str, dict[str,
     return result
 
 
-def classify_topic(rule: dict) -> str | None:
-    """Classify a policy rule into a topic based on action.subject and rule_type keywords."""
-    subject = rule.get("action", {}).get("subject", "").lower()
-    rule_type = rule.get("rule_type", "").lower()
-    search_text = f"{subject} {rule_type}"
+def _normalize(text: str) -> str:
+    """Lowercase, replace hyphens/spaces with underscores, strip non-alphanum."""
+    text = text.lower().strip()
+    text = re.sub(r"[\s\-]+", "_", text)
+    return re.sub(r"[^a-z0-9_]", "", text)
 
-    # Check for keyword matches
+
+def classify_topic(rule: dict) -> str | None:
+    """Classify a policy rule into a topic based on action.subject, rule_type, and rule_id."""
+    subject = _normalize(rule.get("action", {}).get("subject", ""))
+    rule_type = _normalize(rule.get("rule_type", ""))
+    rule_id = _normalize(rule.get("rule_id", ""))
+    search_text = f"{subject} {rule_type} {rule_id}"
+
     best_topic = None
     best_score = 0
     for topic, keywords in TOPIC_KEYWORDS.items():
-        score = sum(1 for kw in keywords if kw in search_text)
+        score = sum(1 for kw in keywords if kw in search_text or search_text in kw)
+        # Also check if any keyword is a substring of the subject itself
+        for kw in keywords:
+            if kw in subject or subject in kw:
+                score += 2
         if score > best_score:
             best_score = score
             best_topic = topic
@@ -105,7 +129,7 @@ def _extract_numeric_params(rule: dict) -> dict[str, float]:
     return {k: v for k, v in params.items() if isinstance(v, (int, float))}
 
 
-def _extract_threshold(rule: dict, field: str) -> float | None:
+def _extract_condition_value(rule: dict, field: str) -> float | None:
     """Extract the threshold value for a specific condition field."""
     for cond in rule.get("conditions", []):
         if cond.get("field") == field:
@@ -115,15 +139,50 @@ def _extract_threshold(rule: dict, field: str) -> float | None:
     return None
 
 
+def _compare_conditions(
+    policy_rule: dict,
+    leg_rule: dict,
+) -> list[dict]:
+    """Compare condition thresholds between policy and legislation rules.
+
+    If legislation applies at 75 employees but policy only kicks in at 100,
+    the policy is more restrictive (falls_short for employees in the 75-99 range).
+    """
+    conflicts = []
+
+    for field, direction in CONDITION_THRESHOLD_FIELDS.items():
+        policy_val = _extract_condition_value(policy_rule, field)
+        leg_val = _extract_condition_value(leg_rule, field)
+
+        if policy_val is None or leg_val is None:
+            continue
+
+        if direction == "lower_is_more_protective":
+            # Legislation triggers at a lower threshold (more protective).
+            # If policy threshold is HIGHER, employees in the gap lose protection.
+            if policy_val > leg_val:
+                conflicts.append({
+                    "parameter": f"condition:{field}",
+                    "type": "falls_short",
+                    "policy_value": policy_val,
+                    "legislation_value": leg_val,
+                    "legislation_rule_id": leg_rule.get("rule_id"),
+                    "detail": (
+                        f"Policy requires {field}>={policy_val} but legislation "
+                        f"applies at {field}>={leg_val}. Employees between "
+                        f"{leg_val} and {policy_val} lose protection."
+                    ),
+                })
+
+    return conflicts
+
+
 def compare_rule(
     policy_rule: dict,
     legislation_rules: list[dict],
     jurisdiction: str,
 ) -> dict:
-    """Compare a single policy rule against matching legislation rules.
-
-    Returns a comparison result dict with conflict_type and details.
-    """
+    """Compare a single policy rule against matching legislation rules."""
     topic = classify_topic(policy_rule)
     if topic is None:
         return {
@@ -161,20 +220,24 @@ def compare_rule(
             "legislation_rule_ids": [],
         }
 
-    # Compare parameters
+    # Compare parameters and conditions
     policy_params = _extract_numeric_params(policy_rule)
     conflicts = []
+    comparisons_made = 0
     leg_rule_ids = [r.get("rule_id") for r in matching_leg_rules]
 
     for leg_rule in matching_leg_rules:
         leg_params = _extract_numeric_params(leg_rule)
 
+        # 1. Compare action parameters (notice_days, max_weeks, etc.)
         for param_name, direction in PARAMETER_DIRECTIONS.items():
             policy_val = policy_params.get(param_name)
             leg_val = leg_params.get(param_name)
 
             if policy_val is None or leg_val is None:
                 continue
+
+            comparisons_made += 1
 
             if direction == "higher_is_better":
                 if policy_val < leg_val:
@@ -206,11 +269,17 @@ def compare_rule(
                         "detail": f"Policy sets {param_name}={policy_val}, legislation allows max {leg_val}.",
                     })
 
-        # Compare action types
+        # 2. Compare condition thresholds (employer size, tenure, etc.)
+        condition_conflicts = _compare_conditions(policy_rule, leg_rule)
+        if condition_conflicts:
+            comparisons_made += len(condition_conflicts)
+            conflicts.extend(condition_conflicts)
+
+        # 3. Compare action types
         policy_action_type = policy_rule.get("action", {}).get("type")
         leg_action_type = leg_rule.get("action", {}).get("type")
         if policy_action_type and leg_action_type and policy_action_type != leg_action_type:
-            # e.g., policy says "deny" but legislation says "grant"
+            comparisons_made += 1
             if (policy_action_type == "deny" and leg_action_type in ("grant", "require")) or \
                (policy_action_type == "grant" and leg_action_type == "deny"):
                 conflicts.append({
@@ -223,9 +292,7 @@ def compare_rule(
                 })
 
     # Determine overall conflict type
-    if not conflicts:
-        conflict_type = "compliant"
-    else:
+    if conflicts:
         conflict_types = {c["type"] for c in conflicts}
         if "contradicts" in conflict_types:
             conflict_type = "contradicts"
@@ -235,13 +302,30 @@ def compare_rule(
             conflict_type = "exceeds"
         else:
             conflict_type = "compliant"
+    elif comparisons_made > 0:
+        conflict_type = "compliant"
+    else:
+        # Topic matched but no numeric comparisons could be made.
+        # This means we can't verify compliance — flag for human review.
+        conflict_type = "needs_review"
+
+    details: Any
+    if conflicts:
+        details = conflicts
+    elif conflict_type == "needs_review":
+        details = (
+            f"Policy rule matched to topic '{topic}' but no numeric parameters "
+            f"could be compared against {jurisdiction} legislation. Manual review required."
+        )
+    else:
+        details = "Policy rule is compliant with legislation."
 
     return {
         "policy_rule_id": policy_rule.get("rule_id"),
         "topic": topic,
         "conflict_type": conflict_type,
         "jurisdiction": jurisdiction,
-        "details": conflicts if conflicts else "Policy rule is compliant with legislation.",
+        "details": details,
         "legislation_rule_ids": leg_rule_ids,
     }
 
@@ -278,10 +362,7 @@ def compare_all(
     policy_rules: list[dict],
     legislation_dir: Path | None = None,
 ) -> dict:
-    """Compare all extracted policy rules against all legislation.
-
-    Returns a dict with per-rule results and missing requirements.
-    """
+    """Compare all extracted policy rules against all legislation."""
     legislation = load_legislation(legislation_dir)
     results = []
 
