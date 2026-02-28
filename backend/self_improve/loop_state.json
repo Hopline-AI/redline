@@ -1,0 +1,32 @@
+{
+  "cycles": [
+    {
+      "cycle_num": 1,
+      "target_category": "entitlement",
+      "dominant_failure": "none",
+      "samples_generated": 0,
+      "dataset_version": 1,
+      "status": "complete",
+      "before_run": "baseline-devstral-2512",
+      "after_run": "cycle_1_simulated"
+    },
+    {
+      "cycle_num": 2,
+      "target_category": "restriction",
+      "dominant_failure": "none",
+      "samples_generated": 0,
+      "dataset_version": 2,
+      "status": "complete",
+      "before_run": "cycle_1_simulated",
+      "after_run": "cycle_2_simulated"
+    }
+  ],
+  "consecutive_sub_threshold": 2,
+  "stop_reason": "Converged after 2 cycles (patience=2)",
+  "started_at": "2026-02-28T17:06:44.141696+00:00",
+  "finished_at": "2026-02-28T17:06:45.792703+00:00",
+  "responsiveness": {
+    "entitlement": 0.2,
+    "restriction": 0.2
+  }
+}

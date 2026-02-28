@@ -10,7 +10,6 @@ Can run in two modes:
 from __future__ import annotations
 
 import argparse
-import copy
 import json
 import time
 from dataclasses import dataclass, field
@@ -271,9 +270,19 @@ def run_improvement_loop(
         if eval_callback:
             new_snapshot = eval_callback()
         elif dry_run:
-            new_snapshot = copy.deepcopy(current)
-            new_snapshot.run_name = f"cycle_{cycle_num}_simulated"
-            new_snapshot.run_id = f"sim_{cycle_num}"
+            # Build a fresh snapshot instead of deepcopy (W&B raw dict is not copyable)
+            new_snapshot = MetricsSnapshot(
+                run_id=f"sim_{cycle_num}",
+                run_name=f"cycle_{cycle_num}_simulated",
+                created_at=current.created_at,
+                schema_validity_rate=current.schema_validity_rate,
+                field_accuracy=current.field_accuracy,
+                rule_detection_f1=current.rule_detection_f1,
+                source_text_overlap=current.source_text_overlap,
+                avg_latency_ms=current.avg_latency_ms,
+                per_type=dict(current.per_type),
+                failure_modes=dict(current.failure_modes),
+            )
             # Simulate: targeted category improves by ~0.08, others stay stable
             if target_category in new_snapshot.per_type:
                 new_snapshot.per_type[target_category] = min(
@@ -404,9 +413,20 @@ def main():
     parser.add_argument("--max-cycles", type=int, default=MAX_CYCLES, help="Maximum improvement cycles")
     parser.add_argument("--dry-run", action="store_true", help="Simulate without generating data or retraining")
     parser.add_argument("--generate-model", default="gemini-2.0-flash", help="Gemini model for data generation")
+    parser.add_argument("--no-callbacks", action="store_true", help="Run without HF Jobs callbacks (print instructions instead)")
     args = parser.parse_args()
 
+    eval_cb = None
+    retrain_cb = None
+
+    if not args.no_callbacks and not args.dry_run:
+        from self_improve.callbacks import eval_callback, retrain_callback
+        eval_cb = eval_callback
+        retrain_cb = retrain_callback
+
     run_improvement_loop(
+        eval_callback=eval_cb,
+        retrain_callback=retrain_cb,
         max_cycles=args.max_cycles,
         dry_run=args.dry_run,
         generate_model=args.generate_model,

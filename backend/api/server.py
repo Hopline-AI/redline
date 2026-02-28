@@ -18,11 +18,17 @@ import requests
 from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
+from api.auto_retrain import (
+    check_and_trigger,
+    get_status as get_retrain_status,
+    initialize_from_disk,
+)
 from api.models import (
     ComparisonResult,
     ComplianceReportResponse,
     ExtractionResult,
     JobStatus,
+    RetrainStatus,
     ReviewRequest,
     ReviewResponse,
     UploadResponse,
@@ -52,12 +58,10 @@ LAWYER_EDITS_DIR = Path("data/lawyer_edits")
 LAWYER_EDITS_DIR.mkdir(parents=True, exist_ok=True)
 LAWYER_CORRECTIONS_PATH = Path("data/lawyer_corrections.jsonl")
 
-# Model endpoint config
 MODEL_ENDPOINT = os.environ.get("REDLINE_MODEL_ENDPOINT", "http://localhost:8080")
 MISTRAL_API_KEY = os.environ.get("MISTRAL_API_KEY", "")
 USE_MISTRAL_API = os.environ.get("REDLINE_USE_MISTRAL_API", "false").lower() == "true"
 
-# System message for training format
 SYSTEM_MESSAGE = (
     "You are a compliance extraction engine. Your task is to extract all decision "
     "rules from company policy documents into structured JSON. Output only valid JSON "
@@ -71,9 +75,8 @@ USER_TEMPLATE = (
     "source text from the policy.\n\nPolicy text:\n{policy_text}"
 )
 
-# --- W&B Weave initialization ---
-
 _weave_initialized = False
+
 
 def _init_weave():
     global _weave_initialized
@@ -88,6 +91,13 @@ def _init_weave():
         return False
 
 
+def _parse_prompt_template(policy_text: str) -> tuple[str, str]:
+    template = Path("schema/prompt_template.txt").read_text()
+    system_msg = template.split("USER:")[0].replace("SYSTEM:", "").strip()
+    user_msg = template.split("USER:")[1].strip().replace("{policy_text}", policy_text)
+    return system_msg, user_msg
+
+
 def _get_model_name() -> str:
     """Auto-detect model name from vLLM endpoint."""
     try:
@@ -99,11 +109,7 @@ def _get_model_name() -> str:
 
 def _extract_with_endpoint(policy_text: str) -> dict:
     """Call the vLLM/TGI endpoint for extraction."""
-    template_path = Path("schema/prompt_template.txt")
-    template = template_path.read_text()
-    system_msg = template.split("USER:")[0].replace("SYSTEM:", "").strip()
-    user_msg = template.split("USER:")[1].strip().replace("{policy_text}", policy_text)
-
+    system_msg, user_msg = _parse_prompt_template(policy_text)
     model_name = _get_model_name()
 
     start = time.time()
@@ -124,7 +130,6 @@ def _extract_with_endpoint(policy_text: str) -> dict:
     content = resp.json()["choices"][0]["message"]["content"]
     latency_ms = (time.time() - start) * 1000
 
-    # Weave trace
     if _weave_initialized:
         try:
             import weave
@@ -146,10 +151,7 @@ def _extract_with_mistral(policy_text: str) -> dict:
     from mistralai import Mistral
 
     client = Mistral(api_key=MISTRAL_API_KEY)
-    template_path = Path("schema/prompt_template.txt")
-    template = template_path.read_text()
-    system_msg = template.split("USER:")[0].replace("SYSTEM:", "").strip()
-    user_msg = template.split("USER:")[1].strip().replace("{policy_text}", policy_text)
+    system_msg, user_msg = _parse_prompt_template(policy_text)
 
     start = time.time()
     response = client.chat.complete(
@@ -185,11 +187,9 @@ def _run_pipeline(job_id: str, text: str, policy_name: str):
     job = jobs[job_id]
 
     try:
-        # Chunk
         job["status"] = JobStatus.extracting
         chunks = chunk_by_sections(text)
 
-        # Extract rules from each chunk
         all_rules = []
         metadata = None
         for chunk in chunks:
@@ -213,12 +213,10 @@ def _run_pipeline(job_id: str, text: str, policy_name: str):
 
         job["extraction"] = {"rules": all_rules, "metadata": metadata}
 
-        # Compare
         job["status"] = JobStatus.comparing
         comparison = compare_all(all_rules)
         job["comparison"] = comparison
 
-        # Generate report
         report = generate_report(policy_name, all_rules, report_id=f"report_{job_id}")
         job["report"] = report_to_dict(report)
 
@@ -245,14 +243,11 @@ def _save_correction_and_log(job_id: str, policy_text: str, corrected_rules: lis
     corrected_extraction = {"rules": corrected_rules, "metadata": metadata}
     sample = _build_training_sample(policy_text, corrected_extraction)
 
-    # Append to corrections file
     with open(LAWYER_CORRECTIONS_PATH, "a") as f:
         f.write(json.dumps(sample) + "\n")
 
-    # Count total corrections
     correction_count = sum(1 for _ in open(LAWYER_CORRECTIONS_PATH))
 
-    # Log as W&B Artifact (versioned dataset)
     try:
         import wandb
 
@@ -277,11 +272,10 @@ def _save_correction_and_log(job_id: str, policy_text: str, corrected_rules: lis
         print(f"W&B artifact logging failed: {e}")
 
 
-# --- Routes ---
-
 @app.on_event("startup")
 async def startup():
     _init_weave()
+    initialize_from_disk()
 
 
 @app.post("/upload", response_model=UploadResponse)
@@ -360,16 +354,14 @@ async def get_comparison(job_id: str):
 
 
 @app.post("/review/{job_id}", response_model=ReviewResponse)
-async def submit_review(job_id: str, request: ReviewRequest):
+async def submit_review(job_id: str, request: ReviewRequest, background_tasks: BackgroundTasks):
     """Submit lawyer reviews. Edits become retraining samples logged to W&B."""
     if job_id not in jobs:
         raise HTTPException(status_code=404, detail="Job not found")
 
     job = jobs[job_id]
     extraction = job.get("extraction", {})
-    existing_rules = {r["rule_id"]: r for r in extraction.get("rules", [])}
 
-    # Apply reviews to report
     report = job.get("report", {})
     rule_results = report.get("rule_results", [])
     rule_map = {r["policy_rule_id"]: r for r in rule_results}
@@ -382,7 +374,6 @@ async def submit_review(job_id: str, request: ReviewRequest):
             rule_map[review.rule_id]["lawyer_status"] = review.action.value
             rule_map[review.rule_id]["lawyer_notes"] = review.notes
 
-        # If lawyer edited, replace the rule in corrected set
         if review.action.value == "edit" and review.edited_rule:
             has_edits = True
             for i, rule in enumerate(corrected_rules):
@@ -390,12 +381,10 @@ async def submit_review(job_id: str, request: ReviewRequest):
                     corrected_rules[i] = review.edited_rule.model_dump()
                     break
 
-        # If lawyer denied, remove from corrected set
         if review.action.value == "deny":
             has_edits = True
             corrected_rules = [r for r in corrected_rules if r.get("rule_id") != review.rule_id]
 
-    # Save raw edits for audit trail
     edits_path = LAWYER_EDITS_DIR / f"{job_id}.jsonl"
     with open(edits_path, "a") as f:
         for review in request.reviews:
@@ -410,17 +399,23 @@ async def submit_review(job_id: str, request: ReviewRequest):
                 edit_record["edited_rule"] = review.edited_rule.model_dump()
             f.write(json.dumps(edit_record) + "\n")
 
-    # If any edits/denials, build a corrected training sample and log to W&B
+    retrain_triggered = False
     if has_edits:
         policy_text = job.get("raw_text", "")
         metadata = extraction.get("metadata", {})
         _save_correction_and_log(job_id, policy_text, corrected_rules, metadata)
+        retrain_triggered = check_and_trigger(background_tasks)
+
+    msg = f"Saved {len(request.reviews)} reviews."
+    if has_edits:
+        msg += " Corrections logged to W&B for retraining."
+    if retrain_triggered:
+        msg += " Auto-retrain triggered."
 
     return ReviewResponse(
         job_id=job_id,
         reviewed_count=len(request.reviews),
-        message=f"Saved {len(request.reviews)} reviews."
-               + (" Corrections logged to W&B for retraining." if has_edits else ""),
+        message=msg,
     )
 
 
@@ -445,6 +440,12 @@ async def get_report(job_id: str):
         missing_requirements=report["missing_requirements"],
         summary=report["summary"],
     )
+
+
+@app.get("/retrain/status", response_model=RetrainStatus)
+async def retrain_status():
+    """Show auto-retrain pipeline status."""
+    return RetrainStatus(**get_retrain_status())
 
 
 @app.get("/health")

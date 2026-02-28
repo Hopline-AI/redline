@@ -15,7 +15,7 @@ observed improvements exceed statistical noise.
 # W&B project coordinates
 # ---------------------------------------------------------------------------
 WANDB_PROJECT = "redline-compliance"
-WANDB_ENTITY = None  # resolved at runtime from wandb.api.default_entity
+WANDB_ENTITY = "khushiyant-personal"
 
 # ---------------------------------------------------------------------------
 # Composite score weights (sum to 1.0)

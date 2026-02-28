@@ -125,3 +125,12 @@ class ComplianceReportResponse(BaseModel):
     rule_results: list[ReportRuleResult]
     missing_requirements: list[dict]
     summary: dict
+
+
+class RetrainStatus(BaseModel):
+    corrections_since_last_retrain: int
+    total_corrections: int
+    retrain_threshold: int
+    last_retrain_at: str | None = None
+    last_retrain_error: str | None = None
+    retrain_in_progress: bool = False

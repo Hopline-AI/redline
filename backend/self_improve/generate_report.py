@@ -181,29 +181,52 @@ def create_wandb_report(
     project: str | None = None,
     entity: str | None = None,
 ) -> str:
-    """Create a W&B Report via the Python SDK. Returns the report URL."""
-    import wandb
+    """Create a W&B Report via wandb-workspaces SDK. Returns the report URL."""
+    import wandb_workspaces.reports.v2 as wr
 
-    api = wandb.Api()
-    entity = entity or WANDB_ENTITY or api.default_entity
+    entity = entity or WANDB_ENTITY
     project = project or WANDB_PROJECT
     n_cycles = len(cycle_comparisons)
 
     markdown = build_report_markdown(cycle_snapshots, cycle_comparisons, cycle_metadata)
     title = REPORT_TITLE_TEMPLATE.format(n_cycles=n_cycles)
 
-    # Create report via W&B API
-    report = wandb.apis.reports.Report(
-        project=project,
+    report = wr.Report(
         entity=entity,
+        project=project,
         title=title,
-        description=markdown,
+        description="Automated self-improvement loop results",
     )
-    report.save()
-    url = report.url
 
-    print(f"\nW&B Report created: {url}")
-    return url
+    report.blocks = [
+        wr.TableOfContents(),
+        wr.H1(text="Self-Improvement Loop Results"),
+        wr.MarkdownBlock(text=markdown),
+        wr.H2(text="Training Curves"),
+        wr.PanelGrid(
+            runsets=[wr.Runset(entity=entity, project=project, name="All Runs")],
+            panels=[
+                wr.LinePlot(x="Step", y=["train/loss"], title="Training Loss"),
+                wr.LinePlot(
+                    x="Step",
+                    y=[f"eval/per_type/{rt}" for rt in RULE_TYPES],
+                    title="Per-Category Accuracy",
+                ),
+            ],
+        ),
+        wr.H2(text="Key Metrics"),
+        wr.PanelGrid(
+            runsets=[wr.Runset(entity=entity, project=project, name="Eval Runs")],
+            panels=[
+                wr.LinePlot(x="Step", y=["eval/schema_validity_rate"], title="Schema Validity"),
+                wr.LinePlot(x="Step", y=["eval/field_accuracy", "eval/f1"], title="Field Accuracy & F1"),
+            ],
+        ),
+    ]
+
+    report.save()
+    print(f"\nW&B Report created: {report.url}")
+    return report.url
 
 
 def get_mcp_report_payload(
