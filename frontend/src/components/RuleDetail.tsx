@@ -3,6 +3,16 @@ import { useParams } from "react-router-dom";
 import { Plus, Trash } from "lucide-react";
 import { PdfViewerModal } from "./PdfViewerModal";
 import { useRuleEditor } from "@/hooks/useRuleEditor";
+import { formatCondition } from "@/utils/formatUtils";
+
+const COMMON_FIELDS = [
+  "employee.hours_worked_daily",
+  "employee.pay_type",
+  "employee.employment_type",
+  "employer.location_state",
+  "employer.employee_count",
+  "payroll.pay_frequency"
+];
 
 const OPERATOR_LABELS: Record<string, string> = {
   eq: "=",
@@ -32,6 +42,9 @@ export function RuleDetail({ rule, isEditing = false, onSave }: Props) {
     handleActionChange,
     handleAddCondition,
     handleRemoveCondition,
+    handleParameterChange,
+    handleAddParameter,
+    handleRemoveParameter,
     handleSaveClick
   } = useRuleEditor(rule, onSave);
   return (
@@ -86,17 +99,21 @@ export function RuleDetail({ rule, isEditing = false, onSave }: Props) {
               <li key={i} className="condition-item" style={{ display: isEditing ? "grid" : "flex", gridTemplateColumns: isEditing ? "1fr auto 1fr auto" : undefined, gap: isEditing ? "12px" : undefined, alignItems: "center" }}>
                 {isEditing ? (
                   <>
+                    <datalist id="common-fields">
+                      {COMMON_FIELDS.map(f => <option key={f} value={f} />)}
+                    </datalist>
                     <input 
                       type="text" 
+                      list="common-fields"
                       value={c.field} 
                       onChange={(e) => handleConditionChange(i, "field", e.target.value)} 
-                      style={{ width: "100%", padding: "8px 12px", border: "1px solid var(--border)", borderRadius: "6px", fontFamily: "var(--font-mono)", fontSize: "13px", backgroundColor: "var(--background)" }}
-                      placeholder="Field name"
+                      style={{ width: "100%", padding: "8px 12px", border: "1px solid var(--border)", borderRadius: "6px", fontSize: "13px", backgroundColor: "var(--background)" }}
+                      placeholder="Field name (e.g. employee.pay_type)"
                     />
                     <select 
                       value={c.operator} 
                       onChange={(e) => handleConditionChange(i, "operator", e.target.value)}
-                      style={{ width: "auto", padding: "8px 12px", border: "1px solid var(--border)", borderRadius: "6px", fontFamily: "var(--font-mono)", fontSize: "13px", backgroundColor: "var(--background)", minWidth: "80px" }}
+                      style={{ width: "auto", padding: "8px 12px", border: "1px solid var(--border)", borderRadius: "6px", fontSize: "13px", backgroundColor: "var(--background)", minWidth: "80px" }}
                     >
                       {Object.entries(OPERATOR_LABELS).map(([op, label]) => (
                         <option key={op} value={op}>{label}</option>
@@ -110,7 +127,7 @@ export function RuleDetail({ rule, isEditing = false, onSave }: Props) {
                         if (!isNaN(Number(val)) && val.trim() !== "") val = Number(val);
                         handleConditionChange(i, "value", val);
                       }} 
-                      style={{ width: "100%", padding: "8px 12px", border: "1px solid var(--border)", borderRadius: "6px", fontFamily: "var(--font-mono)", fontSize: "13px", backgroundColor: "var(--background)" }}
+                      style={{ width: "100%", padding: "8px 12px", border: "1px solid var(--border)", borderRadius: "6px", fontSize: "13px", backgroundColor: "var(--background)" }}
                       placeholder="Value"
                     />
                     <button 
@@ -123,11 +140,9 @@ export function RuleDetail({ rule, isEditing = false, onSave }: Props) {
                     </button>
                   </>
                 ) : (
-                  <>
-                    <span>{c.field}</span>
-                    <strong>{OPERATOR_LABELS[c.operator] ?? c.operator}</strong>
-                    <span>{JSON.stringify(c.value)}</span>
-                  </>
+                  <span style={{ fontSize: "14px", color: "var(--foreground)" }}>
+                    {formatCondition(c)}
+                  </span>
                 )}
               </li>
             ))}
@@ -176,31 +191,55 @@ export function RuleDetail({ rule, isEditing = false, onSave }: Props) {
             )}
             {isEditing && (
               <div style={{ marginTop: "16px" }}>
-                <label style={{ fontSize: "11px", fontWeight: 600, color: "var(--muted-foreground)", textTransform: "uppercase", letterSpacing: "0.05em", display: "block", marginBottom: "8px" }}>Parameters (JSON)</label>
-                <textarea
-                  defaultValue={editedRule.action.parameters ? JSON.stringify(editedRule.action.parameters, null, 2) : ""}
-                  onBlur={(e) => {
-                    const val = e.target.value.trim();
-                    if (!val) {
-                      handleActionChange("parameters", undefined);
-                      return;
-                    }
-                    try {
-                      const parsed = JSON.parse(val);
-                      handleActionChange("parameters", parsed);
-                    } catch (err) {
-                      // Silently fail on invalid JSON to prevent crash, user can fix it
-                    }
-                  }}
-                  style={{ width: "100%", fontFamily: "var(--font-mono)", fontSize: "12px", padding: "12px", borderRadius: "6px", border: "1px solid var(--border)", backgroundColor: "var(--background)", minHeight: "100px", resize: "vertical" }}
-                  placeholder='{"key": "value"}'
-                />
+                <label style={{ fontSize: "11px", fontWeight: 600, color: "var(--muted-foreground)", textTransform: "uppercase", letterSpacing: "0.05em", display: "block", marginBottom: "8px" }}>Parameters</label>
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  {Object.entries(editedRule.action.parameters || {}).map(([key, val], idx) => (
+                    <div key={idx} style={{ display: "grid", gridTemplateColumns: "1fr 1fr auto", gap: "10px", alignItems: "center" }}>
+                      <input 
+                        type="text" 
+                        value={key} 
+                        onChange={(e) => handleParameterChange(key, e.target.value, val)}
+                        style={{ padding: "8px 12px", border: "1px solid var(--border)", borderRadius: "6px", fontSize: "13px", backgroundColor: "var(--background)" }}
+                        placeholder="Parameter Name"
+                      />
+                      <input 
+                        type="text" 
+                        value={String(val)} 
+                        onChange={(e) => {
+                          let v: any = e.target.value;
+                          if (!isNaN(Number(v)) && v.trim() !== "") v = Number(v);
+                          handleParameterChange(key, key, v);
+                        }}
+                        style={{ padding: "8px 12px", border: "1px solid var(--border)", borderRadius: "6px", fontSize: "13px", backgroundColor: "var(--background)" }}
+                        placeholder="Value"
+                      />
+                      <button 
+                        className="btn-ghost" 
+                        onClick={() => handleRemoveParameter(key)}
+                        style={{ padding: "8px", color: "var(--danger)", borderRadius: "6px" }}
+                      >
+                        <Trash size={14} />
+                      </button>
+                    </div>
+                  ))}
+                  <button 
+                    className="btn-outline" 
+                    onClick={handleAddParameter}
+                    style={{ fontSize: "12px", padding: "6px 12px", width: "fit-content", borderRadius: "6px", display: "flex", alignItems: "center", gap: "4px" }}
+                  >
+                    <Plus size={14} /> Add Parameter
+                  </button>
+                </div>
               </div>
             )}
             {!isEditing && rule.action.parameters && Object.keys(rule.action.parameters).length > 0 && (
-              <pre style={{ marginTop: "16px", padding: "12px", backgroundColor: "var(--faint)", borderRadius: "6px", fontSize: "12px", fontFamily: "var(--font-mono)", color: "var(--foreground)", overflowX: "auto" }}>
-                {JSON.stringify(rule.action.parameters, null, 2)}
-              </pre>
+              <div style={{ marginTop: "12px", display: "flex", flexDirection: "column", gap: "4px" }}>
+                {Object.entries(rule.action.parameters).map(([k, v]) => (
+                  <div key={k} style={{ fontSize: "14px" }}>
+                    <span style={{ color: "var(--muted-foreground)" }}>{k.replace(/_/g, " ")}:</span> <span style={{ fontWeight: 500 }}>{String(v)}</span>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>

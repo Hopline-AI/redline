@@ -59,6 +59,26 @@ export function useRuleEditor(initialRule: ExtractedRule, onSaveCallback?: (rule
         setValidationErrors([]);
     };
 
+    const handleParameterChange = (oldKey: string, newKey: string, value: any) => {
+        const newParams = { ...(editedRule.action.parameters || {}) };
+        if (oldKey !== newKey) {
+            delete newParams[oldKey];
+        }
+        newParams[newKey] = value;
+        handleActionChange("parameters", newParams);
+    };
+
+    const handleAddParameter = () => {
+        const newParams = { ...(editedRule.action.parameters || {}), "": "" };
+        handleActionChange("parameters", newParams);
+    };
+
+    const handleRemoveParameter = (key: string) => {
+        const newParams = { ...(editedRule.action.parameters || {}) };
+        delete newParams[key];
+        handleActionChange("parameters", newParams);
+    };
+
     const handleSaveClick = () => {
         const result = extractedRuleSchema.safeParse(editedRule);
 
@@ -83,6 +103,9 @@ export function useRuleEditor(initialRule: ExtractedRule, onSaveCallback?: (rule
         handleActionChange,
         handleAddCondition,
         handleRemoveCondition,
+        handleParameterChange,
+        handleAddParameter,
+        handleRemoveParameter,
         handleSaveClick
     };
 }
