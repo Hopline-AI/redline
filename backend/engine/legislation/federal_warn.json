@@ -11,7 +11,8 @@
       "rule_type": "restriction",
       "conditions": [
         {"field": "employer.employee_count", "operator": "gte", "value": 100},
-        {"field": "layoff.affected_count", "operator": "gte", "value": 50}
+        {"field": "layoff.affected_count", "operator": "gte", "value": 50},
+        {"field": "layoff.affected_percentage", "operator": "gte", "value": 33}
       ],
       "condition_logic": "all",
       "action": {
@@ -19,7 +20,22 @@
         "subject": "layoff_notice",
         "parameters": {"notice_days": 60}
       },
-      "source_text": "29 U.S.C. § 2102(a): An employer shall not order a plant closing or mass layoff until the end of a 60-day period after the employer serves written notice of such an order to each representative of the affected employees or, if there is no such representative, to each affected employee."
+      "source_text": "29 U.S.C. § 2101(a)(3) & § 2102(a): A mass layoff requires notice when 50+ employees are affected AND they comprise at least 33% of active employees at the site. Alternatively, 500+ employees affected triggers notice regardless of percentage. Employer must have 100+ full-time employees (excluding part-time)."
+    },
+    {
+      "rule_id": "fed_warn_001b",
+      "rule_type": "restriction",
+      "conditions": [
+        {"field": "employer.employee_count", "operator": "gte", "value": 100},
+        {"field": "layoff.affected_count", "operator": "gte", "value": 500}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "require",
+        "subject": "layoff_notice",
+        "parameters": {"notice_days": 60}
+      },
+      "source_text": "29 U.S.C. § 2101(a)(3)(B): A mass layoff also means a reduction in force of 500 or more employees at a single site of employment, regardless of percentage of workforce."
     },
     {
       "rule_id": "fed_warn_002",

@@ -18,9 +18,9 @@
       "action": {
         "type": "grant",
         "subject": "paid_family_leave",
-        "parameters": {"max_weeks": 8, "wage_replacement_rate_min": 0.60, "wage_replacement_rate_max": 0.70}
+        "parameters": {"max_weeks": 8, "wage_replacement_rate_min": 0.70, "wage_replacement_rate_max": 0.90}
       },
-      "source_text": "Cal. Unemp. Ins. Code § 3301(a): An individual shall be eligible for family temporary disability insurance benefits if the individual is unable to perform his or her regular or customary work because the individual is needed to provide care for a seriously ill family member or to bond with a minor child within one year of birth or placement for adoption or foster care."
+      "source_text": "Cal. Unemp. Ins. Code § 3301(a): An individual shall be eligible for family temporary disability insurance benefits if unable to perform regular work because needed to care for a seriously ill family member or to bond with a minor child within one year of birth or placement. Effective January 1, 2025 (AB 2123), benefit rates increased to 70%-90% of wages depending on income level."
     },
     {
       "rule_id": "ca_pfl_002",

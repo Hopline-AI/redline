@@ -1,0 +1,363 @@
+ACME TECHNOLOGIES INC.
+EMPLOYEE HANDBOOK
+Effective Date: January 1, 2026
+Applicable Jurisdictions: California, United States (Federal)
+
+================================================================================
+TABLE OF CONTENTS
+================================================================================
+
+Section 1:  Welcome & Company Overview
+Section 2:  Employment Classifications
+Section 3:  Compensation & Overtime Policy
+Section 4:  Work Schedules, Meal Periods & Rest Breaks
+Section 5:  Paid Time Off & Leave Policies
+Section 6:  Termination & Final Pay Procedures
+Section 7:  Workforce Reduction & Layoff Procedures
+Section 8:  Employee Benefits
+Section 9:  Workplace Conduct & Anti-Harassment
+Section 10: Acknowledgment
+
+================================================================================
+SECTION 1: WELCOME & COMPANY OVERVIEW
+================================================================================
+
+Welcome to Acme Technologies Inc. ("Acme" or "the Company"). We are a California-
+based software company headquartered in San Jose, California, with approximately
+200 employees across three offices in the San Francisco Bay Area. This Employee
+Handbook sets forth the policies and procedures that govern your employment with
+Acme Technologies. All employees are expected to read, understand, and comply with
+the policies contained herein.
+
+This handbook applies to all employees working in the state of California. Nothing
+in this handbook is intended to create a contract of employment. Employment with
+Acme Technologies is at-will, meaning either the employee or the Company may
+terminate the employment relationship at any time, with or without cause or notice,
+subject to the procedures described in this handbook.
+
+This handbook supersedes all prior handbooks, policies, and practices. The Company
+reserves the right to modify, amend, or discontinue any policy at any time.
+
+================================================================================
+SECTION 2: EMPLOYMENT CLASSIFICATIONS
+================================================================================
+
+2.1 EMPLOYEE CATEGORIES
+
+Acme Technologies classifies employees into the following categories for purposes
+of compensation, benefits eligibility, and compliance with applicable laws:
+
+  (a) Full-Time Employees: Employees who are regularly scheduled to work 40 or
+      more hours per week. Full-time employees are eligible for all Company
+      benefits described in this handbook.
+
+  (b) Part-Time Employees: Employees who are regularly scheduled to work fewer
+      than 40 hours per week. Part-time employees working 20 or more hours per
+      week are eligible for limited benefits as described in Section 8.
+
+  (c) Temporary Employees: Employees hired for a specific project or time period
+      not to exceed six months. Temporary employees are not eligible for Company
+      benefits.
+
+2.2 EXEMPT AND NON-EXEMPT STATUS
+
+Employees are classified as either exempt or non-exempt under the Fair Labor
+Standards Act (FLSA) and California law:
+
+  (a) Exempt Employees: Employees who meet the criteria for exemption from
+      overtime requirements under federal and state law. Exempt employees are
+      paid on a salary basis and are not eligible for overtime pay.
+
+  (b) Non-Exempt Employees: Employees who are entitled to overtime pay in
+      accordance with the Company's overtime policy as described in Section 3.
+
+================================================================================
+SECTION 3: COMPENSATION & OVERTIME POLICY
+================================================================================
+
+3.1 PAY PERIODS AND METHODS
+
+All employees are paid on a bi-weekly basis. Paychecks are issued every other
+Friday via direct deposit. Pay stubs are available electronically through our
+payroll portal.
+
+3.2 OVERTIME POLICY
+
+Non-exempt employees are eligible for overtime compensation as follows:
+
+  (a) Weekly Overtime: Non-exempt employees who work more than 40 hours in a
+      single workweek shall be compensated at a rate of one and one-half (1.5)
+      times their regular hourly rate for all hours worked in excess of 40 hours.
+
+  (b) All overtime must be pre-approved by the employee's direct supervisor.
+      Unauthorized overtime may result in disciplinary action, though the
+      Company will still compensate employees for all hours actually worked.
+
+  (c) Exempt employees are not eligible for overtime pay regardless of the
+      number of hours worked.
+
+  (d) For purposes of calculating overtime, the workweek begins on Monday at
+      12:00 a.m. and ends on Sunday at 11:59 p.m.
+
+3.3 ON-CALL AND STANDBY PAY
+
+Employees required to remain on Company premises or within a restricted area
+during on-call periods will be compensated at their regular hourly rate for all
+on-call hours. Employees who are free to leave the premises and use their time
+for personal purposes while on call will not be compensated for on-call time
+unless called in to work.
+
+================================================================================
+SECTION 4: WORK SCHEDULES, MEAL PERIODS & REST BREAKS
+================================================================================
+
+4.1 STANDARD WORK SCHEDULE
+
+The standard work schedule for full-time employees is Monday through Friday,
+9:00 a.m. to 5:30 p.m., with a 30-minute lunch break. Alternative schedules may
+be arranged with supervisor approval. During peak project periods, employees may
+be required to work extended hours, including weekends, as business needs dictate.
+
+4.2 MEAL PERIODS
+
+All non-exempt employees working more than six (6) hours in a workday are
+entitled to one unpaid meal period of twenty (20) minutes. The meal period
+should be taken approximately midway through the shift. During the meal period,
+employees are relieved of all duties and are free to leave the premises.
+
+Employees working shifts of ten (10) hours or longer are encouraged, but not
+required, to take a second meal break at a time agreed upon with their supervisor.
+
+4.3 REST BREAKS
+
+Non-exempt employees are entitled to one paid rest break of ten (10) minutes for
+each four (4) hours of work, or major fraction thereof. Rest breaks should be
+taken as close to the middle of each work period as practicable.
+
+4.4 LACTATION ACCOMMODATION
+
+The Company provides reasonable break time and a private space (other than a
+bathroom) for employees who need to express breast milk for their infant child,
+in accordance with California law.
+
+================================================================================
+SECTION 5: PAID TIME OFF & LEAVE POLICIES
+================================================================================
+
+5.1 PAID TIME OFF (PTO)
+
+Full-time employees accrue PTO as follows:
+  - Years 0-2: 15 days per year (accrued at 4.62 hours per pay period)
+  - Years 3-5: 20 days per year (accrued at 6.15 hours per pay period)
+  - Years 6+:  25 days per year (accrued at 7.69 hours per pay period)
+
+PTO may be used for vacation, personal days, or sick leave. Unused PTO may be
+carried over from year to year, up to a maximum accrual cap of 1.5 times the
+annual accrual rate. Upon termination, accrued but unused PTO will be paid out
+at the employee's final regular rate of pay.
+
+5.2 FAMILY AND MEDICAL LEAVE
+
+Acme Technologies provides family and medical leave to eligible employees in
+accordance with applicable law. To be eligible for family and medical leave,
+an employee must:
+
+  (a) Have been employed by the Company for at least eighteen (18) months; and
+  (b) Have worked at least 1,250 hours during the twelve (12) months preceding
+      the start of the leave; and
+  (c) Work at a location where the Company employs at least 50 employees within
+      a 75-mile radius.
+
+Eligible employees may take up to eight (8) weeks of unpaid, job-protected leave
+in a 12-month period for any of the following reasons:
+
+  (a) The birth of a child and to bond with the newborn;
+  (b) The placement of a child for adoption or foster care;
+  (c) To care for a spouse, child, or parent with a serious health condition;
+  (d) A serious health condition that makes the employee unable to perform the
+      essential functions of their job.
+
+During approved family and medical leave, the Company will maintain the employee's
+group health insurance coverage under the same terms as if the employee had
+continued to work.
+
+5.3 CALIFORNIA PAID FAMILY LEAVE
+
+The Company acknowledges that California employees may be eligible for Paid Family
+Leave (PFL) benefits through the state Employment Development Department (EDD).
+PFL provides partial wage replacement of up to fifty percent (50%) of the
+employee's weekly salary for up to six (6) weeks when an employee needs time off
+to bond with a new child or care for a seriously ill family member.
+
+PFL benefits are funded entirely through employee payroll deductions to the State
+Disability Insurance (SDI) program. Employees must apply directly to the EDD for
+PFL benefits. The Company does not administer PFL benefits.
+
+Employees may use accrued PTO concurrently with PFL benefits, but the combined
+total shall not exceed 100% of the employee's regular weekly salary.
+
+5.4 SICK LEAVE
+
+In accordance with California's Healthy Workplaces, Healthy Families Act, all
+employees (including part-time and temporary employees) accrue paid sick leave
+at a rate of one hour for every 30 hours worked, up to a maximum of 40 hours
+per year. Sick leave may be used beginning on the 90th day of employment.
+
+5.5 BEREAVEMENT LEAVE
+
+Full-time employees are entitled to up to three (3) paid days of bereavement leave
+upon the death of an immediate family member (spouse, domestic partner, child,
+parent, sibling, grandparent, or grandchild).
+
+================================================================================
+SECTION 6: TERMINATION & FINAL PAY PROCEDURES
+================================================================================
+
+6.1 VOLUNTARY TERMINATION
+
+Employees who wish to resign from their position are requested to provide at
+least two (2) weeks' written notice to their supervisor and Human Resources.
+Upon resignation, the employee's final paycheck, including all earned wages
+and accrued PTO payout, will be issued on the next regularly scheduled payday.
+
+6.2 INVOLUNTARY TERMINATION
+
+When the Company terminates an employee's employment, the employee will receive
+their final paycheck, including all earned wages and accrued PTO payout, within
+five (5) business days of the termination date.
+
+6.3 RETURN OF COMPANY PROPERTY
+
+All employees must return Company property upon termination, including but not
+limited to laptops, access badges, keys, and any confidential materials. Failure
+to return Company property may result in deductions from the final paycheck to
+the extent permitted by law.
+
+6.4 EXIT INTERVIEWS
+
+The Company may conduct exit interviews with departing employees. Exit interviews
+are voluntary but encouraged, as they help the Company improve workplace policies
+and practices.
+
+================================================================================
+SECTION 7: WORKFORCE REDUCTION & LAYOFF PROCEDURES
+================================================================================
+
+7.1 NOTICE OF LAYOFF
+
+In the event that business conditions require a reduction in workforce, the
+Company is committed to providing affected employees with reasonable advance
+notice. If the Company employs 100 or more employees and plans to lay off 50
+or more employees at a single site of employment within a 30-day period, the
+Company will provide affected employees with at least thirty (30) calendar days'
+written notice prior to the effective date of the layoff.
+
+In situations involving fewer than 50 affected employees or where the Company
+employs fewer than 100 employees, the Company will endeavor to provide at least
+two (2) weeks' notice, although such notice is not guaranteed.
+
+7.2 SEVERANCE PAY
+
+Employees affected by a workforce reduction who have been employed for at least
+one year may be eligible for severance pay, subject to the execution of a
+separation agreement and general release of claims. Severance pay, if offered,
+will typically be calculated at one (1) week of base pay for each full year of
+service, up to a maximum of twelve (12) weeks.
+
+7.3 BENEFITS CONTINUATION
+
+Employees affected by a workforce reduction will be offered the opportunity to
+continue their group health insurance coverage under COBRA for up to 18 months
+following their separation date. Information regarding COBRA continuation
+coverage will be provided at the time of separation.
+
+7.4 OUTPLACEMENT SERVICES
+
+The Company may, at its discretion, provide outplacement assistance to employees
+affected by a workforce reduction, including resume writing assistance and job
+search support.
+
+================================================================================
+SECTION 8: EMPLOYEE BENEFITS
+================================================================================
+
+8.1 HEALTH INSURANCE
+
+Full-time employees are eligible for Company-sponsored health insurance beginning
+on the first day of the month following 30 days of employment. The Company
+offers medical, dental, and vision plans. The Company pays 80% of the premium
+for employee-only coverage and 50% of the premium for dependent coverage.
+
+8.2 RETIREMENT PLAN
+
+Full-time employees are eligible to participate in the Company's 401(k)
+retirement plan after 90 days of employment. The Company matches employee
+contributions dollar-for-dollar up to 4% of the employee's annual salary.
+
+8.3 LIFE AND DISABILITY INSURANCE
+
+Full-time employees receive Company-paid basic life insurance equal to one times
+their annual salary, up to $200,000. Short-term and long-term disability
+insurance is also provided at no cost to the employee.
+
+8.4 PROFESSIONAL DEVELOPMENT
+
+The Company provides an annual professional development stipend of $2,000 per
+full-time employee for work-related courses, certifications, conferences, and
+training materials. Requests must be pre-approved by the employee's manager.
+
+================================================================================
+SECTION 9: WORKPLACE CONDUCT & ANTI-HARASSMENT
+================================================================================
+
+9.1 EQUAL EMPLOYMENT OPPORTUNITY
+
+Acme Technologies is an equal opportunity employer. We do not discriminate on the
+basis of race, color, religion, sex, national origin, age, disability, genetic
+information, sexual orientation, gender identity or expression, veteran status,
+or any other characteristic protected by applicable federal, state, or local law.
+
+9.2 ANTI-HARASSMENT POLICY
+
+Acme Technologies is committed to maintaining a work environment free from
+harassment, including sexual harassment. All forms of harassment based on any
+protected characteristic are strictly prohibited. Employees who experience or
+witness harassment should report it immediately to their supervisor, Human
+Resources, or the Company's anonymous ethics hotline.
+
+9.3 DRUG-FREE WORKPLACE
+
+Acme Technologies maintains a drug-free workplace. The use, possession, sale,
+or distribution of illegal drugs or controlled substances on Company premises or
+while conducting Company business is strictly prohibited and will result in
+immediate termination. The responsible use of alcohol at Company-sponsored events
+is permitted.
+
+9.4 CONFIDENTIALITY AND INTELLECTUAL PROPERTY
+
+All employees are required to protect the Company's confidential information and
+trade secrets. Employees may be required to sign a Confidentiality and Invention
+Assignment Agreement as a condition of employment.
+
+================================================================================
+SECTION 10: ACKNOWLEDGMENT
+================================================================================
+
+By signing below, I acknowledge that I have received a copy of the Acme
+Technologies Inc. Employee Handbook, effective January 1, 2026. I understand
+that it is my responsibility to read and familiarize myself with the policies
+and procedures contained in this handbook.
+
+I understand that this handbook does not constitute a contract of employment and
+that my employment with Acme Technologies is at-will. I further understand that
+the Company reserves the right to modify, amend, or discontinue any policy at
+any time.
+
+
+Employee Signature: ___________________________  Date: ________________
+
+Employee Name (Print): ________________________
+
+================================================================================
+END OF EMPLOYEE HANDBOOK
+================================================================================

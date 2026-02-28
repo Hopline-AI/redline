@@ -25,7 +25,7 @@ TOPIC_KEYWORDS: dict[str, list[str]] = {
     ],
     "overtime": [
         "overtime", "overtime_pay", "double_overtime", "weekly_overtime",
-        "double_overtime_pay", "seventh_day_double_overtime", "weekly_overtime_pay",
+        "double_overtime_pay", "seventh_day_double_overtime", "seventh_day_overtime", "weekly_overtime_pay",
     ],
     "meal_breaks": [
         "meal_break", "rest_break", "meal_period", "rest_period",

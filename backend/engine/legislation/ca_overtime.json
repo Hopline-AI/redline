@@ -46,6 +46,23 @@
         {"field": "employee.location", "operator": "eq", "value": "CA"},
         {"field": "employee.exempt", "operator": "eq", "value": false},
         {"field": "employee.seventh_consecutive_day", "operator": "eq", "value": true},
+        {"field": "employee.daily_hours", "operator": "lte", "value": 8}
+      ],
+      "condition_logic": "all",
+      "action": {
+        "type": "grant",
+        "subject": "seventh_day_overtime",
+        "parameters": {"rate_multiplier": 1.5, "basis": "seventh_day_first_8_hours"}
+      },
+      "source_text": "Cal. Lab. Code § 510(a): The first eight hours worked on the seventh day of work in any one workweek shall be compensated at the rate of no less than one and one-half times the regular rate of pay for an employee."
+    },
+    {
+      "rule_id": "ca_ot_005",
+      "rule_type": "compensation",
+      "conditions": [
+        {"field": "employee.location", "operator": "eq", "value": "CA"},
+        {"field": "employee.exempt", "operator": "eq", "value": false},
+        {"field": "employee.seventh_consecutive_day", "operator": "eq", "value": true},
         {"field": "employee.daily_hours", "operator": "gt", "value": 8}
       ],
       "condition_logic": "all",
