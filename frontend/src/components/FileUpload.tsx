@@ -1,5 +1,6 @@
-import { useRef, useState, useCallback } from "react";
+import { useRef } from "react";
 import { Upload } from "lucide-react";
+import { useDragAndDrop } from "@/hooks/useDragAndDrop";
 
 interface Props {
   onFile: (file: File) => void;
@@ -8,31 +9,16 @@ interface Props {
 
 export function FileUpload({ onFile, disabled }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [dragOver, setDragOver] = useState(false);
-
-  const handleFile = useCallback(
-    (file: File | undefined) => {
-      if (file && file.type === "application/pdf" || file.type === "text/plain") {
-        onFile(file);
-      }
-    },
-    [onFile]
-  );
+  
+  const { dragOver, handleFile, onDragOver, onDragLeave, onDrop } = useDragAndDrop(onFile);
 
   return (
     <div
       className={`dropzone${dragOver ? " drag-over" : ""}`}
       onClick={() => !disabled && inputRef.current?.click()}
-      onDragOver={(e) => {
-        e.preventDefault();
-        setDragOver(true);
-      }}
-      onDragLeave={() => setDragOver(false)}
-      onDrop={(e) => {
-        e.preventDefault();
-        setDragOver(false);
-        handleFile(e.dataTransfer.files[0]);
-      }}
+      onDragOver={onDragOver}
+      onDragLeave={onDragLeave}
+      onDrop={onDrop}
     >
       <div className="icon">
         <Upload size={40} />

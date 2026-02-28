@@ -1,5 +1,6 @@
 import React from 'react';
-import { ConflictBadge, worstConflict } from "@/components/ConflictBadge";
+import { ConflictBadge } from "@/components/ConflictBadge";
+import { worstConflict } from "@/utils/conflictUtils";
 
 interface Props {
   rules: any[];

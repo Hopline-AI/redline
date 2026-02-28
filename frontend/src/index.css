@@ -20,6 +20,82 @@
 
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Glassmorphism / Elevation */
+  --glass-bg: light-dark(rgba(255, 255, 255, 0.7), rgba(18, 18, 23, 0.7));
+  --glass-border: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
+  --glass-blur: 12px;
+}
+
+/* ─── Utilities ──────────────────────────────────────────────────── */
+.tabular-nums { font-variant-numeric: tabular-nums; }
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* ─── Buttons ────────────────────────────────────────────────────── */
+button, .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-sans);
+  font-size: var(--text-7);
+  font-weight: var(--font-medium);
+  border-radius: var(--radius-medium);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+button:focus-visible, .btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+button:disabled, .btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-primary:not(:disabled):hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.btn-primary:not(:disabled):active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+  border-color: var(--border);
+}
+
+.btn-secondary:not(:disabled):hover {
+  background: var(--accent);
+  border-color: var(--accent-foreground);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--foreground);
+}
+
+.btn-ghost:not(:disabled):hover {
+  background: var(--faint);
 }
 
 /* ─── Layout ─────────────────────────────────────────────────────── */
@@ -29,7 +105,11 @@
   gap: var(--space-4);
   padding: var(--space-2) var(--space-6);
   border-bottom: 1px solid var(--border);
-  background: var(--card);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .app-header .logo {
@@ -516,4 +596,39 @@
     max-width: none;
     padding: 0;
   }
+}
+
+/* ─── Law Disclaimer Toast ─────────────────────────────────────── */
+.law-disclaimer {
+  position: fixed;
+  bottom: var(--space-4);
+  right: var(--space-4);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-medium);
+  font-size: var(--text-7);
+  color: var(--foreground);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all var(--transition-fast);
+}
+
+.law-disclaimer:hover {
+  background: var(--accent);
+  transform: translateY(-2px);
+}
+
+.law-disclaimer .icon {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.law-disclaimer strong {
+  color: var(--primary);
+  margin-right: var(--space-1);
 }

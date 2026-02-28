@@ -1,0 +1,21 @@
+{
+  "name": "Redline Engine",
+  "short_name": "Redline",
+  "description": "Explaniable Compliance Engine for HR and Legal.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#ff0000",
+  "icons": [
+    {
+      "src": "/og-image.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/og-image.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
