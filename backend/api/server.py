@@ -81,10 +81,30 @@ USER_TEMPLATE = (
 
 _weave_initialized = False
 
-# Extraction cache: content hash -> extracted JSON
-_extraction_cache: dict[str, dict] = {}
+# Extraction cache: content hash -> extracted JSON, persisted to disk
+CACHE_PATH = Path("data/.extraction_cache.json")
 MAX_CACHE_SIZE = 256
 MAX_EXTRACTION_WORKERS = 4
+
+
+def _load_cache() -> dict[str, dict]:
+    if CACHE_PATH.exists():
+        try:
+            return json.loads(CACHE_PATH.read_text())
+        except (json.JSONDecodeError, OSError):
+            return {}
+    return {}
+
+
+def _save_cache():
+    try:
+        CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
+        CACHE_PATH.write_text(json.dumps(_extraction_cache))
+    except OSError:
+        pass
+
+
+_extraction_cache: dict[str, dict] = _load_cache()
 
 
 def _init_weave():
@@ -171,6 +191,7 @@ def _extract_with_endpoint(policy_text: str) -> dict:
     result = json.loads(content)
     if len(_extraction_cache) < MAX_CACHE_SIZE:
         _extraction_cache[key] = result
+        _save_cache()
     return result
 
 
@@ -214,6 +235,7 @@ def _extract_with_mistral(policy_text: str) -> dict:
     result = json.loads(content)
     if len(_extraction_cache) < MAX_CACHE_SIZE:
         _extraction_cache[key] = result
+        _save_cache()
     return result
 
 
@@ -545,6 +567,7 @@ async def health():
 async def clear_cache():
     """Clear the extraction cache (e.g. after retraining)."""
     _extraction_cache.clear()
+    CACHE_PATH.unlink(missing_ok=True)
     _get_model_name.cache_clear()
     _load_prompt_template.cache_clear()
     return {"cleared": True}
