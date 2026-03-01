@@ -318,12 +318,19 @@ def evaluate(
         use_weave = True
         print(f"Weave Evaluation complete.")
 
-        # Parse summary — weave aggregates scorer return dicts.
-        # Format: {"scorer_name": {"metric_key": {"mean": val}}} or {"metric_key": val}
+        print(f"\nWeave summary keys: {list(summary.keys())}")
+        for k, v in summary.items():
+            print(f"  {k}: {v}")
+
+        # Parse summary — weave aggregates differently by return type:
+        # floats → {"mean": val}, booleans → {"true_fraction": val, "true_count": n}
         def _mean(scorer: str, metric: str) -> float:
             val = summary.get(scorer, {}).get(metric)
             if isinstance(val, dict):
-                return float(val.get("mean", val.get("true_mean", 0.0)))
+                for key in ("mean", "true_fraction", "true_mean"):
+                    if key in val:
+                        return float(val[key])
+                return 0.0
             return float(val) if val is not None else 0.0
 
         agg = {
