@@ -1,3 +1,5 @@
+![Redline Banner](frontend/public/github-banner.png)
+
 # Redline
 
 Explainable compliance engine for HR policy verification across California and US federal labor rules.

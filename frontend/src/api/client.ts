@@ -8,7 +8,7 @@ import type {
     PolicyMeta
 } from "@/types";
 
-const API_BASE = "http://35.245.2.116:8000";
+const API_BASE = import.meta.env.BASE_URL || "http://35.245.2.116:8000";
 
 const apiClient = axios.create({
     baseURL: API_BASE,
