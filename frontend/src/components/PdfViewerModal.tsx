@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import * as pdfjsLib from "pdfjs-dist";
 import { X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Search } from "lucide-react";
 import { usePdfViewer } from "@/hooks/usePdfViewer";
@@ -57,18 +58,18 @@ export function PdfViewerModal({ policyId, sourceText, onClose }: Props) {
         
         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
            <div style={{ display: "flex", alignItems: "center", gap: "8px", background: "var(--background-alt)", padding: "4px", borderRadius: "8px", border: "1px solid var(--border)" }}>
-             <button onClick={zoomOut} style={{ padding: "4px", color: "var(--foreground)" }}><ZoomOut size={16} /></button>
+             <button onClick={zoomOut} style={{ padding: "4px", background: "transparent", border: "none", color: "var(--foreground)" }}><ZoomOut size={16} /></button>
              <span style={{ fontSize: "12px", minWidth: "40px", textAlign: "center", color: "var(--foreground)" }}>{Math.round(scale * 100)}%</span>
-             <button onClick={zoomIn} style={{ padding: "4px", color: "var(--foreground)" }}><ZoomIn size={16} /></button>
+             <button onClick={zoomIn} style={{ padding: "4px", background: "transparent", border: "none", color: "var(--foreground)" }}><ZoomIn size={16} /></button>
            </div>
            
            <div style={{ display: "flex", alignItems: "center", gap: "8px", background: "var(--background-alt)", padding: "4px", borderRadius: "8px", border: "1px solid var(--border)" }}>
-             <button onClick={prevPage} disabled={pageNum <= 1} style={{ padding: "4px", color: pageNum <= 1 ? "var(--muted-foreground)" : "var(--foreground)" }}><ChevronLeft size={16} /></button>
+             <button onClick={prevPage} disabled={pageNum <= 1} style={{ padding: "4px", background: "transparent", border: "none", color: pageNum <= 1 ? "var(--muted-foreground)" : "var(--foreground)" }}><ChevronLeft size={16} /></button>
              <span style={{ fontSize: "12px", minWidth: "60px", textAlign: "center", color: "var(--foreground)" }}>Page {pageNum} of {pageCount}</span>
-             <button onClick={nextPage} disabled={pageNum >= pageCount} style={{ padding: "4px", color: pageNum >= pageCount ? "var(--muted-foreground)" : "var(--foreground)" }}><ChevronRight size={16} /></button>
+             <button onClick={nextPage} disabled={pageNum >= pageCount} style={{ padding: "4px", background: "transparent", border: "none", color: pageNum >= pageCount ? "var(--muted-foreground)" : "var(--foreground)" }}><ChevronRight size={16} /></button>
            </div>
            
-           <button onClick={onClose} style={{ padding: "8px", marginLeft: "16px", borderRadius: "50%", background: "var(--background-alt)", border: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--foreground)" }}>
+           <button onClick={onClose} style={{ padding: "8px", marginLeft: "16px", borderRadius: "50%", background: "var(--background-alt)", border: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--foreground)", cursor: "pointer" }}>
              <X size={20} />
            </button>
         </div>

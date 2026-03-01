@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import * as pdfjsLib from "pdfjs-dist";
-import { getPdf } from "@/api/client";
+import { getPdfFromStore } from "@/utils/indexedDB";
 
 export function usePdfViewer(policyId: string, sourceText?: string) {
     const [pdfDoc, setPdfDoc] = useState<pdfjsLib.PDFDocumentProxy | null>(null);
@@ -17,8 +17,13 @@ export function usePdfViewer(policyId: string, sourceText?: string) {
     // 1. Fetch PDF Blob & Load Document
     useEffect(() => {
         setIsLoading(true);
-        getPdf(policyId)
+        getPdfFromStore(policyId)
             .then(async (blob) => {
+                if (!blob) {
+                    setError("PDF not found in local cache. Please upload the document on this device to view it.");
+                    setIsLoading(false);
+                    return;
+                }
                 const arrayBuffer = await blob.arrayBuffer();
                 const loadingTask = pdfjsLib.getDocument(new Uint8Array(arrayBuffer));
                 const doc = await loadingTask.promise;

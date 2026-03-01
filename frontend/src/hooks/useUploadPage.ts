@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { uploadPolicy, pollPipeline } from "@/api/client";
+import { storePdf } from "@/utils/indexedDB";
 
 export function useUploadPage(urlPolicyId: string | undefined) {
     const navigate = useNavigate();
@@ -9,7 +10,11 @@ export function useUploadPage(urlPolicyId: string | undefined) {
     const [policyId, setPolicyId] = useState<string | null>(urlPolicyId ?? null);
 
     const { mutate: doUpload, isPending: isUploading } = useMutation({
-        mutationFn: uploadPolicy,
+        mutationFn: async (f: File) => {
+            const res = await uploadPolicy(f);
+            await storePdf(res.policyId, f);
+            return res;
+        },
         onSuccess: (res) => {
             setPolicyId(res.policyId);
             navigate(`/${res.policyId}`, { replace: true });

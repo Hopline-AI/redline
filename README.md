@@ -10,7 +10,7 @@ Redline is an **explainable compliance engine** that automates HR policy verific
 - **Creativity:** Combines probabilistic extraction with deterministic checking, creating a novel hybrid architecture where the AI structures data, and code verifies compliance.
 
 ## Demo Video
-[Watch our Demo Video Here](<INSERT_LOOM_LINK>)
+[Watch our Demo Video Here](https://www.loom.com/share/150e59a74a324683969d8d73b865a6be)
 
 ## Technical Architecture
 

@@ -68,13 +68,6 @@ export async function uploadPolicy(file: File): Promise<UploadResponse> {
     };
 }
 
-export async function getPdf(jobId: string): Promise<Blob> {
-    const response = await apiClient.get(`/document/${jobId}`, {
-        responseType: 'blob'
-    });
-    return response.data;
-}
-
 export async function getExtraction(jobId: string): Promise<ApiExtractionResult> {
     const { data } = await apiClient.get<ApiExtractionResult>(`/extract/${jobId}`);
     return data;
