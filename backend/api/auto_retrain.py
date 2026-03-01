@@ -139,11 +139,14 @@ def push_dataset_to_hub():
     """Upload the updated train.jsonl to HF Hub."""
     token = os.environ.get("HF_TOKEN")
     api = HfApi(token=token)
-    api.create_repo(
-        repo_id=HF_DATASET_REPO,
-        repo_type="dataset",
-        exist_ok=True,
-    )
+    try:
+        api.create_repo(
+            repo_id=HF_DATASET_REPO,
+            repo_type="dataset",
+            exist_ok=True,
+        )
+    except Exception as e:
+        log.warning("create_repo failed (repo may already exist): %s", e)
     api.upload_file(
         path_or_fileobj=str(TRAIN_PATH),
         path_in_repo="train.jsonl",
