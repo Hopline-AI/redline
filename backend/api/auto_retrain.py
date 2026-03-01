@@ -65,21 +65,23 @@ def initialize_from_disk():
     """Restore correction counter from disk on server startup."""
     global _corrections_since_retrain, _total_corrections
     if CORRECTIONS_PATH.exists():
-        count = sum(1 for _ in open(CORRECTIONS_PATH))
+        with open(CORRECTIONS_PATH) as f:
+            count = sum(1 for _ in f)
         with _lock:
             _corrections_since_retrain = count
             _total_corrections = count
 
 
 def get_status() -> dict:
-    return {
-        "corrections_since_last_retrain": _corrections_since_retrain,
-        "total_corrections": _total_corrections,
-        "retrain_threshold": RETRAIN_THRESHOLD,
-        "last_retrain_at": _last_retrain_at,
-        "last_retrain_error": _last_retrain_error,
-        "retrain_in_progress": _retrain_in_progress,
-    }
+    with _lock:
+        return {
+            "corrections_since_last_retrain": _corrections_since_retrain,
+            "total_corrections": _total_corrections,
+            "retrain_threshold": RETRAIN_THRESHOLD,
+            "last_retrain_at": _last_retrain_at,
+            "last_retrain_error": _last_retrain_error,
+            "retrain_in_progress": _retrain_in_progress,
+        }
 
 
 def increment_correction_counter():
@@ -170,7 +172,7 @@ def trigger_hf_pipeline():
         while True:
             info = inspect_job(job_id=job.id)
             stage = info.status.stage
-            if stage in ("COMPLETED", "ERROR", "CANCELED"):
+            if stage in ("COMPLETED", "ERROR", "CANCELED", "DELETED"):
                 log.info("Job %s finished: %s", job_config["name"], stage)
                 if stage != "COMPLETED":
                     raise RuntimeError(f"HF Job '{job_config['name']}' ended with: {stage}")

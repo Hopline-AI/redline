@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import threading
 import time
 import uuid
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -87,6 +88,9 @@ MAX_CACHE_SIZE = 256
 MAX_EXTRACTION_WORKERS = 4
 
 
+_cache_lock = threading.Lock()
+
+
 def _load_cache() -> dict[str, dict]:
     if CACHE_PATH.exists():
         try:
@@ -99,7 +103,8 @@ def _load_cache() -> dict[str, dict]:
 def _save_cache():
     try:
         CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
-        CACHE_PATH.write_text(json.dumps(_extraction_cache))
+        with _cache_lock:
+            CACHE_PATH.write_text(json.dumps(_extraction_cache))
     except OSError:
         pass
 
@@ -189,9 +194,10 @@ def _extract_with_endpoint(policy_text: str) -> dict:
             pass
 
     result = json.loads(content)
-    if len(_extraction_cache) < MAX_CACHE_SIZE:
-        _extraction_cache[key] = result
-        _save_cache()
+    with _cache_lock:
+        if len(_extraction_cache) < MAX_CACHE_SIZE:
+            _extraction_cache[key] = result
+    _save_cache()
     return result
 
 
@@ -233,9 +239,10 @@ def _extract_with_mistral(policy_text: str) -> dict:
             pass
 
     result = json.loads(content)
-    if len(_extraction_cache) < MAX_CACHE_SIZE:
-        _extraction_cache[key] = result
-        _save_cache()
+    with _cache_lock:
+        if len(_extraction_cache) < MAX_CACHE_SIZE:
+            _extraction_cache[key] = result
+    _save_cache()
     return result
 
 
@@ -314,7 +321,8 @@ def _save_correction_and_log(job_id: str, policy_text: str, corrected_rules: lis
     with open(LAWYER_CORRECTIONS_PATH, "a") as f:
         f.write(json.dumps(sample) + "\n")
 
-    correction_count = sum(1 for _ in open(LAWYER_CORRECTIONS_PATH))
+    with open(LAWYER_CORRECTIONS_PATH) as f:
+        correction_count = sum(1 for _ in f)
 
     try:
         import wandb
@@ -549,11 +557,26 @@ async def retrain_status():
     return RetrainStatus(**get_retrain_status())
 
 
+@app.post("/retrain/trigger")
+async def trigger_retrain(background_tasks: BackgroundTasks):
+    """Manually trigger the retrain pipeline, bypassing the threshold."""
+    import api.auto_retrain as ar
+
+    with ar._lock:
+        if ar._retrain_in_progress:
+            raise HTTPException(status_code=409, detail="Retrain already in progress")
+        ar._retrain_in_progress = True
+
+    background_tasks.add_task(ar.run_auto_retrain)
+    return {"triggered": True, "message": "Retrain pipeline started in background"}
+
+
 @app.get("/health")
 async def health():
     corrections = 0
     if LAWYER_CORRECTIONS_PATH.exists():
-        corrections = sum(1 for _ in open(LAWYER_CORRECTIONS_PATH))
+        with open(LAWYER_CORRECTIONS_PATH) as f:
+            corrections = sum(1 for _ in f)
     return {
         "status": "ok",
         "jobs_count": len(jobs),
