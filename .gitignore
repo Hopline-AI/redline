@@ -74,3 +74,5 @@ htmlcov/
 backend/wandb/
 backend/data/lawyer_edits/
 backend/data/lawyer_corrections.jsonl
+
+.agents/

@@ -7,11 +7,14 @@ Lawyer edits are converted to training samples and logged as W&B Artifacts.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import time
 import uuid
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
+from functools import lru_cache
 from pathlib import Path
 
 import requests
@@ -78,6 +81,11 @@ USER_TEMPLATE = (
 
 _weave_initialized = False
 
+# Extraction cache: content hash -> extracted JSON
+_extraction_cache: dict[str, dict] = {}
+MAX_CACHE_SIZE = 256
+MAX_EXTRACTION_WORKERS = 4
+
 
 def _init_weave():
     global _weave_initialized
@@ -92,15 +100,23 @@ def _init_weave():
         return False
 
 
-def _parse_prompt_template(policy_text: str) -> tuple[str, str]:
+@lru_cache(maxsize=1)
+def _load_prompt_template() -> tuple[str, str]:
+    """Load and parse prompt template once, cache forever."""
     template = Path("schema/prompt_template.txt").read_text()
     system_msg = template.split("USER:")[0].replace("SYSTEM:", "").strip()
-    user_msg = template.split("USER:")[1].strip().replace("{policy_text}", policy_text)
-    return system_msg, user_msg
+    user_tpl = template.split("USER:")[1].strip()
+    return system_msg, user_tpl
 
 
+def _parse_prompt_template(policy_text: str) -> tuple[str, str]:
+    system_msg, user_tpl = _load_prompt_template()
+    return system_msg, user_tpl.replace("{policy_text}", policy_text)
+
+
+@lru_cache(maxsize=1)
 def _get_model_name() -> str:
-    """Auto-detect model name from vLLM endpoint."""
+    """Auto-detect model name from vLLM endpoint. Cached after first call."""
     try:
         resp = requests.get(f"{MODEL_ENDPOINT}/v1/models", timeout=5)
         return resp.json()["data"][0]["id"]
@@ -108,8 +124,16 @@ def _get_model_name() -> str:
         return "redline-extractor"
 
 
+def _cache_key(text: str) -> str:
+    return hashlib.sha256(text.encode()).hexdigest()[:16]
+
+
 def _extract_with_endpoint(policy_text: str) -> dict:
-    """Call the vLLM/TGI endpoint for extraction."""
+    """Call the vLLM/TGI endpoint for extraction. Returns cached result if available."""
+    key = _cache_key(policy_text)
+    if key in _extraction_cache:
+        return _extraction_cache[key]
+
     system_msg, user_msg = _parse_prompt_template(policy_text)
     model_name = _get_model_name()
 
@@ -144,11 +168,18 @@ def _extract_with_endpoint(policy_text: str) -> dict:
         except Exception:
             pass
 
-    return json.loads(content)
+    result = json.loads(content)
+    if len(_extraction_cache) < MAX_CACHE_SIZE:
+        _extraction_cache[key] = result
+    return result
 
 
 def _extract_with_mistral(policy_text: str) -> dict:
-    """Call Mistral API for extraction."""
+    """Call Mistral API for extraction. Returns cached result if available."""
+    key = _cache_key(policy_text)
+    if key in _extraction_cache:
+        return _extraction_cache[key]
+
     from mistralai import Mistral
 
     client = Mistral(api_key=MISTRAL_API_KEY)
@@ -180,11 +211,21 @@ def _extract_with_mistral(policy_text: str) -> dict:
         except Exception:
             pass
 
-    return json.loads(content)
+    result = json.loads(content)
+    if len(_extraction_cache) < MAX_CACHE_SIZE:
+        _extraction_cache[key] = result
+    return result
+
+
+def _extract_chunk(chunk: str) -> dict:
+    """Extract a single chunk using the configured backend."""
+    if USE_MISTRAL_API:
+        return _extract_with_mistral(chunk)
+    return _extract_with_endpoint(chunk)
 
 
 def _run_pipeline(job_id: str, text: str, policy_name: str):
-    """Background pipeline: parse -> chunk -> extract -> compare -> store."""
+    """Background pipeline: parse -> chunk -> extract (parallel) -> compare -> store."""
     job = jobs[job_id]
 
     try:
@@ -193,17 +234,18 @@ def _run_pipeline(job_id: str, text: str, policy_name: str):
 
         all_rules = []
         metadata = None
-        for chunk in chunks:
-            try:
-                if USE_MISTRAL_API:
-                    result = _extract_with_mistral(chunk)
-                else:
-                    result = _extract_with_endpoint(chunk)
-                all_rules.extend(result.get("rules", []))
-                if metadata is None and "metadata" in result:
-                    metadata = result["metadata"]
-            except Exception as e:
-                job.setdefault("errors", []).append(f"Extraction error: {e}")
+
+        workers = min(MAX_EXTRACTION_WORKERS, len(chunks))
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            future_to_chunk = {pool.submit(_extract_chunk, c): c for c in chunks}
+            for future in as_completed(future_to_chunk):
+                try:
+                    result = future.result()
+                    all_rules.extend(result.get("rules", []))
+                    if metadata is None and "metadata" in result:
+                        metadata = result["metadata"]
+                except Exception as e:
+                    job.setdefault("errors", []).append(f"Extraction error: {e}")
 
         if metadata is None:
             metadata = {
@@ -460,6 +502,16 @@ async def health():
     return {
         "status": "ok",
         "jobs_count": len(jobs),
+        "extraction_cache_size": len(_extraction_cache),
         "lawyer_corrections": corrections,
         "weave_enabled": _weave_initialized,
     }
+
+
+@app.post("/cache/clear")
+async def clear_cache():
+    """Clear the extraction cache (e.g. after retraining)."""
+    _extraction_cache.clear()
+    _get_model_name.cache_clear()
+    _load_prompt_template.cache_clear()
+    return {"cleared": True}
