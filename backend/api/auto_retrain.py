@@ -150,8 +150,13 @@ def trigger_hf_pipeline():
     if result.stdout:
         log.info("Pipeline output:\n%s", result.stdout)
     if result.returncode != 0:
-        log.error("Pipeline failed:\n%s", result.stderr)
-        raise RuntimeError(f"HF Jobs pipeline failed: {result.stderr}")
+        log.error("Pipeline failed (rc=%d):\nSTDOUT:\n%s\nSTDERR:\n%s",
+                  result.returncode, result.stdout, result.stderr)
+        raise RuntimeError(
+            f"HF Jobs pipeline failed (rc={result.returncode}):\n"
+            f"STDOUT:\n{result.stdout}\n"
+            f"STDERR:\n{result.stderr}"
+        )
 
 
 def _log_retrain_event(merged_count: int):
