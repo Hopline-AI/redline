@@ -33,12 +33,12 @@ setup: |
   fi
 
   # Download test data
-  python -c "
-from huggingface_hub import hf_hub_download
-import os
-repo = os.environ['DATASET_REPO']
-hf_hub_download(repo_id=repo, filename='test.jsonl', repo_type='dataset', local_dir='/workspace/backend/data')
-"
+  python <<'PYEOF'
+  from huggingface_hub import hf_hub_download
+  import os
+  repo = os.environ['DATASET_REPO']
+  hf_hub_download(repo_id=repo, filename='test.jsonl', repo_type='dataset', local_dir='/workspace/backend/data')
+  PYEOF
 
 command: |
   cd /workspace/backend
