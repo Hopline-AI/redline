@@ -26,10 +26,7 @@ The true power of Redline comes from its data flywheel. Every time a lawyer edit
 We rely on the **W&B MCP Server** and agentic workflows to drive our optimization loop. A coding agent iteratively evaluates the model's extraction accuracy using W&B Weave, inspects failure modes, and automatically adjusts the prompt schema and config. 
 
 **Model Evaluation & Improvements**
-*Baseline vs Fine-tuned F1 Score: [View W&B Report](<INSERT_WANDB_REPORT_LINK>)*
-*(Placeholder: Insert screenshot/graph of W&B accuracy improvement here)*
-
-*(Placeholder: Insert text detailing specific metric lifts, e.g., "Our automated agent optimized the schema to improve overtime extraction accuracy by 14% over 3 iterations.")*
+*Baseline vs Fine-tuned F1 Score: [View W&B Report](https://wandb.ai/khushiyant-personal/redline-compliance/reports/Redline-Self-Improvement-Report-Cycle-1-MCP-Agent-Run---VmlldzoxNjA2OTgyNQ?accessToken=0asff761rp9vhpf0yi1zm8r4nfl60i0tecokrux8z8y0a9l9baep4cpmd3gs3eqm)*
 
 ### Nvidia: On-Device Deployment
 We target local and edge deployments using **Nvidia** optimizations. Legal and HR data is highly sensitive. By utilizing hardware acceleration (e.g., TensorRT-LLM), the Redline extraction engine can run entirely on-device, ensuring zero data leakage to external APIs while maintaining the low-latency required for a responsive UI.
