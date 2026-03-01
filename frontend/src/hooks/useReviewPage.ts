@@ -132,17 +132,6 @@ export function useReviewPage(policyId: string | undefined, onSaveSuccess: () =>
 
     const updateStatus = useCallback(
         (uiId: string, status: ReviewStatus, notes?: string, editedRule?: any) => {
-            const rule = localRules.find(r => r.ui_id === uiId);
-            if (rule && policyId) {
-                const actionStr = status === "approved" ? "approve" : status === "rejected" ? "deny" : "edit";
-                // Fire and forget auto-save for single rule
-                submitReviews(policyId, [{
-                    rule_id: rule.extracted.rule_id,
-                    action: actionStr,
-                    notes: notes ?? rule.lawyer_notes,
-                    edited_rule: status === "edited" ? (editedRule ?? rule.edited_rule) : undefined
-                }]).catch((e) => console.error("Failed to auto-save review:", e));
-            }
 
             setLocalRules((prev) =>
                 prev.map((r) =>
@@ -152,12 +141,11 @@ export function useReviewPage(policyId: string | undefined, onSaveSuccess: () =>
                 )
             );
         },
-        [localRules, policyId]
+        []
     );
 
     const handleSave = () => {
-        // Since we are auto-saving individually, we can just proceed to generate report directly
-        onSaveSuccess();
+        saveReviews();
     };
 
     const filteredRules = localRules.filter((rule) => {
