@@ -19,7 +19,7 @@ TRAIN_PATH = Path("data/train.jsonl")
 ARCHIVE_DIR = Path("data/lawyer_corrections_archive")
 
 RETRAIN_THRESHOLD = int(os.environ.get("RETRAIN_THRESHOLD", "10"))
-HF_DATASET_REPO = os.environ.get("HF_DATASET_REPO", "khushiyant/redline-compliance-extraction")
+HF_DATASET_REPO = os.environ.get("HF_DATASET_REPO", "mistral-hackaton-2026/redline-compliance-extraction")
 
 HF_MODEL_REPO = os.environ.get("HF_MODEL_REPO", "mistral-hackaton-2026/redline-extractor")
 

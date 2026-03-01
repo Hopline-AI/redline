@@ -16,7 +16,7 @@ env:
   HF_TOKEN: "${HF_TOKEN}"
   WANDB_API_KEY: "${WANDB_API_KEY}"
   WANDB_PROJECT: "redline-compliance"
-  DATASET_REPO: "${DATASET_REPO:-khushiyant/redline-compliance-extraction}"
+  DATASET_REPO: "${DATASET_REPO:-mistral-hackaton-2026/redline-compliance-extraction}"
   MODEL_REPO: "${MODEL_REPO:-mistral-hackaton-2026/redline-extractor}"
   RUN_NAME: "${RUN_NAME:-retrain}"
   CODE_REPO_URL: "${CODE_REPO_URL:-https://huggingface.co/mistral-hackaton-2026/redline-extractor}"

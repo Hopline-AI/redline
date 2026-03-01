@@ -20,7 +20,7 @@ env:
   MODEL_ENDPOINT: "${MODEL_ENDPOINT:-}"
   MODEL_ID: "${MODEL_ID:-mistral-small-latest}"
   BASELINE_RUN_ID: "${BASELINE_RUN_ID:-}"
-  DATASET_REPO: "${DATASET_REPO:-khushiyant/redline-compliance-extraction}"
+  DATASET_REPO: "${DATASET_REPO:-mistral-hackaton-2026/redline-compliance-extraction}"
   CODE_REPO_URL: "${CODE_REPO_URL:-https://huggingface.co/mistral-hackaton-2026/redline-extractor}"
 
 setup: |

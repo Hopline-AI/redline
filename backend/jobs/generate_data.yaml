@@ -17,7 +17,7 @@ env:
   HF_TOKEN: "${HF_TOKEN}"
   TARGET_COUNT: "${TARGET_COUNT:-510}"
   WORKERS: "${WORKERS:-15}"
-  DATASET_REPO: "${DATASET_REPO:-khushiyant/redline-compliance-extraction}"
+  DATASET_REPO: "${DATASET_REPO:-mistral-hackaton-2026/redline-compliance-extraction}"
   CODE_REPO_URL: "${CODE_REPO_URL:-https://huggingface.co/mistral-hackaton-2026/redline-extractor}"
 
 setup: |

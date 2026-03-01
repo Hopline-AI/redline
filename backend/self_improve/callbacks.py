@@ -21,7 +21,7 @@ from self_improve.inspect_metrics import MetricsSnapshot, fetch_latest_run
 log = logging.getLogger(__name__)
 
 HF_DATASET_REPO = os.environ.get(
-    "HF_DATASET_REPO", "khushiyant/redline-compliance-extraction"
+    "HF_DATASET_REPO", "mistral-hackaton-2026/redline-compliance-extraction"
 )
 HF_MODEL_REPO = os.environ.get(
     "HF_MODEL_REPO", "mistral-hackaton-2026/redline-extractor"
