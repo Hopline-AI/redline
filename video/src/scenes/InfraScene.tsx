@@ -173,13 +173,19 @@ export const InfraScene: React.FC = () => {
           }}
         >
           <span style={{ fontSize: 14, fontWeight: 700, color: "#76b900", fontFamily: monoFamily }}>
-            NVIDIA
+            HF Jobs
           </span>
           <span style={{ fontSize: 14, color: "#76b900", opacity: 0.6, fontFamily: monoFamily }}>
-            /
+            {" "}train
+          </span>
+          <span style={{ fontSize: 14, color: "#76b900", opacity: 0.4, fontFamily: monoFamily }}>
+            {" "}·{" "}
           </span>
           <span style={{ fontSize: 14, fontWeight: 700, color: "#76b900", fontFamily: monoFamily }}>
             BREV
+          </span>
+          <span style={{ fontSize: 14, color: "#76b900", opacity: 0.6, fontFamily: monoFamily }}>
+            {" "}serve
           </span>
         </div>
       </div>
@@ -187,8 +193,8 @@ export const InfraScene: React.FC = () => {
       {/* Cluster cards + arrow */}
       <div style={{ display: "flex", alignItems: "center", gap: 48 }}>
         <ClusterCard
-          title="L40S"
-          subtitle="NVIDIA Ada Lovelace"
+          title="HF Jobs"
+          subtitle="Hugging Face / L40S"
           gpu="NVIDIA L40S"
           vram="48 GB"
           role="TRAIN"
@@ -238,7 +244,7 @@ export const InfraScene: React.FC = () => {
 
         <ClusterCard
           title="L4"
-          subtitle="NVIDIA Ada Lovelace"
+          subtitle="NVIDIA BREV"
           gpu="NVIDIA L4"
           vram="24 GB"
           role="SERVE"

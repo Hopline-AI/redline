@@ -12,22 +12,29 @@ image: python:3.12-slim
 
 env:
   HF_TOKEN: "${HF_TOKEN}"
-  DATASET_REPO: "${DATASET_REPO:-redline-compliance-extraction}"
+  DATASET_REPO: "${DATASET_REPO:-khushiyant/redline-compliance-extraction}"
+  CODE_REPO_URL: "${CODE_REPO_URL:-https://huggingface.co/khushiyant/redline-compliance-extractor}"
 
 setup: |
-  pip install jsonschema huggingface-hub
+  pip install jsonschema huggingface-hub gitpython
 
-command: |
+  # Clone backend code to get validate_data.py and schema
+  git clone "${CODE_REPO_URL}" /workspace/repo || true
+  if [ -d "/workspace/repo/backend" ]; then
+    cp -r /workspace/repo/backend /workspace/backend
+  fi
+
   # Download dataset from HF Hub
   python -c "
-  from huggingface_hub import hf_hub_download
-  import os
-  repo = os.environ['DATASET_REPO']
-  for split in ['train', 'val', 'test']:
-      hf_hub_download(repo_id=repo, filename=f'{split}.jsonl', repo_type='dataset', local_dir='/data')
-  "
+from huggingface_hub import hf_hub_download
+import os
+repo = os.environ['DATASET_REPO']
+for split in ['train', 'val', 'test']:
+    hf_hub_download(repo_id=repo, filename=f'{split}.jsonl', repo_type='dataset', local_dir='/workspace/backend/data')
+"
 
-  # Run validation
-  python data/validate_data.py /data/train.jsonl --schema schema/decision_logic.json --verbose
-  python data/validate_data.py /data/val.jsonl --schema schema/decision_logic.json
-  python data/validate_data.py /data/test.jsonl --schema schema/decision_logic.json
+command: |
+  cd /workspace/backend
+  python data/validate_data.py data/train.jsonl --schema schema/decision_logic.json --verbose
+  python data/validate_data.py data/val.jsonl --schema schema/decision_logic.json
+  python data/validate_data.py data/test.jsonl --schema schema/decision_logic.json

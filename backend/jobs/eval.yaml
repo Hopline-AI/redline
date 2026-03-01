@@ -18,33 +18,39 @@ env:
   WANDB_PROJECT: "redline-compliance"
   MISTRAL_API_KEY: "${MISTRAL_API_KEY}"
   MODEL_ENDPOINT: "${MODEL_ENDPOINT:-}"
-  MODEL_ID: "${MODEL_ID:-}"
+  MODEL_ID: "${MODEL_ID:-mistral-small-latest}"
   BASELINE_RUN_ID: "${BASELINE_RUN_ID:-}"
-  DATASET_REPO: "${DATASET_REPO:-redline-compliance-extraction}"
+  DATASET_REPO: "${DATASET_REPO:-khushiyant/redline-compliance-extraction}"
+  CODE_REPO_URL: "${CODE_REPO_URL:-https://huggingface.co/khushiyant/redline-compliance-extractor}"
 
 setup: |
-  pip install mistralai wandb weave jsonschema requests huggingface-hub
+  pip install mistralai wandb weave jsonschema requests huggingface-hub pyyaml git-lfs
+
+  # Clone backend code
+  git clone "${CODE_REPO_URL}" /workspace/repo || true
+  if [ -d "/workspace/repo/backend" ]; then
+    cp -r /workspace/repo/backend /workspace/backend
+  fi
 
   # Download test data
   python -c "
-  from huggingface_hub import hf_hub_download
-  import os
-  repo = os.environ['DATASET_REPO']
-  hf_hub_download(repo_id=repo, filename='test.jsonl', repo_type='dataset', local_dir='data')
-  "
+from huggingface_hub import hf_hub_download
+import os
+repo = os.environ['DATASET_REPO']
+hf_hub_download(repo_id=repo, filename='test.jsonl', repo_type='dataset', local_dir='/workspace/backend/data')
+"
 
 command: |
+  cd /workspace/backend
+
   if [ -n "${MODEL_ENDPOINT}" ]; then
-    python eval/finetuned_eval.py \
+    python -m eval.finetuned_eval \
       --test-data data/test.jsonl \
       --endpoint "${MODEL_ENDPOINT}" \
       --baseline-run-id "${BASELINE_RUN_ID}"
-  elif [ -n "${MODEL_ID}" ]; then
-    python eval/finetuned_eval.py \
+  else
+    python -m eval.finetuned_eval \
       --test-data data/test.jsonl \
       --model "${MODEL_ID}" \
       --baseline-run-id "${BASELINE_RUN_ID}"
-  else
-    echo "ERROR: Set MODEL_ENDPOINT or MODEL_ID"
-    exit 1
   fi

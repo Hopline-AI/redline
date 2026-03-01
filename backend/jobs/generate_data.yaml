@@ -17,11 +17,20 @@ env:
   HF_TOKEN: "${HF_TOKEN}"
   TARGET_COUNT: "${TARGET_COUNT:-510}"
   WORKERS: "${WORKERS:-15}"
+  DATASET_REPO: "${DATASET_REPO:-khushiyant/redline-compliance-extraction}"
+  CODE_REPO_URL: "${CODE_REPO_URL:-https://huggingface.co/khushiyant/redline-compliance-extractor}"
 
 setup: |
-  pip install google-genai jsonschema huggingface-hub
+  pip install google-genai jsonschema huggingface-hub gitpython
+
+  # Clone backend code to get generation script and schema
+  git clone "${CODE_REPO_URL}" /workspace/repo || true
+  if [ -d "/workspace/repo/backend" ]; then
+    cp -r /workspace/repo/backend /workspace/backend
+  fi
 
 command: |
+  cd /workspace/backend
   python data/generation_script.py \
     --target-count "${TARGET_COUNT}" \
     --workers "${WORKERS}" \
@@ -32,5 +41,5 @@ artifacts:
   output:
     path: /outputs/data
     push_to_hub:
-      repo_id: redline-compliance-extraction
+      repo_id: "${DATASET_REPO}"
       repo_type: dataset

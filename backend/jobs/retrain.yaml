@@ -16,28 +16,36 @@ env:
   HF_TOKEN: "${HF_TOKEN}"
   WANDB_API_KEY: "${WANDB_API_KEY}"
   WANDB_PROJECT: "redline-compliance"
-  DATASET_REPO: "${DATASET_REPO:-redline-compliance-extraction}"
-  MODEL_REPO: "${MODEL_REPO:-redline-compliance-extractor}"
+  DATASET_REPO: "${DATASET_REPO:-khushiyant/redline-compliance-extraction}"
+  MODEL_REPO: "${MODEL_REPO:-khushiyant/redline-compliance-extractor}"
   RUN_NAME: "${RUN_NAME:-retrain}"
+  CODE_REPO_URL: "${CODE_REPO_URL:-https://huggingface.co/khushiyant/redline-compliance-extractor}"
 
 setup: |
-  pip install "unsloth[colab-new]" wandb transformers datasets trl peft bitsandbytes accelerate pyyaml
+  pip install "unsloth[colab-new]" wandb transformers datasets trl peft bitsandbytes accelerate pyyaml huggingface-hub
+
+  # Clone backend code
+  git clone "${CODE_REPO_URL}" /workspace/repo || true
+  if [ -d "/workspace/repo/backend" ]; then
+    cp -r /workspace/repo/backend /workspace/backend
+  fi
 
   # Download dataset
   python -c "
-  from huggingface_hub import hf_hub_download
-  import os
-  repo = os.environ['DATASET_REPO']
-  for split in ['train', 'val', 'test']:
-      hf_hub_download(repo_id=repo, filename=f'{split}.jsonl', repo_type='dataset', local_dir='data')
-  "
+from huggingface_hub import hf_hub_download
+import os
+repo = os.environ['DATASET_REPO']
+for split in ['train', 'val', 'test']:
+    hf_hub_download(repo_id=repo, filename=f'{split}.jsonl', repo_type='dataset', local_dir='/workspace/backend/data')
+"
 
 command: |
+  cd /workspace/backend
   python training/finetune.py --config training/config.yaml
 
 artifacts:
   output:
-    path: ./outputs/redline-mistral-lora/final_adapter
+    path: /workspace/backend/outputs/redline-mistral-lora/final_adapter
     push_to_hub:
       repo_id: "${MODEL_REPO}"
       repo_type: model

@@ -46,7 +46,7 @@ const LOOP_NODES: {
   },
   {
     label: "Retrain",
-    tool: "BREV L40S",
+    tool: "HF Jobs",
     detail: "Unsloth QLoRA fine-tune",
     color: "#76b900",
   },
