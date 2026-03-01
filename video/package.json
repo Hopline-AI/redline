@@ -5,8 +5,8 @@
   "sideEffects": ["*.css"],
   "scripts": {
     "studio": "remotion studio",
-    "render": "remotion render src/Root.tsx RedlineExplainer out/redline.mp4",
-    "build": "remotion render src/Root.tsx RedlineExplainer out/redline.mp4"
+    "render": "remotion render src/index.ts RedlineExplainer out/redline.mp4",
+    "build": "remotion render src/index.ts RedlineExplainer out/redline.mp4"
   },
   "dependencies": {
     "@remotion/cli": "4.0.261",

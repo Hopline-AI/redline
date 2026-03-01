@@ -9,6 +9,7 @@ import { ProblemScene } from "./scenes/ProblemScene";
 import { SavingsScene } from "./scenes/SavingsScene";
 import { PipelineScene } from "./scenes/PipelineScene";
 import { FinetuningScene } from "./scenes/FinetuningScene";
+import { InfraScene } from "./scenes/InfraScene";
 import { ServingScene } from "./scenes/ServingScene";
 import { SelfImprovementScene } from "./scenes/SelfImprovementScene";
 import { TechStackScene } from "./scenes/TechStackScene";
@@ -57,6 +58,15 @@ export const Video: React.FC = () => {
 
       <TransitionSeries.Sequence durationInFrames={SCENE_DURATIONS.finetuning}>
         <FinetuningScene />
+      </TransitionSeries.Sequence>
+
+      <TransitionSeries.Transition
+        presentation={slide({ direction: "from-right" })}
+        timing={linearTiming({ durationInFrames: T })}
+      />
+
+      <TransitionSeries.Sequence durationInFrames={SCENE_DURATIONS.infra}>
+        <InfraScene />
       </TransitionSeries.Sequence>
 
       <TransitionSeries.Transition

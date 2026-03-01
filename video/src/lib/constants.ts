@@ -37,15 +37,16 @@ export const SCENE_DURATIONS = {
   savings: 310,
   pipeline: 300,
   finetuning: 345,
+  infra: 270,
   serving: 210,
-  selfImprovement: 320,
+  selfImprovement: 360,
   techStack: 180,
   closing: 150,
 } as const;
 
 export const TOTAL_FRAMES =
   Object.values(SCENE_DURATIONS).reduce((a, b) => a + b, 0) -
-  8 * TRANSITION_FRAMES;
+  9 * TRANSITION_FRAMES;
 
 export const SPRING_SMOOTH = { damping: 200 };
 export const SPRING_SNAPPY = { damping: 20, stiffness: 200 };
