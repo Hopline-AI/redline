@@ -8,7 +8,7 @@ import sys
 import time
 
 import yaml
-from huggingface_hub import HfApi, inspect_job, run_docker_job
+from huggingface_hub import HfApi
 
 # Map our YAML gpu_type names to HF Jobs flavor IDs
 FLAVOR_MAP = {
@@ -85,13 +85,13 @@ def trigger_job(config_path: str, env_overrides: dict[str, str] | None = None) -
     print(f"  Env vars:    {list(plain_env.keys())}")
     print(f"  Secrets:     {list(secrets.keys())}")
 
-    job = run_docker_job(
+    api = HfApi()
+    job = api.run_job(
         image=image,
         command=["bash", "-euxo", "pipefail", "-c", command],
         env=plain_env,
         secrets=secrets,
         flavor=flavor,
-        timeout=config.get("compute", {}).get("max_duration_seconds", 3600),
     )
 
     print(f"  Job ID:  {job.id}")
@@ -101,9 +101,10 @@ def trigger_job(config_path: str, env_overrides: dict[str, str] | None = None) -
 
 def wait_for_job(job_id: str, poll_interval: int = 30) -> str:
     """Poll until job completes. Returns final status stage."""
+    api = HfApi()
     print(f"Polling job {job_id}...")
     while True:
-        info = inspect_job(job_id=job_id)
+        info = api.inspect_job(job_id=job_id)
         stage = info.status.stage
         print(f"  Status: {stage}")
         if stage in ("COMPLETED", "ERROR", "CANCELED"):
@@ -112,7 +113,8 @@ def wait_for_job(job_id: str, poll_interval: int = 30) -> str:
 
 
 def check_job_status(job_id: str):
-    info = inspect_job(job_id=job_id)
+    api = HfApi()
+    info = api.inspect_job(job_id=job_id)
     print(f"Job {job_id}: {info.status.stage}")
 
 
