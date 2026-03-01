@@ -99,6 +99,18 @@ def trigger_job(config_path: str, env_overrides: dict[str, str] | None = None) -
     return job.id
 
 
+def _print_job_logs(api: HfApi, job_id: str):
+    """Fetch and print the last logs from a job."""
+    try:
+        logs = api.fetch_job_logs(job_id=job_id)
+        print(f"  --- Job logs for {job_id} ---")
+        for line in logs:
+            print(f"  | {line}")
+        print(f"  --- End logs ---")
+    except Exception as e:
+        print(f"  (could not fetch logs: {e})")
+
+
 def wait_for_job(job_id: str, poll_interval: int = 30) -> str:
     """Poll until job completes. Returns final status stage."""
     api = HfApi()
@@ -108,6 +120,8 @@ def wait_for_job(job_id: str, poll_interval: int = 30) -> str:
         stage = info.status.stage
         print(f"  Status: {stage}")
         if stage in ("COMPLETED", "ERROR", "CANCELED"):
+            if stage == "ERROR":
+                _print_job_logs(api, job_id)
             return stage
         time.sleep(poll_interval)
 
