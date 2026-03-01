@@ -318,6 +318,35 @@ def _save_correction_and_log(job_id: str, policy_text: str, corrected_rules: lis
         print(f"W&B artifact logging failed: {e}")
 
 
+def _log_review_to_wandb(job_id: str, reviews: list, has_edits: bool):
+    """Log every review batch to W&B — approvals, denials, and edits."""
+    try:
+        import wandb
+
+        actions = [r.action.value for r in reviews]
+        summary = {a: actions.count(a) for a in set(actions)}
+
+        if wandb.run is None:
+            wandb.init(
+                project="redline-compliance",
+                name=f"review-{job_id}",
+                config={"phase": "lawyer_review", "job_id": job_id},
+            )
+
+        wandb.log({
+            "review/job_id": job_id,
+            "review/total_rules": len(reviews),
+            "review/approved": summary.get("approve", 0),
+            "review/denied": summary.get("deny", 0),
+            "review/edited": summary.get("edit", 0),
+            "review/approval_rate": summary.get("approve", 0) / max(len(reviews), 1),
+            "review/has_corrections": has_edits,
+        })
+        wandb.finish()
+    except Exception as e:
+        print(f"W&B review logging failed: {e}")
+
+
 @app.on_event("startup")
 async def startup():
     _init_weave()
@@ -446,11 +475,15 @@ async def submit_review(job_id: str, request: ReviewRequest, background_tasks: B
             f.write(json.dumps(edit_record) + "\n")
 
     retrain_triggered = False
+    policy_text = job.get("raw_text", "")
+    metadata = extraction.get("metadata", {})
+
     if has_edits:
-        policy_text = job.get("raw_text", "")
-        metadata = extraction.get("metadata", {})
         _save_correction_and_log(job_id, policy_text, corrected_rules, metadata)
         retrain_triggered = check_and_trigger(background_tasks)
+
+    # Always log review actions to W&B (approvals are positive signal too)
+    _log_review_to_wandb(job_id, request.reviews, has_edits)
 
     msg = f"Saved {len(request.reviews)} reviews."
     if has_edits:
