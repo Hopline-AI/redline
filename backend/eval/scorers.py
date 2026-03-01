@@ -208,6 +208,31 @@ class FieldAccuracyScorer:
             if _action_signature(exp) == _action_signature(out)
         )
 
+        # Per-type accuracy: for each rule_type, fraction of fields correct across its rules.
+        # Missing rules (unmatched expected) count as 0 for their type.
+        per_type_scores: dict[str, list[float]] = {}
+        for exp_rule in exp_rules:
+            rt = exp_rule.get("rule_type", "unknown")
+            out_rule = matched_exp_ids.get(id(exp_rule))
+            if out_rule is None:
+                per_type_scores.setdefault(rt, []).append(0.0)
+                continue
+            checks, correct = 0, 0
+            for fn in fields_to_check:
+                checks += 1
+                if exp_rule.get(fn) == out_rule.get(fn):
+                    correct += 1
+            checks += 1
+            if (sorted(json.dumps(c, sort_keys=True) for c in exp_rule.get("conditions", []))
+                    == sorted(json.dumps(c, sort_keys=True) for c in out_rule.get("conditions", []))):
+                correct += 1
+            checks += 1
+            if (_action_signature(exp_rule) == _action_signature(out_rule)):
+                correct += 1
+            per_type_scores.setdefault(rt, []).append(correct / checks if checks else 0.0)
+
+        per_type_accuracy = {rt: sum(v) / len(v) for rt, v in per_type_scores.items()}
+
         return {
             "field_accuracy": accuracy,
             "correct_fields": correct_checks,
@@ -217,6 +242,7 @@ class FieldAccuracyScorer:
             "action_accuracy": (action_correct / total_rules) if total_rules else 1.0,
             "matched_rules": matched_count,
             "missing_rules": len(unmatched_expected),
+            "per_type_accuracy": per_type_accuracy,
         }
 
 
