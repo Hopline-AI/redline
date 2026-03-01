@@ -7,11 +7,10 @@ import logging
 import os
 import shutil
 import threading
-import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-from huggingface_hub import HfApi, inspect_job, run_uv_job
+from huggingface_hub import HfApi
 
 log = logging.getLogger(__name__)
 
@@ -20,37 +19,9 @@ TRAIN_PATH = Path("data/train.jsonl")
 ARCHIVE_DIR = Path("data/lawyer_corrections_archive")
 
 RETRAIN_THRESHOLD = int(os.environ.get("RETRAIN_THRESHOLD", "10"))
-HF_DATASET_REPO = os.environ.get("HF_DATASET_REPO", "mistral-hackathon-2026/redline-compliance-extraction")
+HF_DATASET_REPO = os.environ.get("HF_DATASET_REPO", "khushiyant/redline-compliance-extraction")
 
-PIPELINE_JOBS = [
-    {
-        "name": "validate",
-        "script": "data/validate_data.py",
-        "script_args": ["data/train.jsonl", "--schema", "schema/decision_logic.json"],
-        "dependencies": ["jsonschema"],
-        "flavor": "cpu-basic",
-        "timeout": "10m",
-    },
-    {
-        "name": "retrain",
-        "script": "training/finetune.py",
-        "script_args": ["--config", "training/config.yaml"],
-        "dependencies": [
-            "unsloth", "transformers", "trl", "peft",
-            "bitsandbytes", "wandb", "datasets", "accelerate", "pyyaml",
-        ],
-        "flavor": "a10g-large",
-        "timeout": "2h",
-    },
-    {
-        "name": "eval",
-        "script": "eval/finetuned_eval.py",
-        "script_args": ["--test-data", "data/test.jsonl", "--model", "mistral-small-latest"],
-        "dependencies": ["mistralai", "wandb", "weave", "jsonschema"],
-        "flavor": "cpu-upgrade",
-        "timeout": "30m",
-    },
-]
+HF_MODEL_REPO = os.environ.get("HF_MODEL_REPO", "mistral-hackaton-2026/redline-extractor")
 
 # State tracked across the server's lifetime
 _corrections_since_retrain = 0
@@ -157,35 +128,29 @@ def push_dataset_to_hub():
 
 
 def trigger_hf_pipeline():
-    """Submit validate -> retrain -> eval jobs via HF Jobs SDK, waiting for each."""
-    secrets = {}
-    for key in ("HF_TOKEN", "WANDB_API_KEY", "MISTRAL_API_KEY"):
-        val = os.environ.get(key)
-        if val:
-            secrets[key] = val
+    """Submit validate -> retrain -> eval jobs via run_job.py, waiting for each."""
+    import subprocess
+    import sys
 
-    for job_config in PIPELINE_JOBS:
-        log.info("Submitting HF Job: %s", job_config["name"])
-        job = run_uv_job(
-            job_config["script"],
-            script_args=job_config.get("script_args", []),
-            dependencies=job_config.get("dependencies", []),
-            flavor=job_config.get("flavor", "cpu-basic"),
-            timeout=job_config.get("timeout", "1h"),
-            env={"WANDB_PROJECT": "redline-compliance", "HF_DATASET_REPO": HF_DATASET_REPO},
-            secrets=secrets,
-        )
-        log.info("Job submitted: %s (id=%s)", job_config["name"], job.id)
+    env = {
+        **os.environ,
+        "HF_DATASET_REPO": HF_DATASET_REPO,
+        "HF_MODEL_REPO": HF_MODEL_REPO,
+        "WANDB_PROJECT": "redline-compliance",
+    }
 
-        while True:
-            info = inspect_job(job_id=job.id)
-            stage = info.status.stage
-            if stage in ("COMPLETED", "ERROR", "CANCELED", "DELETED"):
-                log.info("Job %s finished: %s", job_config["name"], stage)
-                if stage != "COMPLETED":
-                    raise RuntimeError(f"HF Job '{job_config['name']}' ended with: {stage}")
-                break
-            time.sleep(30)
+    log.info("Submitting HF Jobs pipeline: validate -> retrain -> eval")
+    result = subprocess.run(
+        [sys.executable, "jobs/run_job.py", "pipeline", "validate", "retrain", "eval"],
+        env=env,
+        capture_output=True,
+        text=True,
+    )
+    if result.stdout:
+        log.info("Pipeline output:\n%s", result.stdout)
+    if result.returncode != 0:
+        log.error("Pipeline failed:\n%s", result.stderr)
+        raise RuntimeError(f"HF Jobs pipeline failed: {result.stderr}")
 
 
 def _log_retrain_event(merged_count: int):

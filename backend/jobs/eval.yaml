@@ -21,7 +21,7 @@ env:
   MODEL_ID: "${MODEL_ID:-mistral-small-latest}"
   BASELINE_RUN_ID: "${BASELINE_RUN_ID:-}"
   DATASET_REPO: "${DATASET_REPO:-khushiyant/redline-compliance-extraction}"
-  CODE_REPO_URL: "${CODE_REPO_URL:-https://huggingface.co/khushiyant/redline-compliance-extractor}"
+  CODE_REPO_URL: "${CODE_REPO_URL:-https://huggingface.co/mistral-hackaton-2026/redline-extractor}"
 
 setup: |
   pip install mistralai wandb weave jsonschema requests huggingface-hub pyyaml git-lfs

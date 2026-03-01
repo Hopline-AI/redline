@@ -24,7 +24,7 @@ HF_DATASET_REPO = os.environ.get(
     "HF_DATASET_REPO", "khushiyant/redline-compliance-extraction"
 )
 HF_MODEL_REPO = os.environ.get(
-    "HF_MODEL_REPO", "khushiyant/redline-compliance-extractor"
+    "HF_MODEL_REPO", "mistral-hackaton-2026/redline-extractor"
 )
 
 # Jobs config for HF Jobs YAML-based submission (via run_job.py)

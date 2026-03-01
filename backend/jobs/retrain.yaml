@@ -17,9 +17,9 @@ env:
   WANDB_API_KEY: "${WANDB_API_KEY}"
   WANDB_PROJECT: "redline-compliance"
   DATASET_REPO: "${DATASET_REPO:-khushiyant/redline-compliance-extraction}"
-  MODEL_REPO: "${MODEL_REPO:-khushiyant/redline-compliance-extractor}"
+  MODEL_REPO: "${MODEL_REPO:-mistral-hackaton-2026/redline-extractor}"
   RUN_NAME: "${RUN_NAME:-retrain}"
-  CODE_REPO_URL: "${CODE_REPO_URL:-https://huggingface.co/khushiyant/redline-compliance-extractor}"
+  CODE_REPO_URL: "${CODE_REPO_URL:-https://huggingface.co/mistral-hackaton-2026/redline-extractor}"
 
 setup: |
   pip install "unsloth[colab-new]" wandb transformers datasets trl peft bitsandbytes accelerate pyyaml huggingface-hub
