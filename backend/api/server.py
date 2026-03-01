@@ -82,6 +82,11 @@ USER_TEMPLATE = (
 
 _weave_initialized = False
 
+try:
+    import weave
+except ImportError:
+    weave = None
+
 # Extraction cache: content hash -> extracted JSON, persisted to disk
 CACHE_PATH = Path("data/.extraction_cache.json")
 MAX_CACHE_SIZE = 256
@@ -117,8 +122,8 @@ def _init_weave():
     if _weave_initialized:
         return True
     try:
-        import weave
-        weave.init("redline-compliance")
+        entity = os.environ.get("WANDB_ENTITY", "khushiyant-personal")
+        weave.init(f"{entity}/redline-compliance")
         _weave_initialized = True
         return True
     except Exception:
@@ -154,11 +159,7 @@ def _cache_key(text: str) -> str:
 
 
 def _extract_with_endpoint(policy_text: str) -> dict:
-    """Call the vLLM/TGI endpoint for extraction. Returns cached result if available."""
-    key = _cache_key(policy_text)
-    if key in _extraction_cache:
-        return _extraction_cache[key]
-
+    """Call the vLLM/TGI endpoint for extraction."""
     system_msg, user_msg = _parse_prompt_template(policy_text)
     model_name = _get_model_name()
 
@@ -180,33 +181,12 @@ def _extract_with_endpoint(policy_text: str) -> dict:
     content = resp.json()["choices"][0]["message"]["content"]
     latency_ms = (time.time() - start) * 1000
 
-    if _weave_initialized:
-        try:
-            import weave
-            weave.publish({
-                "input_policy_text": policy_text[:500],
-                "raw_model_output": content[:500],
-                "latency_ms": latency_ms,
-                "model": model_name,
-                "inference_mode": "vllm_endpoint",
-            }, name=f"extraction_{int(time.time())}")
-        except Exception:
-            pass
-
     result = json.loads(content)
-    with _cache_lock:
-        if len(_extraction_cache) < MAX_CACHE_SIZE:
-            _extraction_cache[key] = result
-    _save_cache()
-    return result
+    return {"result": result, "raw_output": content, "latency_ms": latency_ms, "model": model_name}
 
 
 def _extract_with_mistral(policy_text: str) -> dict:
-    """Call Mistral API for extraction. Returns cached result if available."""
-    key = _cache_key(policy_text)
-    if key in _extraction_cache:
-        return _extraction_cache[key]
-
+    """Call Mistral API for extraction."""
     from mistralai import Mistral
 
     client = Mistral(api_key=MISTRAL_API_KEY)
@@ -225,20 +205,21 @@ def _extract_with_mistral(policy_text: str) -> dict:
     content = response.choices[0].message.content
     latency_ms = (time.time() - start) * 1000
 
-    if _weave_initialized:
-        try:
-            import weave
-            weave.publish({
-                "input_policy_text": policy_text[:500],
-                "raw_model_output": content[:500],
-                "latency_ms": latency_ms,
-                "model": "mistral-small-latest",
-                "inference_mode": "mistral_api",
-            }, name=f"extraction_{int(time.time())}")
-        except Exception:
-            pass
-
     result = json.loads(content)
+    return {"result": result, "raw_output": content, "latency_ms": latency_ms, "model": "mistral-small-latest"}
+
+
+def _extract_chunk(chunk: str) -> dict:
+    """Extract a single chunk with caching and Weave tracing."""
+    key = _cache_key(chunk)
+    if key in _extraction_cache:
+        return _extraction_cache[key]
+
+    if _weave_initialized and weave:
+        result = _extract_chunk_traced(chunk)
+    else:
+        result = _extract_chunk_raw(chunk)
+
     with _cache_lock:
         if len(_extraction_cache) < MAX_CACHE_SIZE:
             _extraction_cache[key] = result
@@ -246,11 +227,41 @@ def _extract_with_mistral(policy_text: str) -> dict:
     return result
 
 
-def _extract_chunk(chunk: str) -> dict:
-    """Extract a single chunk using the configured backend."""
+def _extract_chunk_raw(chunk: str) -> dict:
+    """Extract without tracing."""
     if USE_MISTRAL_API:
-        return _extract_with_mistral(chunk)
-    return _extract_with_endpoint(chunk)
+        data = _extract_with_mistral(chunk)
+    else:
+        data = _extract_with_endpoint(chunk)
+    return data["result"]
+
+
+def _weave_extract(policy_text: str) -> dict:
+    """Weave-traced extraction op. Decorated at init time."""
+    if USE_MISTRAL_API:
+        data = _extract_with_mistral(policy_text)
+    else:
+        data = _extract_with_endpoint(policy_text)
+    return {
+        "extraction": data["result"],
+        "latency_ms": data["latency_ms"],
+        "model": data["model"],
+        "inference_mode": "mistral_api" if USE_MISTRAL_API else "vllm_endpoint",
+        "rule_count": len(data["result"].get("rules", [])),
+    }
+
+
+# Will be wrapped with @weave.op() at init time
+_extract_chunk_traced_fn = None
+
+
+def _extract_chunk_traced(chunk: str) -> dict:
+    """Call the weave-decorated version."""
+    global _extract_chunk_traced_fn
+    if _extract_chunk_traced_fn is None:
+        _extract_chunk_traced_fn = weave.op(name="redline_extract")(_weave_extract)
+    output = _extract_chunk_traced_fn(chunk)
+    return output["extraction"]
 
 
 def _run_pipeline(job_id: str, text: str, policy_name: str):
