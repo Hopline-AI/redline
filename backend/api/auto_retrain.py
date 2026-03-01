@@ -29,6 +29,7 @@ _total_corrections = 0
 _last_retrain_at: str | None = None
 _last_retrain_error: str | None = None
 _retrain_in_progress = False
+_cycle_num = 0
 _lock = threading.Lock()
 
 
@@ -175,20 +176,67 @@ def _log_retrain_event(merged_count: int):
         log.warning("W&B auto-retrain logging failed: %s", e)
 
 
+def _generate_targeted_data() -> int:
+    """Fetch weakest category from W&B and generate targeted synthetic samples.
+
+    Returns number of samples generated. Raises on failure.
+    """
+    global _cycle_num
+
+    from self_improve.inspect_metrics import fetch_latest_run
+    from self_improve.generate_targeted_data import (
+        append_to_training_data,
+        generate_targeted_samples,
+    )
+
+    snapshot = fetch_latest_run()
+    weakest_cat, weakest_score = snapshot.weakest_category()
+    dominant_failure = snapshot.dominant_failure_mode()
+
+    with _lock:
+        _cycle_num += 1
+        cycle = _cycle_num
+
+    log.info(
+        "Weakest category: %s (%.4f) | Dominant failure: %s | Cycle: %d",
+        weakest_cat, weakest_score, dominant_failure, cycle,
+    )
+
+    new_samples = generate_targeted_samples(
+        target_category=weakest_cat,
+        dominant_failure=dominant_failure,
+        cycle_num=cycle,
+    )
+
+    if not new_samples:
+        raise RuntimeError(f"No valid samples generated for category '{weakest_cat}'")
+
+    append_to_training_data(new_samples)
+    log.info("Generated %d targeted samples for '%s'", len(new_samples), weakest_cat)
+    return len(new_samples)
+
+
 def run_auto_retrain():
-    """Called as a background task. _retrain_in_progress is already True (set by check_and_trigger)."""
+    """Called as a background task. _retrain_in_progress is already True (set by check_and_trigger).
+
+    Two paths:
+      1. Lawyer corrections exist → merge them into train.jsonl, then retrain.
+      2. No corrections → fetch W&B metrics, generate targeted synthetic data, then retrain.
+    """
     global _retrain_in_progress, _corrections_since_retrain, _last_retrain_at, _last_retrain_error
 
     try:
         merged, _ = merge_corrections_into_training()
+
         if merged == 0:
-            return
+            log.info("No lawyer corrections — generating targeted synthetic data from W&B metrics...")
+            merged = _generate_targeted_data()
 
         push_dataset_to_hub()
         trigger_hf_pipeline()
 
-        # Archive only after push+trigger succeed
-        archive_corrections()
+        if CORRECTIONS_PATH.exists():
+            archive_corrections()
         _log_retrain_event(merged)
 
         with _lock:

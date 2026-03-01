@@ -36,7 +36,7 @@ Parse the `summaryMetrics` from the run. Extract:
 - `eval/per_type/entitlement`, `eval/per_type/restriction`, `eval/per_type/leave`, `eval/per_type/termination`, `eval/per_type/compensation`, `eval/per_type/eligibility`
 - Any `failure_modes/*` metrics
 
-Identify the weakest rule_type category (lowest `eval/per_type/*` value that is NOT identical to schema_validity_rate — if all are identical, flag that per-type tracking needs a new eval run).
+Identify the weakest rule_type category (lowest `eval/per_type/*` value).
 
 State clearly:
 - Weakest category and its score
@@ -58,24 +58,25 @@ Use `query_weave_traces_tool` and `count_weave_traces_tool` to check:
 - How many Weave traces exist in `khushiyant-personal/redline-compliance`
 - Whether any `Evaluation` traces exist (filter by `op_name_contains: "Evaluation"`)
 
-If traces exist, show a sample. If not, note that the next eval run (using the updated `finetuned_eval.py`) will create them.
+If traces exist, show a sample. If not, note that the next eval run will create them.
 
-## Step 5 — GENERATE (instruct, don't execute)
-Based on the weakest category, show the exact command to generate targeted training data:
+## Step 5 — TRIGGER RETRAIN
+Ask the user: "Trigger the retrain pipeline now? (yes/no)"
+
+If yes, use the Bash tool to fire the trigger:
 
 ```bash
-cd /home/shadeform/redline/backend
-uv run python -m self_improve.orchestrate_loop --max-cycles 1 --dry-run
+curl -s -X POST "http://35.245.2.116:8000/retrain/trigger" \
+  -H "Content-Type: application/json" | python3 -m json.tool
 ```
 
-Or for targeted data only:
+Then check status:
+
 ```bash
-uv run python -c "
-from self_improve.generate_targeted_data import generate_targeted_samples
-samples = generate_targeted_samples('<weakest_category>', '<dominant_failure>', cycle_num=2)
-print(f'Generated {len(samples)} samples')
-"
+curl -s "http://35.245.2.116:8000/retrain/status" | python3 -m json.tool
 ```
+
+Report whether `triggered: true` and the current `corrections_since_last_retrain` count. If 409 (already in progress), report that and skip.
 
 ## Step 6 — REPORT
 Use `create_wandb_report_tool` to create a W&B Report summarizing:
@@ -83,7 +84,7 @@ Use `create_wandb_report_tool` to create a W&B Report summarizing:
 - What the weakest category is and why (Step 2)
 - The delta from the previous cycle (Step 3)
 - Weave evaluation status (Step 4)
-- Recommended next action (Step 5)
+- Whether retrain was triggered and its status (Step 5)
 
 Entity: `khushiyant-personal` | Project: `redline-compliance`
 
