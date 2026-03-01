@@ -28,7 +28,7 @@ export const TechStackScene: React.FC = () => {
   const { fps } = useVideoConfig();
 
   const titleProgress = spring({ frame, fps, config: SPRING_SMOOTH });
-  const tagProgress = spring({ frame: frame - 140, fps, config: SPRING_SMOOTH });
+  const tagProgress = spring({ frame: frame - 100, fps, config: SPRING_SMOOTH });
 
   return (
     <AbsoluteFill
@@ -66,7 +66,7 @@ export const TechStackScene: React.FC = () => {
       >
         {TECHS.map((tech, i) => {
           const progress = spring({
-            frame: frame - (20 + i * 12),
+            frame: frame - (12 + i * 8),
             fps,
             config: SPRING_SNAPPY,
           });
@@ -79,6 +79,7 @@ export const TechStackScene: React.FC = () => {
                 borderRadius: 16,
                 backgroundColor: COLORS.surface,
                 border: `2px solid ${tech.color}`,
+                boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
                 opacity: progress,
                 transform: `scale(${0.8 + 0.2 * progress})`,
               }}

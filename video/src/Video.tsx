@@ -6,6 +6,7 @@ import { SCENE_DURATIONS, TRANSITION_FRAMES } from "./lib/constants";
 
 import { TitleScene } from "./scenes/TitleScene";
 import { ProblemScene } from "./scenes/ProblemScene";
+import { SavingsScene } from "./scenes/SavingsScene";
 import { PipelineScene } from "./scenes/PipelineScene";
 import { FinetuningScene } from "./scenes/FinetuningScene";
 import { ServingScene } from "./scenes/ServingScene";
@@ -29,6 +30,15 @@ export const Video: React.FC = () => {
 
       <TransitionSeries.Sequence durationInFrames={SCENE_DURATIONS.problem}>
         <ProblemScene />
+      </TransitionSeries.Sequence>
+
+      <TransitionSeries.Transition
+        presentation={fade()}
+        timing={linearTiming({ durationInFrames: T })}
+      />
+
+      <TransitionSeries.Sequence durationInFrames={SCENE_DURATIONS.savings}>
+        <SavingsScene />
       </TransitionSeries.Sequence>
 
       <TransitionSeries.Transition

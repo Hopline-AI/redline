@@ -27,8 +27,8 @@ const STAIR_STEPS = [
   { label: "Evaluate", color: COLORS.edited },
 ];
 
-const STEP_DELAY = 50;
-const START_AT = 30;
+const STEP_DELAY = 35;
+const START_AT = 20;
 
 export const SelfImprovementScene: React.FC = () => {
   const frame = useCurrentFrame();
@@ -42,18 +42,8 @@ export const SelfImprovementScene: React.FC = () => {
   const stepWidth = 200;
   const stepRise = 80;
 
-  // Climbing highlight — which step is lit
-  const allStepsIn = START_AT + STAIR_STEPS.length * STEP_DELAY + 30;
-  const highlightIndex = interpolate(
-    frame,
-    [allStepsIn, allStepsIn + STAIR_STEPS.length * 40],
-    [0, STAIR_STEPS.length - 0.01],
-    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
-  );
-  const activeStep = Math.floor(highlightIndex);
-
   // Accuracy counter
-  const accDelay = 180;
+  const accDelay = 120;
   const accProgress = spring({
     frame: frame - accDelay,
     fps,
@@ -101,6 +91,7 @@ export const SelfImprovementScene: React.FC = () => {
             borderRadius: 20,
             border: `2px solid ${COLORS.accent}`,
             backgroundColor: COLORS.surface,
+            boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
             letterSpacing: "0.04em",
           }}
         >
@@ -120,8 +111,6 @@ export const SelfImprovementScene: React.FC = () => {
         const y = baseY - (i + 1) * stepRise;
         const platformHeight = (i + 1) * stepRise;
 
-        const isLit = frame >= allStepsIn && activeStep >= i;
-
         return (
           <React.Fragment key={step.label}>
             {/* Platform/pillar */}
@@ -132,11 +121,14 @@ export const SelfImprovementScene: React.FC = () => {
                 top: y,
                 width: stepWidth - 16,
                 height: platformHeight,
-                backgroundColor: isLit ? step.color : COLORS.surface,
+                backgroundColor: COLORS.surface,
+                border: `1px solid ${COLORS.border}`,
+                borderBottom: "none",
+                borderLeft: `3px solid ${step.color}`,
+                boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
                 borderRadius: "12px 12px 0 0",
                 opacity: stepProgress,
                 transform: `translateY(${(1 - stepProgress) * 40}px)`,
-                transition: "background-color 0.3s",
               }}
             />
 
@@ -156,8 +148,7 @@ export const SelfImprovementScene: React.FC = () => {
                 style={{
                   fontSize: 18,
                   fontWeight: 700,
-                  color: isLit ? step.color : COLORS.muted,
-                  transition: "color 0.3s",
+                  color: step.color,
                 }}
               >
                 {step.label}
@@ -172,7 +163,7 @@ export const SelfImprovementScene: React.FC = () => {
                 top: y + 12,
                 width: stepWidth - 16,
                 textAlign: "center",
-                opacity: stepProgress * 0.6,
+                opacity: stepProgress * 0.5,
                 transform: `translateY(${(1 - stepProgress) * 40}px)`,
               }}
             >
@@ -180,7 +171,7 @@ export const SelfImprovementScene: React.FC = () => {
                 style={{
                   fontSize: 32,
                   fontWeight: 700,
-                  color: isLit ? "#1a1a1a" : COLORS.muted,
+                  color: COLORS.muted,
                   fontFamily: monoFamily,
                 }}
               >
@@ -211,28 +202,6 @@ export const SelfImprovementScene: React.FC = () => {
           </React.Fragment>
         );
       })}
-
-      {/* Climbing ball */}
-      {frame >= allStepsIn && (() => {
-        const ballX = baseX + activeStep * stepWidth + (stepWidth - 16) / 2 - 14;
-        const ballY = baseY - (activeStep + 1) * stepRise - 80;
-        const bounceOffset = Math.sin(frame * 0.15) * 4;
-
-        return (
-          <div
-            style={{
-              position: "absolute",
-              left: ballX,
-              top: ballY + bounceOffset,
-              width: 28,
-              height: 28,
-              borderRadius: "50%",
-              backgroundColor: STAIR_STEPS[activeStep].color,
-              boxShadow: `0 0 20px ${STAIR_STEPS[activeStep].color}80`,
-            }}
-          />
-        );
-      })()}
 
       {/* Accuracy readout */}
       <div

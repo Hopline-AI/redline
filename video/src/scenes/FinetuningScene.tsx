@@ -46,6 +46,10 @@ const Card: React.FC<{
         backgroundColor: COLORS.surface,
         borderRadius: 16,
         borderLeft: `4px solid ${color}`,
+        border: `1px solid ${COLORS.border}`,
+        borderLeftWidth: 4,
+        borderLeftColor: color,
+        boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
         width: 560,
       }}
     >
@@ -146,7 +150,7 @@ export const FinetuningScene: React.FC = () => {
   const titleProgress = spring({ frame, fps, config: SPRING_SMOOTH });
 
   const feedbackProgress = spring({
-    frame: frame - 280,
+    frame: frame - 271,
     fps,
     config: SPRING_SNAPPY,
   });
@@ -178,13 +182,13 @@ export const FinetuningScene: React.FC = () => {
 
       <div style={{ display: "flex", gap: 80, alignItems: "center" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <Card label="Model" value="Mistral 7B" color={COLORS.accent} delay={20} />
-          <Card label="Method" value="QLoRA 4-bit" color={COLORS.exceeds} delay={50} />
-          <Card label="Data" value="500+ pairs" color={COLORS.aligned} delay={80} />
-          <Card label="Tracking" value="W&B" color={COLORS.edited} delay={110} />
+          <Card label="Model" value="Mistral 7B" color={COLORS.accent} delay={11} />
+          <Card label="Method" value="QLoRA 4-bit" color={COLORS.exceeds} delay={41} />
+          <Card label="Data" value="500+ pairs" color={COLORS.aligned} delay={71} />
+          <Card label="Tracking" value="W&B" color={COLORS.edited} delay={101} />
         </div>
 
-        <LossChart delay={140} />
+        <LossChart delay={131} />
       </div>
 
       {/* Feedback loop */}

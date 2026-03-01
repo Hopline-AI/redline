@@ -1,8 +1,8 @@
 // Design tokens from Redline design system (light theme from colors.json)
 export const COLORS = {
   bg: "#F5F0E8",
-  surface: "#1a1a2e",
-  surfaceHover: "#24243c",
+  surface: "#ffffff",
+  surfaceHover: "#f5f5f5",
   border: "#d4cfc4",
 
   // Semantic conflict colors (light theme)
@@ -32,19 +32,20 @@ export const HEIGHT = 1080;
 export const TRANSITION_FRAMES = 15;
 
 export const SCENE_DURATIONS = {
-  title: 90,
-  problem: 240,
-  pipeline: 360,
-  finetuning: 450,
-  serving: 360,
-  selfImprovement: 450,
-  techStack: 240,
+  title: 120,
+  problem: 170,
+  savings: 310,
+  pipeline: 300,
+  finetuning: 345,
+  serving: 210,
+  selfImprovement: 320,
+  techStack: 180,
   closing: 150,
 } as const;
 
 export const TOTAL_FRAMES =
   Object.values(SCENE_DURATIONS).reduce((a, b) => a + b, 0) -
-  7 * TRANSITION_FRAMES;
+  8 * TRANSITION_FRAMES;
 
 export const SPRING_SMOOTH = { damping: 200 };
 export const SPRING_SNAPPY = { damping: 20, stiffness: 200 };

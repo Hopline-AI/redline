@@ -52,7 +52,7 @@ const StatBar: React.FC<{
         style={{
           flex: 1,
           height: 32,
-          backgroundColor: COLORS.surface,
+          backgroundColor: COLORS.border,
           borderRadius: 8,
           overflow: "hidden",
         }}
@@ -105,6 +105,10 @@ const ArchBox: React.FC<{
         backgroundColor: COLORS.surface,
         borderRadius: 16,
         borderLeft: `4px solid ${color}`,
+        border: `1px solid ${COLORS.border}`,
+        borderLeftWidth: 4,
+        borderLeftColor: color,
+        boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
         width: 440,
         display: "flex",
         flexDirection: "column",
@@ -126,8 +130,8 @@ export const ServingScene: React.FC = () => {
   const titleProgress = spring({ frame, fps, config: SPRING_SMOOTH });
 
   // Pulsing latency dot
-  const dotEntry = spring({ frame: frame - 100, fps, config: SPRING_SNAPPY });
-  const pulse = interpolate((frame - 100) % 30, [0, 15, 30], [1, 1.4, 1], {
+  const dotEntry = spring({ frame: frame - 50, fps, config: SPRING_SNAPPY });
+  const pulse = interpolate((frame - 50) % 30, [0, 15, 30], [1, 1.4, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
@@ -159,8 +163,8 @@ export const ServingScene: React.FC = () => {
 
       <div style={{ display: "flex", gap: 60, alignItems: "flex-start" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-          <ArchBox title="vLLM" detail="PagedAttention + batching" color={COLORS.accent} delay={20} />
-          <ArchBox title="Constrained Decoding" detail="outlines → valid JSON" color={COLORS.aligned} delay={60} />
+          <ArchBox title="vLLM" detail="PagedAttention + batching" color={COLORS.accent} delay={10} />
+          <ArchBox title="Constrained Decoding" detail="outlines → valid JSON" color={COLORS.aligned} delay={35} />
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 24, marginTop: 12 }}>
@@ -173,7 +177,7 @@ export const ServingScene: React.FC = () => {
                 borderRadius: "50%",
                 backgroundColor: COLORS.aligned,
                 opacity: dotEntry,
-                transform: `scale(${frame > 100 ? pulse : 0})`,
+                transform: `scale(${frame > 50 ? pulse : 0})`,
               }}
             />
             <span style={{ fontSize: 20, color: COLORS.muted }}>
@@ -184,9 +188,9 @@ export const ServingScene: React.FC = () => {
             </span>
           </div>
 
-          <StatBar label="GPU util" value={87} color={COLORS.accent} delay={140} />
-          <StatBar label="JSON validity" value={100} color={COLORS.aligned} delay={170} />
-          <StatBar label="VRAM" value={62} color={COLORS.edited} delay={200} />
+          <StatBar label="GPU util" value={87} color={COLORS.accent} delay={80} />
+          <StatBar label="JSON validity" value={100} color={COLORS.aligned} delay={105} />
+          <StatBar label="VRAM" value={62} color={COLORS.edited} delay={130} />
         </div>
       </div>
     </AbsoluteFill>

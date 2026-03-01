@@ -37,9 +37,7 @@ const PipelineStep: React.FC<{
   label: string;
   color: string;
   delay: number;
-  isActive: boolean;
-  isExtract: boolean;
-}> = ({ label, color, delay, isActive, isExtract }) => {
+}> = ({ label, color, delay }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -48,13 +46,6 @@ const PipelineStep: React.FC<{
     fps,
     config: SPRING_SNAPPY,
   });
-
-  const glowPulse = isExtract
-    ? interpolate((frame - delay) % 40, [0, 20, 40], [0, 0.6, 0], {
-        extrapolateLeft: "clamp",
-        extrapolateRight: "clamp",
-      })
-    : 0;
 
   return (
     <div
@@ -72,21 +63,19 @@ const PipelineStep: React.FC<{
           width: 120,
           height: 120,
           borderRadius: 24,
-          backgroundColor: isActive ? color : COLORS.surface,
+          backgroundColor: COLORS.surface,
           border: `2px solid ${color}`,
+          boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          boxShadow: isExtract && progress > 0.5
-            ? `0 0 ${20 + glowPulse * 30}px ${COLORS.accent}40`
-            : "none",
         }}
       >
         <span
           style={{
             fontSize: 18,
             fontWeight: 700,
-            color: isActive ? "#1a1a1a" : color,
+            color,
             letterSpacing: "-0.01em",
           }}
         >
@@ -102,11 +91,6 @@ export const PipelineScene: React.FC = () => {
   const { fps } = useVideoConfig();
 
   const titleProgress = spring({ frame, fps, config: SPRING_SMOOTH });
-
-  const activeIndex = Math.min(
-    STEPS.length - 1,
-    Math.max(-1, Math.floor((frame - STEP_START - STEPS.length * STEP_INTERVAL) / 25)),
-  );
 
   const lastStepAppears = STEP_START + (STEPS.length - 1) * STEP_INTERVAL;
   const barProgress = interpolate(
@@ -149,8 +133,6 @@ export const PipelineScene: React.FC = () => {
                 label={step.label}
                 color={step.color}
                 delay={STEP_START + i * STEP_INTERVAL}
-                isActive={i === activeIndex}
-                isExtract={step.label === "Extract"}
               />
               {i < STEPS.length - 1 && (
                 <FlowArrow delay={STEP_START + i * STEP_INTERVAL + 20} length={36} />
@@ -202,7 +184,8 @@ export const PipelineScene: React.FC = () => {
                 padding: "16px 32px",
                 borderRadius: 12,
                 border: `1px solid ${COLORS.border}`,
-                backgroundColor: `${COLORS.surface}18`,
+                backgroundColor: COLORS.surface,
+                boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
               }}
             >
               AI extracts → deterministic code compares

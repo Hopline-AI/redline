@@ -50,6 +50,7 @@ const DocBlock: React.FC<{
           borderRadius: 16,
           backgroundColor: COLORS.surface,
           border: `2px solid ${color}`,
+          boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
           padding: 28,
           display: "flex",
           flexDirection: "column",
@@ -63,7 +64,7 @@ const DocBlock: React.FC<{
               height: 8,
               width: `${w * 100}%`,
               backgroundColor: color,
-              opacity: 0.25,
+              opacity: 0.4,
               borderRadius: 4,
             }}
           />
