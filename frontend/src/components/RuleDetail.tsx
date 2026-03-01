@@ -121,12 +121,14 @@ export function RuleDetail({ rule, isEditing = false, onSave }: Props) {
                     </select>
                     <input 
                       type="text" 
-                      value={typeof c.value === "object" ? JSON.stringify(c.value) : c.value.toString()} 
-                      onChange={(e) => {
+                      value={typeof c.value === "object" ? JSON.stringify(c.value) : (c.value != null ? String(c.value) : "")} 
+                      onChange={(e) => handleConditionChange(i, "value", e.target.value)} 
+                      onBlur={(e) => {
                         let val: any = e.target.value;
-                        if (!isNaN(Number(val)) && val.trim() !== "") val = Number(val);
-                        handleConditionChange(i, "value", val);
-                      }} 
+                        if (!isNaN(Number(val)) && val.trim() !== "") {
+                          handleConditionChange(i, "value", Number(val));
+                        }
+                      }}
                       style={{ width: "100%", padding: "8px 12px", border: "1px solid var(--border)", borderRadius: "6px", fontSize: "13px", backgroundColor: "var(--background)" }}
                       placeholder="Value"
                     />
@@ -204,11 +206,13 @@ export function RuleDetail({ rule, isEditing = false, onSave }: Props) {
                       />
                       <input 
                         type="text" 
-                        value={String(val)} 
-                        onChange={(e) => {
+                        value={val !== undefined && val !== null ? String(val) : ""} 
+                        onChange={(e) => handleParameterChange(key, key, e.target.value)}
+                        onBlur={(e) => {
                           let v: any = e.target.value;
-                          if (!isNaN(Number(v)) && v.trim() !== "") v = Number(v);
-                          handleParameterChange(key, key, v);
+                          if (!isNaN(Number(v)) && v.trim() !== "") {
+                            handleParameterChange(key, key, Number(v));
+                          }
                         }}
                         style={{ padding: "8px 12px", border: "1px solid var(--border)", borderRadius: "6px", fontSize: "13px", backgroundColor: "var(--background)" }}
                         placeholder="Value"

@@ -128,7 +128,7 @@ export default function Review() {
             <div style={{ flex: 1, overflowY: "auto", padding: "var(--space-6)" }}>
               <RuleDetail
                 key={selectedRule.ui_id}
-                rule={selectedRule.extracted} 
+                rule={selectedRule.status === 'edited' && selectedRule.edited_rule ? selectedRule.edited_rule : selectedRule.extracted} 
                 isEditing={editingId === selectedRule.ui_id}
                 onSave={(edited) => {
                   updateStatus(selectedRule.ui_id, "edited", undefined, edited);

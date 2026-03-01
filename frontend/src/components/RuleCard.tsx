@@ -30,8 +30,11 @@ export function RuleCard({ rule, selected, onClick }: Props) {
         <span className="type-badge" style={{ fontSize: "10px", padding: "1px 6px" }}>{extracted.rule_type}</span>
         {worst && <ConflictBadge type={worst} />}
         <span className={`confidence-dot ${extracted.confidence}`} title={`Confidence: ${extracted.confidence}`} />
-        {status !== "pending" && (
+        {status !== "pending" && status !== "edited" && (
           <span className={`status-badge ${status}`} style={{ fontSize: "10px", padding: "1px 6px" }}>{status}</span>
+        )}
+        {status === "edited" && (
+          <span className="status-badge edited" style={{ fontSize: "10px", padding: "1px 6px", backgroundColor: "var(--accent)", color: "var(--accent-foreground)", border: "1px solid var(--border)" }}>Edited</span>
         )}
       </div>
       <div className="rule-card-source" style={{ 
