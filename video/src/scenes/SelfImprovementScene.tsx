@@ -19,7 +19,7 @@ const { fontFamily: monoFamily } = loadMono("normal", {
   subsets: ["latin"],
 });
 
-const LOOP_STEPS = [
+const STAIR_STEPS = [
   { label: "Inspect", color: COLORS.edited },
   { label: "Diagnose", color: COLORS.exceeds },
   { label: "Generate", color: COLORS.aligned },
@@ -27,25 +27,30 @@ const LOOP_STEPS = [
   { label: "Evaluate", color: COLORS.edited },
 ];
 
+const STEP_DELAY = 50;
+const START_AT = 30;
+
 export const SelfImprovementScene: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
   const titleProgress = spring({ frame, fps, config: SPRING_SMOOTH });
-  const cx = 860;
-  const cy = 530;
-  const radius = 240;
-  const stepDelay = 45;
-  const startAt = 25;
 
-  // Rotation highlight sweep
-  const sweepStart = startAt + LOOP_STEPS.length * stepDelay + 20;
-  const rotAngle = interpolate(
+  // Staircase layout
+  const baseX = 200;
+  const baseY = 700;
+  const stepWidth = 200;
+  const stepRise = 80;
+
+  // Climbing highlight — which step is lit
+  const allStepsIn = START_AT + STAIR_STEPS.length * STEP_DELAY + 30;
+  const highlightIndex = interpolate(
     frame,
-    [sweepStart, 420],
-    [0, Math.PI * 2.4],
+    [allStepsIn, allStepsIn + STAIR_STEPS.length * 40],
+    [0, STAIR_STEPS.length - 0.01],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
   );
+  const activeStep = Math.floor(highlightIndex);
 
   // Accuracy counter
   const accDelay = 180;
@@ -59,6 +64,7 @@ export const SelfImprovementScene: React.FC = () => {
 
   return (
     <AbsoluteFill style={{ backgroundColor: COLORS.bg, fontFamily }}>
+      {/* Title */}
       <div
         style={{
           position: "absolute",
@@ -76,122 +82,178 @@ export const SelfImprovementScene: React.FC = () => {
         Self-Improvement
       </div>
 
-      {/* Center hub */}
+      {/* W&B MCP badge */}
       <div
         style={{
           position: "absolute",
-          left: cx - 65,
-          top: cy - 65,
-          width: 130,
-          height: 130,
-          borderRadius: "50%",
-          backgroundColor: COLORS.surface,
-          border: `3px solid ${COLORS.accent}`,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
+          top: 140,
+          width: "100%",
+          textAlign: "center",
           opacity: titleProgress,
         }}
       >
-        <span style={{ fontSize: 20, fontWeight: 700, color: COLORS.accent }}>W&B</span>
-        <span style={{ fontSize: 13, color: COLORS.muted }}>MCP</span>
+        <span
+          style={{
+            fontSize: 18,
+            fontWeight: 700,
+            color: COLORS.accent,
+            padding: "8px 24px",
+            borderRadius: 20,
+            border: `2px solid ${COLORS.accent}`,
+            backgroundColor: COLORS.surface,
+            letterSpacing: "0.04em",
+          }}
+        >
+          W&B MCP Orchestrated
+        </span>
       </div>
 
-      {/* Circle nodes */}
-      {LOOP_STEPS.map((step, i) => {
-        const angle = (i / LOOP_STEPS.length) * Math.PI * 2 - Math.PI / 2;
-        const x = cx + radius * Math.cos(angle);
-        const y = cy + radius * Math.sin(angle);
-
-        const progress = spring({
-          frame: frame - (startAt + i * stepDelay),
+      {/* Staircase */}
+      {STAIR_STEPS.map((step, i) => {
+        const stepProgress = spring({
+          frame: frame - (START_AT + i * STEP_DELAY),
           fps,
           config: SPRING_SNAPPY,
         });
 
-        // Highlight logic
-        const stepAngle = (i / LOOP_STEPS.length) * Math.PI * 2;
-        const diff = Math.abs(((rotAngle + Math.PI * 0.5) % (Math.PI * 2)) - stepAngle);
-        const lit = frame > sweepStart && diff < 0.7;
+        const x = baseX + i * stepWidth;
+        const y = baseY - (i + 1) * stepRise;
+        const platformHeight = (i + 1) * stepRise;
+
+        const isLit = frame >= allStepsIn && activeStep >= i;
 
         return (
-          <div
-            key={step.label}
-            style={{
-              position: "absolute",
-              left: x - 60,
-              top: y - 42,
-              width: 120,
-              height: 84,
-              borderRadius: 16,
-              backgroundColor: lit ? step.color : COLORS.surface,
-              border: `2px solid ${step.color}`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              opacity: progress,
-              transform: `scale(${0.7 + 0.3 * progress}${lit ? " scale(1.08)" : ""})`,
-            }}
-          >
-            <span
+          <React.Fragment key={step.label}>
+            {/* Platform/pillar */}
+            <div
               style={{
-                fontSize: 17,
-                fontWeight: 700,
-                color: lit ? COLORS.bg : step.color,
+                position: "absolute",
+                left: x,
+                top: y,
+                width: stepWidth - 16,
+                height: platformHeight,
+                backgroundColor: isLit ? step.color : COLORS.surface,
+                borderRadius: "12px 12px 0 0",
+                opacity: stepProgress,
+                transform: `translateY(${(1 - stepProgress) * 40}px)`,
+                transition: "background-color 0.3s",
+              }}
+            />
+
+            {/* Label on top of platform */}
+            <div
+              style={{
+                position: "absolute",
+                left: x,
+                top: y - 52,
+                width: stepWidth - 16,
+                textAlign: "center",
+                opacity: stepProgress,
+                transform: `translateY(${(1 - stepProgress) * 40}px)`,
               }}
             >
-              {step.label}
-            </span>
-          </div>
+              <span
+                style={{
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: isLit ? step.color : COLORS.muted,
+                  transition: "color 0.3s",
+                }}
+              >
+                {step.label}
+              </span>
+            </div>
+
+            {/* Step number inside platform */}
+            <div
+              style={{
+                position: "absolute",
+                left: x,
+                top: y + 12,
+                width: stepWidth - 16,
+                textAlign: "center",
+                opacity: stepProgress * 0.6,
+                transform: `translateY(${(1 - stepProgress) * 40}px)`,
+              }}
+            >
+              <span
+                style={{
+                  fontSize: 32,
+                  fontWeight: 700,
+                  color: isLit ? "#1a1a1a" : COLORS.muted,
+                  fontFamily: monoFamily,
+                }}
+              >
+                {i + 1}
+              </span>
+            </div>
+
+            {/* Arrow between steps */}
+            {i < STAIR_STEPS.length - 1 && (
+              <div
+                style={{
+                  position: "absolute",
+                  left: x + stepWidth - 16,
+                  top: y - 20,
+                  opacity: spring({
+                    frame: frame - (START_AT + i * STEP_DELAY + 30),
+                    fps,
+                    config: SPRING_SMOOTH,
+                  }),
+                  fontSize: 22,
+                  color: COLORS.subtle,
+                  transform: "rotate(-30deg)",
+                }}
+              >
+                →
+              </div>
+            )}
+          </React.Fragment>
         );
       })}
 
-      {/* Arc arrows */}
-      {LOOP_STEPS.map((_, i) => {
-        const a1 = (i / LOOP_STEPS.length) * Math.PI * 2 - Math.PI / 2;
-        const a2 = (((i + 1) % LOOP_STEPS.length) / LOOP_STEPS.length) * Math.PI * 2 - Math.PI / 2;
-        const mid = (a1 + a2) / 2;
-        const ax = cx + (radius - 40) * Math.cos(mid);
-        const ay = cy + (radius - 40) * Math.sin(mid);
-
-        const prog = spring({
-          frame: frame - (startAt + i * stepDelay + 25),
-          fps,
-          config: SPRING_SMOOTH,
-        });
+      {/* Climbing ball */}
+      {frame >= allStepsIn && (() => {
+        const ballX = baseX + activeStep * stepWidth + (stepWidth - 16) / 2 - 14;
+        const ballY = baseY - (activeStep + 1) * stepRise - 80;
+        const bounceOffset = Math.sin(frame * 0.15) * 4;
 
         return (
           <div
-            key={`a${i}`}
             style={{
               position: "absolute",
-              left: ax - 8,
-              top: ay - 8,
-              fontSize: 18,
-              color: COLORS.subtle,
-              opacity: prog,
-              transform: `rotate(${(mid * 180) / Math.PI + 90}deg)`,
+              left: ballX,
+              top: ballY + bounceOffset,
+              width: 28,
+              height: 28,
+              borderRadius: "50%",
+              backgroundColor: STAIR_STEPS[activeStep].color,
+              boxShadow: `0 0 20px ${STAIR_STEPS[activeStep].color}80`,
             }}
-          >
-            ▾
-          </div>
+          />
         );
-      })}
+      })()}
 
       {/* Accuracy readout */}
       <div
         style={{
           position: "absolute",
           right: 140,
-          top: 200,
+          top: 240,
           display: "flex",
           flexDirection: "column",
           gap: 8,
           opacity: accProgress,
         }}
       >
-        <span style={{ fontSize: 16, color: COLORS.muted, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+        <span
+          style={{
+            fontSize: 16,
+            color: COLORS.muted,
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+          }}
+        >
           Accuracy
         </span>
         <span

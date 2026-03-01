@@ -78,14 +78,14 @@ const LossChart: React.FC<{ delay: number }> = ({ delay }) => {
   const w = 340;
   const h = 180;
   const points: [number, number][] = [
-    [0, 10],
-    [w * 0.12, 40],
+    [0, 164],
+    [w * 0.12, 120],
     [w * 0.25, 80],
-    [w * 0.4, 115],
-    [w * 0.55, 138],
-    [w * 0.7, 150],
-    [w * 0.85, 158],
-    [w, 164],
+    [w * 0.4, 52],
+    [w * 0.55, 34],
+    [w * 0.7, 22],
+    [w * 0.85, 16],
+    [w, 12],
   ];
 
   const clipWidth = w * progress;

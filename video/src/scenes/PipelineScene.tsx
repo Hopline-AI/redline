@@ -30,12 +30,16 @@ const STEPS = [
   { label: "Review", color: COLORS.white },
 ];
 
+const STEP_INTERVAL = 40;
+const STEP_START = 20;
+
 const PipelineStep: React.FC<{
   label: string;
   color: string;
   delay: number;
   isActive: boolean;
-}> = ({ label, color, delay, isActive }) => {
+  isExtract: boolean;
+}> = ({ label, color, delay, isActive, isExtract }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -44,6 +48,13 @@ const PipelineStep: React.FC<{
     fps,
     config: SPRING_SNAPPY,
   });
+
+  const glowPulse = isExtract
+    ? interpolate((frame - delay) % 40, [0, 20, 40], [0, 0.6, 0], {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+      })
+    : 0;
 
   return (
     <div
@@ -66,13 +77,16 @@ const PipelineStep: React.FC<{
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          boxShadow: isExtract && progress > 0.5
+            ? `0 0 ${20 + glowPulse * 30}px ${COLORS.accent}40`
+            : "none",
         }}
       >
         <span
           style={{
             fontSize: 18,
             fontWeight: 700,
-            color: isActive ? COLORS.bg : color,
+            color: isActive ? "#1a1a1a" : color,
             letterSpacing: "-0.01em",
           }}
         >
@@ -89,13 +103,17 @@ export const PipelineScene: React.FC = () => {
 
   const titleProgress = spring({ frame, fps, config: SPRING_SMOOTH });
 
-  const STEP_INTERVAL = 70;
-  const STEP_START = 40;
-
-  // Which step is "active" (highlighted) — sweeps through them
   const activeIndex = Math.min(
     STEPS.length - 1,
-    Math.max(-1, Math.floor((frame - STEP_START - STEPS.length * STEP_INTERVAL) / 40)),
+    Math.max(-1, Math.floor((frame - STEP_START - STEPS.length * STEP_INTERVAL) / 25)),
+  );
+
+  const lastStepAppears = STEP_START + (STEPS.length - 1) * STEP_INTERVAL;
+  const barProgress = interpolate(
+    frame,
+    [STEP_START, lastStepAppears + 30],
+    [0, 1],
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
   );
 
   return (
@@ -107,7 +125,7 @@ export const PipelineScene: React.FC = () => {
         alignItems: "center",
         justifyContent: "center",
         fontFamily,
-        gap: 64,
+        gap: 48,
       }}
     >
       <div
@@ -123,39 +141,68 @@ export const PipelineScene: React.FC = () => {
         The Pipeline
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        {STEPS.map((step, i) => (
-          <React.Fragment key={step.label}>
-            <PipelineStep
-              label={step.label}
-              color={step.color}
-              delay={STEP_START + i * STEP_INTERVAL}
-              isActive={i === activeIndex}
-            />
-            {i < STEPS.length - 1 && (
-              <FlowArrow delay={STEP_START + i * STEP_INTERVAL + 35} length={36} />
-            )}
-          </React.Fragment>
-        ))}
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 24 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          {STEPS.map((step, i) => (
+            <React.Fragment key={step.label}>
+              <PipelineStep
+                label={step.label}
+                color={step.color}
+                delay={STEP_START + i * STEP_INTERVAL}
+                isActive={i === activeIndex}
+                isExtract={step.label === "Extract"}
+              />
+              {i < STEPS.length - 1 && (
+                <FlowArrow delay={STEP_START + i * STEP_INTERVAL + 20} length={36} />
+              )}
+            </React.Fragment>
+          ))}
+        </div>
+
+        {/* Progress bar */}
+        <div
+          style={{
+            width: STEPS.length * 132 + (STEPS.length - 1) * 48,
+            height: 4,
+            backgroundColor: COLORS.subtle,
+            borderRadius: 2,
+            overflow: "hidden",
+            opacity: interpolate(frame, [STEP_START, STEP_START + 10], [0, 1], {
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp",
+            }),
+          }}
+        >
+          <div
+            style={{
+              width: `${barProgress * 100}%`,
+              height: "100%",
+              background: `linear-gradient(90deg, ${COLORS.edited}, ${COLORS.accent}, ${COLORS.aligned})`,
+              borderRadius: 2,
+            }}
+          />
+        </div>
       </div>
 
-      <Sequence from={STEP_START + 2 * STEP_INTERVAL + 40} layout="none" premountFor={30}>
+      <Sequence from={STEP_START + 2 * STEP_INTERVAL} layout="none" premountFor={30}>
         {(() => {
           const f = useCurrentFrame();
-          const opacity = interpolate(f, [0, 20], [0, 1], {
+          const opacity = interpolate(f, [0, 15], [0, 1], {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
           });
           return (
             <div
               style={{
-                fontSize: 22,
+                fontSize: 26,
+                fontWeight: 700,
                 color: COLORS.muted,
                 opacity,
                 fontFamily: monoFamily,
                 padding: "16px 32px",
                 borderRadius: 12,
                 border: `1px solid ${COLORS.border}`,
+                backgroundColor: `${COLORS.surface}18`,
               }}
             >
               AI extracts → deterministic code compares

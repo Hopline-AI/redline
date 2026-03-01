@@ -1,28 +1,28 @@
-// Design tokens from Redline design system
+// Design tokens from Redline design system (light theme from colors.json)
 export const COLORS = {
-  bg: "#0a0a0a",
-  surface: "#141414",
-  surfaceHover: "#1c1c1c",
-  border: "#262626",
+  bg: "#F5F0E8",
+  surface: "#1a1a2e",
+  surfaceHover: "#24243c",
+  border: "#d4cfc4",
 
-  // Semantic conflict colors (dark mode)
-  contradicts: "#ef5350",
-  fallsShort: "#ff9800",
-  exceeds: "#fdd835",
-  missing: "#ce93d8",
-  aligned: "#81c784",
+  // Semantic conflict colors (light theme)
+  contradicts: "#d32f2f",
+  fallsShort: "#e65100",
+  exceeds: "#f9a825",
+  missing: "#7b1fa2",
+  aligned: "#2e7d32",
 
-  // Status
-  approved: "#81c784",
-  flagged: "#ff9800",
-  edited: "#64b5f6",
-  pending: "#a1a1aa",
+  // Status (light theme)
+  approved: "#2e7d32",
+  flagged: "#e65100",
+  edited: "#1565c0",
+  pending: "#71717a",
 
   // Core palette
-  accent: "#ef5350",
-  white: "#f5f5f5",
-  muted: "#71717a",
-  subtle: "#3f3f46",
+  accent: "#d32f2f",
+  white: "#1a1a1a",
+  muted: "#6b6b6b",
+  subtle: "#c4bfb4",
 } as const;
 
 export const FPS = 30;
@@ -34,7 +34,7 @@ export const TRANSITION_FRAMES = 15;
 export const SCENE_DURATIONS = {
   title: 90,
   problem: 240,
-  pipeline: 600,
+  pipeline: 360,
   finetuning: 450,
   serving: 360,
   selfImprovement: 450,
